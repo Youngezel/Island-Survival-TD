@@ -10,7 +10,7 @@ namespace Game.Buildings
     /// The player's fixed, non-purchasable starting point. Loss condition:
     /// when its health reaches zero, the run ends.
     /// </summary>
-    [RequireComponent(typeof(Health))]
+    [RequireComponent(typeof(Health), typeof(Targeting), typeof(Shooter))]
     public class Village : MonoBehaviour
     {
         public static event Action OnVillageDestroyed;
@@ -28,6 +28,8 @@ namespace Game.Buildings
             {
                 _health.SetMaxHealth(_data.MaxHealth);
             }
+
+            GetComponent<Shooter>().Initialize(_data);
         }
 
         private void Start()

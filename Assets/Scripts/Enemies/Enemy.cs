@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Game.Buildings;
 using Game.Combat;
 using Game.Data;
@@ -15,12 +16,16 @@ namespace Game.Enemies
     [RequireComponent(typeof(Health))]
     public class Enemy : MonoBehaviour
     {
+        public static readonly List<Enemy> ActiveEnemies = new List<Enemy>();
+
         [SerializeField] private EnemyData _data;
 
         private Health _health;
         private Health _targetHealth;
         private Transform _target;
         private float _attackCooldown;
+
+        public bool IsDead => _health.IsDead;
 
         private void Awake()
         {
@@ -42,11 +47,13 @@ namespace Game.Enemies
 
         private void OnEnable()
         {
+            ActiveEnemies.Add(this);
             _health.OnDeath += HandleDeath;
         }
 
         private void OnDisable()
         {
+            ActiveEnemies.Remove(this);
             _health.OnDeath -= HandleDeath;
         }
 
