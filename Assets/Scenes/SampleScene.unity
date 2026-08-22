@@ -2351,6 +2351,7 @@ GameObject:
   - component: {fileID: 1923146554}
   - component: {fileID: 1923146555}
   - component: {fileID: 1923146556}
+  - component: {fileID: 1923146557}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -2370,6 +2371,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b0763e38f908fbc4281ae5c6b40a1ed9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Game.Systems.GameOverController
+  _baseXP: 10
+  _xpPerWave: 5
 --- !u!4 &1923146553
 Transform:
   m_ObjectHideFlags: 0
@@ -2433,6 +2436,19 @@ MonoBehaviour:
   - {fileID: 518466334}
   _timeBetweenSpawns: 0.5
   _firstWaveDelay: 2
+--- !u!114 &1923146557
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1923146551}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9a43ace73987e8d4ba6729f91862a386, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Game.Economy.XPWallet
+  _xp: 0
 --- !u!1 &2027831296
 GameObject:
   m_ObjectHideFlags: 0
