@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 namespace Game.Grid
 {
@@ -29,12 +30,13 @@ namespace Game.Grid
 
         private void Update()
         {
-            if (_hexGridManager == null || _camera == null)
+            if (_hexGridManager == null || _camera == null || Mouse.current == null)
             {
                 return;
             }
 
-            var mouseWorld = _camera.ScreenToWorldPoint(Input.mousePosition);
+            Vector2 screenPosition = Mouse.current.position.ReadValue();
+            var mouseWorld = _camera.ScreenToWorldPoint(new Vector3(screenPosition.x, screenPosition.y, -_camera.transform.position.z));
             mouseWorld.z = 0f;
             var cell = _hexGridManager.WorldToCell(mouseWorld);
 
