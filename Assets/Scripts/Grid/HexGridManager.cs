@@ -5,9 +5,19 @@ using UnityEngine.Tilemaps;
 namespace Game.Grid
 {
     /// <summary>
-    /// Wraps a Grid + ground Tilemap configured for flat-top hexagons.
-    /// Provides world&lt;-&gt;cell conversion, neighbor lookup and per-cell
-    /// occupied/free state for building placement.
+    /// Wraps the ground Tilemap configured for flat-top hexagons. Provides
+    /// world&lt;-&gt;cell conversion, neighbor lookup and per-cell occupied/free
+    /// state for building placement.
+    ///
+    /// Note: for this hexagon cellSwizzle, Unity's Grid.GetCellCenterWorld and
+    /// Tilemap.GetCellCenterWorld disagree, and neither one is a clean inverse
+    /// of WorldToCell at the position it reports as a cell's center. WorldToCell
+    /// itself is reliable and identical whether called on the Grid or the
+    /// Tilemap, so cell lookup (mouse picking) is unaffected. CellToWorld uses
+    /// the Grid's version, which is at least self-consistent with WorldToCell;
+    /// revisit with a manually-derived formula if a future system (building
+    /// placement) needs the true rendered tile center rather than a
+    /// self-consistent reference point.
     /// </summary>
     public class HexGridManager : MonoBehaviour
     {
@@ -18,9 +28,9 @@ namespace Game.Grid
 
         private readonly HashSet<Vector3Int> _occupiedCells = new HashSet<Vector3Int>();
 
-        // Flat-top hex on a Unity Grid (cellLayout=Hexagon, cellSwizzle=YXZ):
+        // Flat-top hex on a Unity Tilemap (cellLayout=Hexagon, cellSwizzle=YXZ):
         // neighbor deltas depend on the parity of the cell's x coordinate.
-        // Verified empirically against Grid.GetCellCenterWorld (equal distance to all 6).
+        // Verified empirically against Tilemap.GetCellCenterWorld (equal distance to all 6).
         private static readonly Vector3Int[] EvenXNeighbors =
         {
             new Vector3Int(1, 0, 0), new Vector3Int(-1, 0, 0),
