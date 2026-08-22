@@ -19,3 +19,5 @@ MonoBehaviour:
   _range: 8
   _fireRate: 0.5
   _splash: 1
+  _splashRadius: 1.5
+  _projectileSpeed: 6

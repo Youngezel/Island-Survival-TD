@@ -7,14 +7,14 @@ using UnityEngine;
 namespace Game.Buildings
 {
     /// <summary>
-    /// Automatically damages the nearest enemy in range at a fixed fire
-    /// rate. Shared by the village and every turret. Hit-scan for now
-    /// (instant damage, no travel time); a visible traveling projectile
-    /// and splash damage for the mortar arrive with the projectile system.
+    /// Automatically fires a projectile at the nearest enemy in range, at a
+    /// fixed fire rate. Shared by the village and every turret.
     /// </summary>
     [RequireComponent(typeof(Targeting))]
     public class Shooter : MonoBehaviour
     {
+        [SerializeField] private Projectile _projectilePrefab;
+
         private Targeting _targeting;
         private BuildingData _data;
         private float _cooldown;
@@ -43,9 +43,21 @@ namespace Game.Buildings
 
             if (target != null && _cooldown <= 0f)
             {
-                target.GetComponent<Health>().TakeDamage(_data.Damage);
+                Fire(target);
                 _cooldown = 1f / _data.FireRate;
             }
+        }
+
+        private void Fire(Enemy target)
+        {
+            if (_projectilePrefab == null)
+            {
+                return;
+            }
+
+            Projectile projectile = Instantiate(_projectilePrefab, transform.position, Quaternion.identity);
+            float splashRadiusWorldUnits = _data.SplashRadius * HexGridManager.Instance.HexStepWorldDistance;
+            projectile.Initialize(target, _data.ProjectileSpeed, _data.Damage, _data.Splash, splashRadiusWorldUnits);
         }
     }
 }

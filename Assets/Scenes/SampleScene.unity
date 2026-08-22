@@ -660,6 +660,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fd33b197553ba3b49b60b317a374327f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Game.Buildings.Shooter
+  _projectilePrefab: {fileID: 3866059157763710130, guid: aecb9bc482b0c844b8dd3579f1994996, type: 3}
 --- !u!114 &891463456
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1003,6 +1004,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fd33b197553ba3b49b60b317a374327f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Game.Buildings.Shooter
+  _projectilePrefab: {fileID: 3866059157763710130, guid: aecb9bc482b0c844b8dd3579f1994996, type: 3}
 --- !u!114 &1316570015
 MonoBehaviour:
   m_ObjectHideFlags: 0

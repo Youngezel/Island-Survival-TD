@@ -16,6 +16,8 @@ namespace Game.Data
         [SerializeField] private float _range;
         [SerializeField] private float _fireRate;
         [SerializeField] private bool _splash;
+        [SerializeField] private float _splashRadius;
+        [SerializeField] private float _projectileSpeed = 10f;
 
         public string DisplayName => _displayName;
         public int MaxHealth => _maxHealth;
@@ -24,5 +26,11 @@ namespace Game.Data
         public float Range => _range;
         public float FireRate => _fireRate;
         public bool Splash => _splash;
+
+        /// <summary>Splash radius in hex tiles; only meaningful when Splash is true.</summary>
+        public float SplashRadius => _splashRadius;
+
+        /// <summary>World units per second the fired projectile travels at.</summary>
+        public float ProjectileSpeed => _projectileSpeed;
     }
 }
