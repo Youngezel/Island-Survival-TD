@@ -36,6 +36,14 @@ namespace Game.Grid
             }
 
             Vector2 screenPosition = Mouse.current.position.ReadValue();
+            bool cursorInsideView = screenPosition.x >= 0f && screenPosition.x <= Screen.width
+                && screenPosition.y >= 0f && screenPosition.y <= Screen.height;
+            _spriteRenderer.enabled = cursorInsideView;
+            if (!cursorInsideView)
+            {
+                return;
+            }
+
             var mouseWorld = _camera.ScreenToWorldPoint(new Vector3(screenPosition.x, screenPosition.y, -_camera.transform.position.z));
             mouseWorld.z = 0f;
             var cell = _hexGridManager.WorldToCell(mouseWorld);
