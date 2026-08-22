@@ -40,7 +40,7 @@ Projectcontext voor Claude Code. Lees dit voordat je code schrijft. Afgeleid van
 | Version control | Git + Unity `.gitignore` |
 | Packages | 2D URP, Input System, 2D Tilemap Editor (Hexagonal), Cinemachine |
 
-**Art:** pixel-art. PPU **32**. Hex-tiles **64×64 px** (flat-top). Units/turrets/enemies **32×32 px**. Camera-resolutie **320×180** (Pixel Perfect).
+**Art:** pixel-art. PPU **32**. Hex-tiles **64×64 px** (flat-top). Units/turrets/enemies **32×32 px**. Camera-resolutie **640×360** (Pixel Perfect; verhoogd vanaf 320×180 na overleg — 320×180 voelde te ingezoomd voor tower-defense overzicht).
 **Sprite-naamgeving:** `spr_` prefix (bv. `spr_turret_long_01`, `spr_enemy_fast`, `spr_tile_grass`).
 
 ### Kleurenpalet (16 kleuren — "Island Survival")
