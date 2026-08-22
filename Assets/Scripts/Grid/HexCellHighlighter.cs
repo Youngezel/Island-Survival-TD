@@ -50,9 +50,7 @@ namespace Game.Grid
                 return;
             }
 
-            var mouseWorld = _camera.ScreenToWorldPoint(new Vector3(screenPosition.x, screenPosition.y, -_camera.transform.position.z));
-            mouseWorld.z = 0f;
-            var cell = _hexGridManager.WorldToCell(mouseWorld);
+            var cell = _hexGridManager.ScreenToCell(screenPosition, _camera);
 
             if (_highlightedCell.HasValue && _highlightedCell.Value != cell)
             {

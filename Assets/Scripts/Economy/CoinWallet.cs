@@ -4,9 +4,8 @@ using UnityEngine;
 namespace Game.Economy
 {
     /// <summary>
-    /// In-run coin balance. Spending and the HUD hook into this later
-    /// (section 7.7, 7.9/7.10); for now it just holds the total and notifies
-    /// listeners when it changes.
+    /// In-run coin balance. The HUD hooks into this later (section 7.9/7.10);
+    /// for now it just holds the total and notifies listeners when it changes.
     /// </summary>
     public class CoinWallet : MonoBehaviour
     {
@@ -31,6 +30,19 @@ namespace Game.Economy
 
             _coins += amount;
             OnCoinsChanged?.Invoke(_coins);
+        }
+
+        /// <summary>Deducts amount if affordable. Returns whether the spend succeeded.</summary>
+        public bool TrySpend(int amount)
+        {
+            if (amount < 0 || amount > _coins)
+            {
+                return false;
+            }
+
+            _coins -= amount;
+            OnCoinsChanged?.Invoke(_coins);
+            return true;
         }
     }
 }

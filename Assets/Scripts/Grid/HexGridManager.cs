@@ -27,6 +27,7 @@ namespace Game.Grid
 
         [SerializeField] private UnityEngine.Grid _grid;
         [SerializeField] private Tilemap _groundTilemap;
+        [SerializeField] private TileBase _defaultGroundTile;
 
         private readonly HashSet<Vector3Int> _occupiedCells = new HashSet<Vector3Int>();
 
@@ -86,6 +87,20 @@ namespace Game.Grid
         public bool HasGroundTile(Vector3Int cell)
         {
             return _groundTilemap.HasTile(cell);
+        }
+
+        /// <summary>Paints the default ground tile at the given cell (used when a tile is purchased).</summary>
+        public void PlaceGroundTile(Vector3Int cell)
+        {
+            _groundTilemap.SetTile(cell, _defaultGroundTile);
+        }
+
+        /// <summary>Converts a screen-space point (e.g. a pointer/drag position) to the hex cell under it.</summary>
+        public Vector3Int ScreenToCell(Vector2 screenPosition, Camera camera)
+        {
+            Vector3 worldPosition = camera.ScreenToWorldPoint(new Vector3(screenPosition.x, screenPosition.y, -camera.transform.position.z));
+            worldPosition.z = 0f;
+            return WorldToCell(worldPosition);
         }
 
         public bool IsOccupied(Vector3Int cell)
