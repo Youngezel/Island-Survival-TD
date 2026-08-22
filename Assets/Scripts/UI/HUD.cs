@@ -22,13 +22,19 @@ namespace Game.UI
 
         private void OnEnable()
         {
+            WaveManager.OnWaveStarted += HandleWaveStarted;
+        }
+
+        private void Start()
+        {
+            // Waits for Start (called after every object's Awake) rather than
+            // subscribing in OnEnable, since Village/CoinWallet may not have
+            // set their static Instance yet if this HUD's OnEnable runs first.
             if (CoinWallet.Instance != null)
             {
                 CoinWallet.Instance.OnCoinsChanged += HandleCoinsChanged;
                 HandleCoinsChanged(CoinWallet.Instance.Coins);
             }
-
-            WaveManager.OnWaveStarted += HandleWaveStarted;
 
             if (Village.Instance != null)
             {
