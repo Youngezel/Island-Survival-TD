@@ -521,8 +521,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Game.UI.HotbarSlot
   _item: {fileID: 11400000, guid: f1d75255749f0224b82a575eea1ec81d, type: 2}
-  _ghostIcon: {fileID: 453786400}
-  _worldCamera: {fileID: 519420031}
 --- !u!114 &574983584
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -825,8 +823,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Game.UI.HotbarSlot
   _item: {fileID: 11400000, guid: 86e87e3ed73f3134da23324edd25e517, type: 2}
-  _ghostIcon: {fileID: 453786400}
-  _worldCamera: {fileID: 519420031}
 --- !u!114 &702053687
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1540,8 +1536,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Game.UI.HotbarSlot
   _item: {fileID: 11400000, guid: 5d03364d53e02ef41aee012ab030f0fc, type: 2}
-  _ghostIcon: {fileID: 453786400}
-  _worldCamera: {fileID: 519420031}
 --- !u!114 &1720509532
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1592,6 +1586,7 @@ GameObject:
   - component: {fileID: 1734676436}
   - component: {fileID: 1734676435}
   - component: {fileID: 1734676434}
+  - component: {fileID: 1734676438}
   m_Layer: 0
   m_Name: Canvas
   m_TagString: Untagged
@@ -1683,6 +1678,20 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
+--- !u!114 &1734676438
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1734676433}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9544ce87504cb3540969e274e7866ea0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Game.UI.PlacementCursor
+  _ghostIcon: {fileID: 453786400}
+  _worldCamera: {fileID: 519420031}
 --- !u!1 &1736047500
 GameObject:
   m_ObjectHideFlags: 0
@@ -1853,8 +1862,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Game.UI.HotbarSlot
   _item: {fileID: 11400000, guid: b7e69385fa8496940aa62bad612699c0, type: 2}
-  _ghostIcon: {fileID: 453786400}
-  _worldCamera: {fileID: 519420031}
 --- !u!114 &1747690611
 MonoBehaviour:
   m_ObjectHideFlags: 0

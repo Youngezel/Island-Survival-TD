@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 
 namespace Game.CameraControl
@@ -10,7 +11,8 @@ namespace Game.CameraControl
     /// so panning stays stable even though moving the target also moves the
     /// camera that the conversion would otherwise depend on.
     /// Map bounds are enforced separately by a CinemachineConfiner2D on the
-    /// camera, not by this script.
+    /// camera, not by this script. A drag that starts on a UI element (e.g.
+    /// a hotbar button) never pans the camera.
     /// </summary>
     public class CameraPanController : MonoBehaviour
     {
@@ -37,7 +39,8 @@ namespace Game.CameraControl
 
             if (mouse.leftButton.wasPressedThisFrame)
             {
-                _isDragging = true;
+                bool overUI = EventSystem.current != null && EventSystem.current.IsPointerOverGameObject();
+                _isDragging = !overUI;
             }
             else if (mouse.leftButton.wasReleasedThisFrame)
             {
