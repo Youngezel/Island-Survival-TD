@@ -9,15 +9,17 @@ namespace Game.Grid
     /// world&lt;-&gt;cell conversion, neighbor lookup and per-cell occupied/free
     /// state for building placement.
     ///
-    /// Note: for this hexagon cellSwizzle, Unity's Grid.GetCellCenterWorld and
-    /// Tilemap.GetCellCenterWorld disagree, and neither one is a clean inverse
-    /// of WorldToCell at the position it reports as a cell's center. WorldToCell
-    /// itself is reliable and identical whether called on the Grid or the
-    /// Tilemap, so cell lookup (mouse picking) is unaffected. CellToWorld uses
-    /// the Grid's version, which is at least self-consistent with WorldToCell;
-    /// revisit with a manually-derived formula if a future system (building
-    /// placement) needs the true rendered tile center rather than a
-    /// self-consistent reference point.
+    /// For this hexagon cellSwizzle, Unity's Grid.GetCellCenterWorld and
+    /// Tilemap.GetCellCenterWorld disagree by a constant world-space offset
+    /// (confirmed visually: Grid's reported "center" for a cell actually sits
+    /// on a corner shared by three tiles, not inside any one of them). Since
+    /// Grid.WorldToCell partitions space relative to ITS OWN (shifted) notion
+    /// of cell centers, its cell boundaries are offset from where the tiles
+    /// are actually rendered - which made the highlighted cell change before
+    /// the cursor visually reached the next hex. WorldToCell corrects for this
+    /// by shifting the query point into the Grid's frame before classifying it,
+    /// using the offset measured once at startup against the true (Tilemap)
+    /// center of cell (0,0,0).
     /// </summary>
     public class HexGridManager : MonoBehaviour
     {
@@ -27,6 +29,20 @@ namespace Game.Grid
         [SerializeField] private Tilemap _groundTilemap;
 
         private readonly HashSet<Vector3Int> _occupiedCells = new HashSet<Vector3Int>();
+
+        private Vector3? _gridToTilemapOffset;
+
+        private Vector3 GridToTilemapOffset
+        {
+            get
+            {
+                if (!_gridToTilemapOffset.HasValue)
+                {
+                    _gridToTilemapOffset = _groundTilemap.GetCellCenterWorld(Vector3Int.zero) - _grid.GetCellCenterWorld(Vector3Int.zero);
+                }
+                return _gridToTilemapOffset.Value;
+            }
+        }
 
         // Flat-top hex on a Unity Tilemap (cellLayout=Hexagon, cellSwizzle=YXZ):
         // neighbor deltas depend on the parity of the cell's x coordinate.
@@ -52,12 +68,12 @@ namespace Game.Grid
 
         public Vector3Int WorldToCell(Vector3 worldPosition)
         {
-            return _grid.WorldToCell(worldPosition);
+            return _grid.WorldToCell(worldPosition - GridToTilemapOffset);
         }
 
         public Vector3 CellToWorld(Vector3Int cell)
         {
-            return _grid.GetCellCenterWorld(cell);
+            return _groundTilemap.GetCellCenterWorld(cell);
         }
 
         public bool HasGroundTile(Vector3Int cell)
