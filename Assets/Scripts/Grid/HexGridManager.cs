@@ -76,6 +76,13 @@ namespace Game.Grid
             return _groundTilemap.GetCellCenterWorld(cell);
         }
 
+        /// <summary>
+        /// World-space distance between the centers of two directly adjacent
+        /// (straight up/down) hex cells. Used to convert a "range in tiles"
+        /// stat into a world-space radius.
+        /// </summary>
+        public float HexStepWorldDistance => _grid.cellSize.x;
+
         public bool HasGroundTile(Vector3Int cell)
         {
             return _groundTilemap.HasTile(cell);

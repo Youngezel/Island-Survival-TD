@@ -14,6 +14,7 @@ namespace Game.Buildings
     public class Village : MonoBehaviour
     {
         public static event Action OnVillageDestroyed;
+        public static Village Instance { get; private set; }
 
         [SerializeField] private BuildingData _data;
 
@@ -21,6 +22,7 @@ namespace Game.Buildings
 
         private void Awake()
         {
+            Instance = this;
             _health = GetComponent<Health>();
             if (_data != null)
             {
