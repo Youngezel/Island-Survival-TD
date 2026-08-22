@@ -23,6 +23,7 @@ namespace Game.UI
         [SerializeField] private Camera _worldCamera;
 
         private HotbarItemData _selectedItem;
+        private bool _selectionIsFree;
 
         private void Awake()
         {
@@ -33,9 +34,10 @@ namespace Game.UI
             }
         }
 
-        public void SelectItem(HotbarItemData item)
+        public void SelectItem(HotbarItemData item, bool free = false)
         {
             _selectedItem = item;
+            _selectionIsFree = free;
             if (_ghostIcon != null)
             {
                 _ghostIcon.sprite = item != null ? item.Icon : null;
@@ -66,7 +68,7 @@ namespace Game.UI
             if (Mouse.current.leftButton.wasPressedThisFrame && !overUI)
             {
                 Vector3Int cell = HexGridManager.Instance.ScreenToCell(screenPosition, _worldCamera);
-                if (BuildPlacer.Instance.TryPlace(_selectedItem, cell))
+                if (BuildPlacer.Instance.TryPlace(_selectedItem, cell, _selectionIsFree))
                 {
                     SelectItem(null);
                 }

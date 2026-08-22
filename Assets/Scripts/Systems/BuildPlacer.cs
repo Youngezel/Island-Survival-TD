@@ -18,7 +18,7 @@ namespace Game.Systems
             Instance = this;
         }
 
-        public bool TryPlace(HotbarItemData item, Vector3Int cell)
+        public bool TryPlace(HotbarItemData item, Vector3Int cell, bool free = false)
         {
             if (item == null || HexGridManager.Instance == null || CoinWallet.Instance == null)
             {
@@ -39,7 +39,7 @@ namespace Game.Systems
                 return false;
             }
 
-            if (!CoinWallet.Instance.TrySpend(item.Cost))
+            if (!free && !CoinWallet.Instance.TrySpend(item.Cost))
             {
                 return false;
             }
