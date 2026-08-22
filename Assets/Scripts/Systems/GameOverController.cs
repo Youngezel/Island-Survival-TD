@@ -40,6 +40,12 @@ namespace Game.Systems
                 XPWallet.Instance.AddXP(xpAwarded);
             }
 
+            if (SaveManager.Instance != null)
+            {
+                SaveManager.Instance.Current.xp = XPWallet.Instance != null ? XPWallet.Instance.XP : SaveManager.Instance.Current.xp;
+                SaveManager.Instance.Save();
+            }
+
             IsGameOver = true;
             Time.timeScale = 0f;
 

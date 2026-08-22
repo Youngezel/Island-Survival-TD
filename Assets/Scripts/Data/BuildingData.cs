@@ -18,6 +18,8 @@ namespace Game.Data
         [SerializeField] private bool _splash;
         [SerializeField] private float _splashRadius;
         [SerializeField] private float _projectileSpeed = 10f;
+        [SerializeField] private string _upgradeSaveKey;
+        [SerializeField] private int _damagePerUpgradeLevel = 1;
 
         public string DisplayName => _displayName;
         public int MaxHealth => _maxHealth;
@@ -32,5 +34,11 @@ namespace Game.Data
 
         /// <summary>World units per second the fired projectile travels at.</summary>
         public float ProjectileSpeed => _projectileSpeed;
+
+        /// <summary>Key into SaveManager's upgrade levels; empty means not upgradeable.</summary>
+        public string UpgradeSaveKey => _upgradeSaveKey;
+
+        /// <summary>Extra damage granted per upgrade level.</summary>
+        public int DamagePerUpgradeLevel => _damagePerUpgradeLevel;
     }
 }

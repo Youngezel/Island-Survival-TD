@@ -21,3 +21,5 @@ MonoBehaviour:
   _splash: 0
   _splashRadius: 0
   _projectileSpeed: 12
+  _upgradeSaveKey: long_range_turret
+  _damagePerUpgradeLevel: 1

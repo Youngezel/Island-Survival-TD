@@ -1,12 +1,13 @@
 using System;
+using Game.Systems;
 using UnityEngine;
 
 namespace Game.Economy
 {
     /// <summary>
     /// Meta-progression currency, earned on game over and spent on building
-    /// upgrades in the main menu. Persisting it across runs is section 7.11's
-    /// job; this just holds the total for the current session.
+    /// upgrades in the main menu. Starts from whatever SaveManager loaded
+    /// from disk, so it persists across restarts.
     /// </summary>
     public class XPWallet : MonoBehaviour
     {
@@ -20,6 +21,10 @@ namespace Game.Economy
         private void Awake()
         {
             Instance = this;
+            if (SaveManager.Instance != null)
+            {
+                _xp = SaveManager.Instance.Current.xp;
+            }
         }
 
         public void AddXP(int amount)

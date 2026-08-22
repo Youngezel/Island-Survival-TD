@@ -3066,6 +3066,7 @@ GameObject:
   - component: {fileID: 1923146555}
   - component: {fileID: 1923146556}
   - component: {fileID: 1923146557}
+  - component: {fileID: 1923146558}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -3163,6 +3164,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Game.Economy.XPWallet
   _xp: 0
+--- !u!114 &1923146558
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1923146551}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2f83ceeaabe6a8b4f9bd353c04b54848, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Game.Systems.SaveManager
 --- !u!1 &2026562640
 GameObject:
   m_ObjectHideFlags: 0

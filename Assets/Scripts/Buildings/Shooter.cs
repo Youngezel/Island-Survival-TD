@@ -17,6 +17,7 @@ namespace Game.Buildings
 
         private Targeting _targeting;
         private BuildingData _data;
+        private int _upgradeLevel;
         private float _cooldown;
 
         private void Awake()
@@ -24,9 +25,10 @@ namespace Game.Buildings
             _targeting = GetComponent<Targeting>();
         }
 
-        public void Initialize(BuildingData data)
+        public void Initialize(BuildingData data, int upgradeLevel = 0)
         {
             _data = data;
+            _upgradeLevel = upgradeLevel;
         }
 
         private void Update()
@@ -57,7 +59,8 @@ namespace Game.Buildings
 
             Projectile projectile = Instantiate(_projectilePrefab, transform.position, Quaternion.identity);
             float splashRadiusWorldUnits = _data.SplashRadius * HexGridManager.Instance.HexStepWorldDistance;
-            projectile.Initialize(target, _data.ProjectileSpeed, _data.Damage, _data.Splash, splashRadiusWorldUnits);
+            int damage = _data.Damage + _data.DamagePerUpgradeLevel * _upgradeLevel;
+            projectile.Initialize(target, _data.ProjectileSpeed, damage, _data.Splash, splashRadiusWorldUnits);
         }
     }
 }
