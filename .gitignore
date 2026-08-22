@@ -61,3 +61,7 @@ Thumbs.db
 
 ## Claude Code local session state
 .claude/
+
+## Unity crash/auto-recovery scratch scenes
+/[Aa]ssets/_Recovery/
+/[Aa]ssets/_Recovery.meta
