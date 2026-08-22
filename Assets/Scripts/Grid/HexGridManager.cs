@@ -28,8 +28,11 @@ namespace Game.Grid
         [SerializeField] private UnityEngine.Grid _grid;
         [SerializeField] private Tilemap _groundTilemap;
         [SerializeField] private TileBase _defaultGroundTile;
+        [SerializeField] private int _tileMaxHealth = 5;
 
         private readonly HashSet<Vector3Int> _occupiedCells = new HashSet<Vector3Int>();
+        private readonly HashSet<Vector3Int> _tileCells = new HashSet<Vector3Int>();
+        private readonly Dictionary<Vector3Int, int> _tileHealth = new Dictionary<Vector3Int, int>();
 
         private Vector3? _gridToTilemapOffset;
 
@@ -65,6 +68,19 @@ namespace Game.Grid
         private void Awake()
         {
             Instance = this;
+            ScanExistingTiles();
+        }
+
+        private void ScanExistingTiles()
+        {
+            BoundsInt bounds = _groundTilemap.cellBounds;
+            foreach (Vector3Int cell in bounds.allPositionsWithin)
+            {
+                if (_groundTilemap.HasTile(cell))
+                {
+                    _tileCells.Add(cell);
+                }
+            }
         }
 
         public Vector3Int WorldToCell(Vector3 worldPosition)
@@ -93,6 +109,49 @@ namespace Game.Grid
         public void PlaceGroundTile(Vector3Int cell)
         {
             _groundTilemap.SetTile(cell, _defaultGroundTile);
+            _tileCells.Add(cell);
+        }
+
+        /// <summary>All cells that currently have a ground tile painted on them.</summary>
+        public IEnumerable<Vector3Int> GetAllTileCells() => _tileCells;
+
+        /// <summary>Current HP of the tile at this cell (lazily initialized to the max on first query).</summary>
+        public int GetTileHealth(Vector3Int cell)
+        {
+            if (!HasGroundTile(cell))
+            {
+                return 0;
+            }
+
+            if (!_tileHealth.TryGetValue(cell, out int health))
+            {
+                health = _tileMaxHealth;
+                _tileHealth[cell] = health;
+            }
+
+            return health;
+        }
+
+        /// <summary>Damages the tile at this cell, removing it (back to open water) once its HP is depleted.</summary>
+        public void DamageTile(Vector3Int cell, int amount)
+        {
+            if (!HasGroundTile(cell) || amount <= 0)
+            {
+                return;
+            }
+
+            int health = GetTileHealth(cell) - amount;
+            if (health <= 0)
+            {
+                _groundTilemap.SetTile(cell, null);
+                _tileHealth.Remove(cell);
+                _tileCells.Remove(cell);
+                SetOccupied(cell, false);
+            }
+            else
+            {
+                _tileHealth[cell] = health;
+            }
         }
 
         /// <summary>Converts a screen-space point (e.g. a pointer/drag position) to the hex cell under it.</summary>

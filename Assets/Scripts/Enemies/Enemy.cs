@@ -9,21 +9,36 @@ using UnityEngine;
 namespace Game.Enemies
 {
     /// <summary>
-    /// Sails toward the village and attacks once within range. Ranged
-    /// enemies simply have a larger range value and stop farther away -
-    /// no special-case behavior needed, it falls out of the shared logic.
+    /// Sails toward the village but attacks whatever damageable thing is
+    /// nearest first - a building or a hex tile in its way - and only
+    /// engages the village once nothing closer is left standing. Re-picks
+    /// its target every frame, so once a tile/building it was attacking is
+    /// destroyed it naturally moves on to the next-nearest obstacle. Ranged
+    /// enemies fall out of the same logic: a larger range just lets them
+    /// hit an obstacle from farther away without needing to reach it.
     /// </summary>
     [RequireComponent(typeof(Health))]
     public class Enemy : MonoBehaviour
     {
         public static readonly List<Enemy> ActiveEnemies = new List<Enemy>();
 
+        private enum TargetKind
+        {
+            None,
+            Village,
+            Building,
+            Tile,
+        }
+
         [SerializeField] private EnemyData _data;
 
         private Health _health;
-        private Health _targetHealth;
-        private Transform _target;
         private float _attackCooldown;
+
+        private TargetKind _targetKind;
+        private Health _targetHealth;
+        private Vector3 _targetPosition;
+        private Vector3Int _targetCell;
 
         public bool IsDead => _health.IsDead;
 
@@ -33,15 +48,6 @@ namespace Game.Enemies
             if (_data != null)
             {
                 _health.SetMaxHealth(_data.MaxHealth);
-            }
-        }
-
-        private void Start()
-        {
-            if (Village.Instance != null)
-            {
-                _target = Village.Instance.transform;
-                _targetHealth = Village.Instance.GetComponent<Health>();
             }
         }
 
@@ -59,29 +65,107 @@ namespace Game.Enemies
 
         private void Update()
         {
-            if (_target == null || _data == null || HexGridManager.Instance == null)
+            if (_data == null || HexGridManager.Instance == null || Village.Instance == null)
             {
                 return;
             }
 
-            Vector3 toTarget = _target.position - transform.position;
+            AcquireNearestTarget();
+            if (_targetKind == TargetKind.None)
+            {
+                return;
+            }
+
+            Vector3 toTarget = _targetPosition - transform.position;
             float rangeWorldUnits = _data.Range * HexGridManager.Instance.HexStepWorldDistance;
 
             if (toTarget.sqrMagnitude > rangeWorldUnits * rangeWorldUnits)
             {
-                Vector3 direction = toTarget.normalized;
-                transform.position += direction * _data.MoveSpeed * Time.deltaTime;
+                transform.position += toTarget.normalized * _data.MoveSpeed * Time.deltaTime;
                 return;
             }
 
             _attackCooldown -= Time.deltaTime;
             if (_attackCooldown <= 0f)
             {
-                if (_targetHealth != null)
-                {
-                    _targetHealth.TakeDamage(_data.Damage);
-                }
+                Attack();
                 _attackCooldown = 1f / _data.AttackRate;
+            }
+        }
+
+        /// <summary>Finds the nearest damageable thing: any building, any standing hex tile, or the village itself.</summary>
+        private void AcquireNearestTarget()
+        {
+            _targetKind = TargetKind.None;
+            float bestSqrDistance = float.MaxValue;
+
+            Health villageHealth = Village.Instance.GetComponent<Health>();
+            if (villageHealth != null && !villageHealth.IsDead)
+            {
+                float sqrDistance = (Village.Instance.transform.position - transform.position).sqrMagnitude;
+                bestSqrDistance = sqrDistance;
+                _targetKind = TargetKind.Village;
+                _targetHealth = villageHealth;
+                _targetPosition = Village.Instance.transform.position;
+            }
+
+            foreach (Building building in Building.ActiveBuildings)
+            {
+                if (building == null)
+                {
+                    continue;
+                }
+
+                Health buildingHealth = building.GetComponent<Health>();
+                if (buildingHealth == null || buildingHealth.IsDead)
+                {
+                    continue;
+                }
+
+                float sqrDistance = (building.transform.position - transform.position).sqrMagnitude;
+                if (sqrDistance < bestSqrDistance)
+                {
+                    bestSqrDistance = sqrDistance;
+                    _targetKind = TargetKind.Building;
+                    _targetHealth = buildingHealth;
+                    _targetPosition = building.transform.position;
+                }
+            }
+
+            Vector3Int villageCell = HexGridManager.Instance.WorldToCell(Village.Instance.transform.position);
+            foreach (Vector3Int cell in HexGridManager.Instance.GetAllTileCells())
+            {
+                if (cell == villageCell || HexGridManager.Instance.IsOccupied(cell))
+                {
+                    continue;
+                }
+
+                if (HexGridManager.Instance.GetTileHealth(cell) <= 0)
+                {
+                    continue;
+                }
+
+                Vector3 tileWorldPosition = HexGridManager.Instance.CellToWorld(cell);
+                float sqrDistance = (tileWorldPosition - transform.position).sqrMagnitude;
+                if (sqrDistance < bestSqrDistance)
+                {
+                    bestSqrDistance = sqrDistance;
+                    _targetKind = TargetKind.Tile;
+                    _targetCell = cell;
+                    _targetPosition = tileWorldPosition;
+                }
+            }
+        }
+
+        private void Attack()
+        {
+            if (_targetKind == TargetKind.Tile)
+            {
+                HexGridManager.Instance.DamageTile(_targetCell, _data.Damage);
+            }
+            else if (_targetHealth != null)
+            {
+                _targetHealth.TakeDamage(_data.Damage);
             }
         }
 
