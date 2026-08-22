@@ -23,3 +23,4 @@ MonoBehaviour:
   _projectileSpeed: 10
   _upgradeSaveKey: turret
   _damagePerUpgradeLevel: 1
+  _upgradeCost: 20

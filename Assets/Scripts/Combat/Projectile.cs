@@ -1,13 +1,15 @@
+using System;
 using Game.Enemies;
 using UnityEngine;
 
 namespace Game.Combat
 {
     /// <summary>
-    /// Travels toward the enemy it was fired at and deals damage on arrival.
-    /// If the target dies mid-flight, it keeps flying toward the target's
-    /// last known position instead of snapping or vanishing. Splash damage
-    /// hits every living enemy within radius of the impact point.
+    /// Travels toward the point it was fired at and deals damage on arrival.
+    /// Fired by turrets at an enemy (homing on it while it's alive, with
+    /// optional splash to nearby enemies) or by enemies at a fixed point -
+    /// the village, a building, or a hex tile - via a generic onHit callback
+    /// so this one class doesn't need to know about every target type.
     /// </summary>
     public class Projectile : MonoBehaviour
     {
@@ -17,6 +19,7 @@ namespace Game.Combat
         private int _damage;
         private bool _splash;
         private float _splashRadiusWorldUnits;
+        private Action<int> _onHit;
 
         public void Initialize(Enemy target, float speed, int damage, bool splash, float splashRadiusWorldUnits)
         {
@@ -26,6 +29,15 @@ namespace Game.Combat
             _damage = damage;
             _splash = splash;
             _splashRadiusWorldUnits = splashRadiusWorldUnits;
+        }
+
+        /// <summary>Fired at a fixed world point (the target doesn't move); onHit applies the damage however that target type needs.</summary>
+        public void InitializeAtFixedTarget(Vector3 worldPosition, float speed, int damage, Action<int> onHit)
+        {
+            _lastKnownTargetPosition = worldPosition;
+            _speed = speed;
+            _damage = damage;
+            _onHit = onHit;
         }
 
         private void Update()
@@ -65,6 +77,10 @@ namespace Game.Combat
                         enemy.GetComponent<Health>().TakeDamage(_damage);
                     }
                 }
+            }
+            else if (_onHit != null)
+            {
+                _onHit(_damage);
             }
             else if (_target != null && !_target.IsDead)
             {

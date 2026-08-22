@@ -20,6 +20,7 @@ namespace Game.Data
         [SerializeField] private float _projectileSpeed = 10f;
         [SerializeField] private string _upgradeSaveKey;
         [SerializeField] private int _damagePerUpgradeLevel = 1;
+        [SerializeField] private int _upgradeCost = 20;
 
         public string DisplayName => _displayName;
         public int MaxHealth => _maxHealth;
@@ -40,5 +41,8 @@ namespace Game.Data
 
         /// <summary>Extra damage granted per upgrade level.</summary>
         public int DamagePerUpgradeLevel => _damagePerUpgradeLevel;
+
+        /// <summary>Base meta-XP cost to buy the next upgrade level; scales with the level already bought.</summary>
+        public int UpgradeCost => _upgradeCost;
     }
 }

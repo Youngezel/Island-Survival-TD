@@ -832,9 +832,9 @@ Camera:
   m_NormalizedViewPortRect:
     serializedVersion: 2
     x: 0.16173361
-    y: 0.15699333
+    y: 0.17955555
     width: 0.67653275
-    height: 0.6850618
+    height: 0.64
   near clip plane: 0.1
   far clip plane: 5000
   field of view: 40
@@ -2034,6 +2034,7 @@ MonoBehaviour:
   _grid: {fileID: 1196704217}
   _groundTilemap: {fileID: 2028570616}
   _defaultGroundTile: {fileID: 11400000, guid: ca348769a39a9dc43b1ad204f306eb87, type: 2}
+  _tileMaxHealth: 5
 --- !u!4 &1196704216
 Transform:
   m_ObjectHideFlags: 0
@@ -2477,7 +2478,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Opnieuw beginnen
+  m_Text: Naar hoofdmenu
 --- !u!222 &1566091843
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -2950,6 +2951,7 @@ MonoBehaviour:
   _panel: {fileID: 1703308025}
   _resultText: {fileID: 1275737238}
   _restartButton: {fileID: 2026562641}
+  _mainMenuSceneName: MainMenu
 --- !u!114 &1734676442
 MonoBehaviour:
   m_ObjectHideFlags: 0

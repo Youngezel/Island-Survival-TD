@@ -119,3 +119,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Game.Enemies.Enemy
   _data: {fileID: 11400000, guid: ea43f946cad58d240a6d8bdc74cf3815, type: 2}
+  _projectilePrefab: {fileID: 3866059157763710130, guid: aecb9bc482b0c844b8dd3579f1994996, type: 3}

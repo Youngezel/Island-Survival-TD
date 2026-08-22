@@ -23,3 +23,4 @@ MonoBehaviour:
   _projectileSpeed: 6
   _upgradeSaveKey: mortar
   _damagePerUpgradeLevel: 1
+  _upgradeCost: 30

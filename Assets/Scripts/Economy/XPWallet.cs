@@ -37,5 +37,25 @@ namespace Game.Economy
             _xp += amount;
             OnXPChanged?.Invoke(_xp);
         }
+
+        /// <summary>Deducts amount if affordable and persists it immediately. Returns whether the spend succeeded.</summary>
+        public bool TrySpend(int amount)
+        {
+            if (amount < 0 || amount > _xp)
+            {
+                return false;
+            }
+
+            _xp -= amount;
+            OnXPChanged?.Invoke(_xp);
+
+            if (SaveManager.Instance != null)
+            {
+                SaveManager.Instance.Current.xp = _xp;
+                SaveManager.Instance.Save();
+            }
+
+            return true;
+        }
     }
 }

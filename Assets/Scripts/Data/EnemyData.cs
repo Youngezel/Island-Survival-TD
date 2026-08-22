@@ -15,6 +15,7 @@ namespace Game.Data
         [SerializeField] private float _moveSpeed;
         [SerializeField] private float _range;
         [SerializeField] private float _attackRate;
+        [SerializeField] private float _projectileSpeed = 10f;
 
         public string DisplayName => _displayName;
         public int MaxHealth => _maxHealth;
@@ -23,5 +24,8 @@ namespace Game.Data
         public float MoveSpeed => _moveSpeed;
         public float Range => _range;
         public float AttackRate => _attackRate;
+
+        /// <summary>World units per second the fired projectile travels at.</summary>
+        public float ProjectileSpeed => _projectileSpeed;
     }
 }

@@ -7,25 +7,26 @@ namespace Game.UI
 {
     /// <summary>
     /// Shows the run's result once GameOverController resolves the XP award,
-    /// with a button to restart by reloading the scene. A real main menu
-    /// (with persisted upgrades) arrives with the save system (§7.11).
+    /// with a button back to the main menu so the player can spend the XP
+    /// they just earned on upgrades before the next run.
     /// </summary>
     public class GameOverScreenUI : MonoBehaviour
     {
         [SerializeField] private GameObject _panel;
         [SerializeField] private Text _resultText;
         [SerializeField] private Button _restartButton;
+        [SerializeField] private string _mainMenuSceneName = "MainMenu";
 
         private void OnEnable()
         {
             GameOverController.OnGameOverResolved += HandleGameOverResolved;
-            _restartButton.onClick.AddListener(Restart);
+            _restartButton.onClick.AddListener(BackToMainMenu);
         }
 
         private void OnDisable()
         {
             GameOverController.OnGameOverResolved -= HandleGameOverResolved;
-            _restartButton.onClick.RemoveListener(Restart);
+            _restartButton.onClick.RemoveListener(BackToMainMenu);
         }
 
         private void HandleGameOverResolved(int xpAwarded, int wavesSurvived)
@@ -38,10 +39,10 @@ namespace Game.UI
             _panel.SetActive(true);
         }
 
-        private void Restart()
+        private void BackToMainMenu()
         {
             Time.timeScale = 1f;
-            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+            SceneManager.LoadScene(_mainMenuSceneName);
         }
     }
 }

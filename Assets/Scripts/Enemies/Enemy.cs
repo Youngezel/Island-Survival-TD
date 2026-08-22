@@ -31,6 +31,7 @@ namespace Game.Enemies
         }
 
         [SerializeField] private EnemyData _data;
+        [SerializeField] private Projectile _projectilePrefab;
 
         private Health _health;
         private float _attackCooldown;
@@ -159,13 +160,30 @@ namespace Game.Enemies
 
         private void Attack()
         {
+            if (_projectilePrefab == null)
+            {
+                return;
+            }
+
+            Projectile projectile = Instantiate(_projectilePrefab, transform.position, Quaternion.identity);
+
             if (_targetKind == TargetKind.Tile)
             {
-                HexGridManager.Instance.DamageTile(_targetCell, _data.Damage);
+                Vector3Int cell = _targetCell;
+                projectile.InitializeAtFixedTarget(_targetPosition, _data.ProjectileSpeed, _data.Damage,
+                    damage => HexGridManager.Instance.DamageTile(cell, damage));
             }
-            else if (_targetHealth != null)
+            else
             {
-                _targetHealth.TakeDamage(_data.Damage);
+                Health targetHealth = _targetHealth;
+                projectile.InitializeAtFixedTarget(_targetPosition, _data.ProjectileSpeed, _data.Damage,
+                    damage =>
+                    {
+                        if (targetHealth != null && !targetHealth.IsDead)
+                        {
+                            targetHealth.TakeDamage(damage);
+                        }
+                    });
             }
         }
 

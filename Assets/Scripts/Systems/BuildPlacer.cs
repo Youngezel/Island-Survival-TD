@@ -29,7 +29,7 @@ namespace Game.Systems
 
             if (item.IsGroundTile)
             {
-                if (hasTile)
+                if (hasTile || !HasAdjacentTile(cell))
                 {
                     return false;
                 }
@@ -61,6 +61,19 @@ namespace Game.Systems
             }
 
             return true;
+        }
+
+        private bool HasAdjacentTile(Vector3Int cell)
+        {
+            foreach (Vector3Int neighbor in HexGridManager.Instance.GetNeighbors(cell))
+            {
+                if (HexGridManager.Instance.HasGroundTile(neighbor))
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
     }
 }
