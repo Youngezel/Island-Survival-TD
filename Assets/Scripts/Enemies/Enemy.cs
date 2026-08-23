@@ -193,6 +193,12 @@ namespace Game.Enemies
             {
                 CoinWallet.Instance.AddCoins(_data.CoinReward);
             }
+
+            if (Game.Systems.KillTracker.Instance != null)
+            {
+                Game.Systems.KillTracker.Instance.RegisterKill();
+            }
+
             Destroy(gameObject);
         }
     }
