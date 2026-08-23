@@ -25,4 +25,4 @@ MonoBehaviour:
   _damagePerUpgradeLevel: 1
   _upgradeCost: 25
   _maxUpgradeLevel: 5
-  _icon: {fileID: 21300000, guid: a77eee7ff2b2a2f42a55e86b4378ca44, type: 3}
+  _icon: {fileID: 21300000, guid: eaf6bc8b4d513cd43bae87bceb34f187, type: 3}
