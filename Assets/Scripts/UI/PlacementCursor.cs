@@ -22,6 +22,8 @@ namespace Game.UI
         [SerializeField] private Image _ghostIcon;
         [SerializeField] private Camera _worldCamera;
 
+        public HotbarItemData SelectedItem => _selectedItem;
+
         private HotbarItemData _selectedItem;
         private bool _selectionIsFree;
 
