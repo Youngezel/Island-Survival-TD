@@ -24,3 +24,5 @@ MonoBehaviour:
   _upgradeSaveKey: long_range_turret
   _damagePerUpgradeLevel: 1
   _upgradeCost: 25
+  _maxUpgradeLevel: 5
+  _icon: {fileID: 21300000, guid: a77eee7ff2b2a2f42a55e86b4378ca44, type: 3}

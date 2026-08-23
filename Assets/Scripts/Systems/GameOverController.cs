@@ -43,6 +43,7 @@ namespace Game.Systems
             if (SaveManager.Instance != null)
             {
                 SaveManager.Instance.Current.xp = XPWallet.Instance != null ? XPWallet.Instance.XP : SaveManager.Instance.Current.xp;
+                SaveManager.Instance.Current.bestWave = Mathf.Max(SaveManager.Instance.Current.bestWave, wavesSurvived);
                 SaveManager.Instance.Save();
             }
 

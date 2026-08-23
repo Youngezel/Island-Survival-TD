@@ -15,5 +15,6 @@ namespace Game.Systems
         public int turretUpgradeLevel;
         public int longRangeTurretUpgradeLevel;
         public int mortarUpgradeLevel;
+        public int bestWave;
     }
 }

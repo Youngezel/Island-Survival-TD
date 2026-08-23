@@ -21,6 +21,8 @@ namespace Game.Data
         [SerializeField] private string _upgradeSaveKey;
         [SerializeField] private int _damagePerUpgradeLevel = 1;
         [SerializeField] private int _upgradeCost = 20;
+        [SerializeField] private int _maxUpgradeLevel = 5;
+        [SerializeField] private Sprite _icon;
 
         public string DisplayName => _displayName;
         public int MaxHealth => _maxHealth;
@@ -44,5 +46,11 @@ namespace Game.Data
 
         /// <summary>Base meta-XP cost to buy the next upgrade level; scales with the level already bought.</summary>
         public int UpgradeCost => _upgradeCost;
+
+        /// <summary>Highest upgrade level purchasable in the upgrade shop.</summary>
+        public int MaxUpgradeLevel => _maxUpgradeLevel;
+
+        /// <summary>Icon shown in the hotbar/upgrade shop, matching the in-world sprite.</summary>
+        public Sprite Icon => _icon;
     }
 }
