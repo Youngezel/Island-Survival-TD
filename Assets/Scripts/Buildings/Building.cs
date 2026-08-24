@@ -82,7 +82,7 @@ namespace Game.Buildings
                 return;
             }
 
-            BuildingInspectorUI.Instance?.Open(this);
+            BuildingInspectorUI.Instance?.Open(_data, this);
         }
 
         private int GetUpgradeLevel()

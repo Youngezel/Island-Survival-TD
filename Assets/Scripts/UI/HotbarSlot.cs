@@ -1,5 +1,8 @@
+using Game.Buildings;
 using Game.Data;
 using Game.Economy;
+using Game.Grid;
+using Game.Systems;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -9,12 +12,14 @@ namespace Game.UI
 {
     /// <summary>
     /// A hotbar button representing one purchasable building or hex tile.
-    /// Click it to select it for placement, then click a hex tile on the
-    /// map to place it there (see PlacementCursor). Shows a gold border
-    /// while selected and grays out its cost label while unaffordable,
+    /// A plain click (turret items only) opens the building inspector to
+    /// view stats and buy a run-only upgrade. Press and drag onto the map
+    /// to place it - releasing over the map places at that hex, releasing
+    /// back over UI cancels. Shows a gold border while a drag from this
+    /// slot is in progress and grays out its cost label while unaffordable,
     /// per the visual identity spec.
     /// </summary>
-    public class HotbarSlot : MonoBehaviour, IPointerClickHandler
+    public class HotbarSlot : MonoBehaviour, IPointerClickHandler, IBeginDragHandler, IDragHandler, IEndDragHandler
     {
         [SerializeField] private HotbarItemData _item;
         [SerializeField] private Image _icon;
@@ -67,12 +72,52 @@ namespace Game.UI
             RefreshAffordability();
         }
 
+        /// <summary>A plain click (no drag) opens the inspector for turret items; the ground tile has no stats to show.</summary>
         public void OnPointerClick(PointerEventData eventData)
+        {
+            if (_item == null || _item.BuildingPrefab == null)
+            {
+                return;
+            }
+
+            Building building = _item.BuildingPrefab.GetComponent<Building>();
+            if (building == null || building.Data == null || string.IsNullOrEmpty(building.Data.UpgradeSaveKey))
+            {
+                return;
+            }
+
+            BuildingInspectorUI.Instance?.Open(building.Data);
+        }
+
+        public void OnBeginDrag(PointerEventData eventData)
         {
             if (_item != null && PlacementCursor.Instance != null)
             {
                 PlacementCursor.Instance.SelectItem(_item);
             }
+        }
+
+        public void OnDrag(PointerEventData eventData)
+        {
+            // Ghost icon position is driven every frame by PlacementCursor.Update() while an item is selected.
+        }
+
+        public void OnEndDrag(PointerEventData eventData)
+        {
+            if (_item == null || PlacementCursor.Instance == null || HexGridManager.Instance == null || BuildPlacer.Instance == null)
+            {
+                return;
+            }
+
+            bool overUI = EventSystem.current != null && EventSystem.current.IsPointerOverGameObject();
+            if (!overUI)
+            {
+                Camera worldCamera = Camera.main;
+                Vector3Int cell = HexGridManager.Instance.ScreenToCell(eventData.position, worldCamera);
+                BuildPlacer.Instance.TryPlace(_item, cell, free: false);
+            }
+
+            PlacementCursor.Instance.SelectItem(null);
         }
 
         private void Update()

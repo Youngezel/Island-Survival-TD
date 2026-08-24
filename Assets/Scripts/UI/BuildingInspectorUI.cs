@@ -1,6 +1,7 @@
 using Game.Buildings;
 using Game.Data;
 using Game.Economy;
+using Game.Systems;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -8,9 +9,12 @@ using UnityEngine.UI;
 namespace Game.UI
 {
     /// <summary>
-    /// Popup opened by clicking a placed turret: shows its live stats and
-    /// lets the player buy a run-only upgrade level with in-run coins,
-    /// separate from the permanent levels bought with XP in the main menu.
+    /// Popup opened by clicking a placed turret or its hotbar slot: shows
+    /// its live stats and lets the player buy a run-only upgrade level with
+    /// in-run coins. The level is tracked per building TYPE (RunUpgradeManager),
+    /// so it applies to every turret of that type - already placed and
+    /// future - separate from the permanent per-type levels bought with XP
+    /// in the main menu.
     /// </summary>
     public class BuildingInspectorUI : MonoBehaviour
     {
@@ -28,7 +32,8 @@ namespace Game.UI
         [SerializeField] private TMP_Text _upgradeButtonText;
         [SerializeField] private Button _closeButton;
 
-        private Building _current;
+        private BuildingData _currentData;
+        private Building _currentBuilding;
 
         private void Awake()
         {
@@ -62,22 +67,34 @@ namespace Game.UI
             }
         }
 
-        public void Open(Building building)
+        /// <summary>
+        /// Opens the inspector for a building type. <paramref name="building"/>
+        /// is the specific placed instance that was clicked, if any - passing
+        /// it lets the panel auto-close if that turret dies while open; pass
+        /// null when opened from a hotbar slot, before anything is placed.
+        /// </summary>
+        public void Open(BuildingData data, Building building = null)
         {
-            _current = building;
-            _current.Health.OnDeath += HandleBuildingDied;
+            _currentData = data;
+            _currentBuilding = building;
+            if (_currentBuilding != null)
+            {
+                _currentBuilding.Health.OnDeath += HandleBuildingDied;
+            }
+
             _panel.SetActive(true);
             Refresh();
         }
 
         private void Close()
         {
-            if (_current != null)
+            if (_currentBuilding != null)
             {
-                _current.Health.OnDeath -= HandleBuildingDied;
+                _currentBuilding.Health.OnDeath -= HandleBuildingDied;
             }
 
-            _current = null;
+            _currentData = null;
+            _currentBuilding = null;
             _panel.SetActive(false);
         }
 
@@ -88,7 +105,7 @@ namespace Game.UI
 
         private void HandleCoinsChanged(int coins)
         {
-            if (_current != null)
+            if (_currentData != null)
             {
                 Refresh();
             }
@@ -96,70 +113,69 @@ namespace Game.UI
 
         private void Upgrade()
         {
-            if (_current == null || CoinWallet.Instance == null)
+            if (_currentData == null || CoinWallet.Instance == null || RunUpgradeManager.Instance == null)
             {
                 return;
             }
 
-            BuildingData data = _current.Data;
-            Shooter shooter = _current.Shooter;
-            if (shooter.RunUpgradeLevel >= data.MaxUpgradeLevel)
+            int level = RunUpgradeManager.Instance.GetLevel(_currentData.UpgradeSaveKey);
+            if (level >= _currentData.MaxUpgradeLevel)
             {
                 return;
             }
 
-            int cost = data.RunUpgradeCost * (shooter.RunUpgradeLevel + 1);
+            int cost = _currentData.RunUpgradeCost * (level + 1);
             if (!CoinWallet.Instance.TrySpend(cost))
             {
                 return;
             }
 
-            shooter.AddRunUpgradeLevel();
+            RunUpgradeManager.Instance.AddLevel(_currentData.UpgradeSaveKey);
             Refresh();
         }
 
         private void Refresh()
         {
-            if (_current == null)
+            if (_currentData == null)
             {
                 return;
             }
 
-            BuildingData data = _current.Data;
-            Shooter shooter = _current.Shooter;
-            int level = shooter.RunUpgradeLevel;
-            bool isMaxLevel = level >= data.MaxUpgradeLevel;
+            int permanentLevel = SaveManager.Instance != null ? SaveManager.Instance.GetUpgradeLevel(_currentData.UpgradeSaveKey) : 0;
+            int runLevel = RunUpgradeManager.Instance != null ? RunUpgradeManager.Instance.GetLevel(_currentData.UpgradeSaveKey) : 0;
+            int currentDamage = _currentData.Damage + _currentData.DamagePerUpgradeLevel * (permanentLevel + runLevel);
+            bool isMaxLevel = runLevel >= _currentData.MaxUpgradeLevel;
 
             if (_nameText != null)
             {
-                _nameText.text = data.DisplayName.ToUpperInvariant();
+                _nameText.text = _currentData.DisplayName.ToUpperInvariant();
             }
 
             if (_damageText != null)
             {
-                _damageText.text = $"DAMAGE: {shooter.CurrentDamage}";
+                _damageText.text = $"DAMAGE: {currentDamage}";
             }
 
             if (_rangeText != null)
             {
-                _rangeText.text = $"RANGE: {data.Range:0.#} TILES";
+                _rangeText.text = $"RANGE: {_currentData.Range:0.#} TILES";
             }
 
             if (_fireRateText != null)
             {
-                _fireRateText.text = $"FIRE RATE: {data.FireRate:0.#}/s";
+                _fireRateText.text = $"FIRE RATE: {_currentData.FireRate:0.#}/s";
             }
 
             if (_levelText != null)
             {
-                _levelText.text = $"RUN UPGRADE LVL {level}";
+                _levelText.text = $"RUN UPGRADE LVL {runLevel}";
             }
 
             for (int i = 0; i < _pips.Length; i++)
             {
                 if (_pips[i] != null)
                 {
-                    _pips[i].color = i < level ? UITheme.Gold : UITheme.Divider;
+                    _pips[i].color = i < runLevel ? UITheme.Gold : UITheme.Divider;
                 }
             }
 
@@ -178,7 +194,7 @@ namespace Game.UI
             }
             else
             {
-                int cost = data.RunUpgradeCost * (level + 1);
+                int cost = _currentData.RunUpgradeCost * (runLevel + 1);
                 bool affordable = CoinWallet.Instance != null && CoinWallet.Instance.Coins >= cost;
                 _upgradeButton.interactable = affordable;
                 if (_upgradeButtonBackground != null)

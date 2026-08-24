@@ -2,6 +2,7 @@ using Game.Combat;
 using Game.Data;
 using Game.Enemies;
 using Game.Grid;
+using Game.Systems;
 using UnityEngine;
 
 namespace Game.Buildings
@@ -18,16 +19,20 @@ namespace Game.Buildings
         private Targeting _targeting;
         private BuildingData _data;
         private int _permanentUpgradeLevel;
-        private int _runUpgradeLevel;
         private float _cooldown;
 
         public BuildingData Data => _data;
 
-        /// <summary>Run-only upgrade level bought in-game via the building inspector; resets every run, separate from the permanent main-menu level.</summary>
-        public int RunUpgradeLevel => _runUpgradeLevel;
+        /// <summary>
+        /// Run-only upgrade level for this building's type, bought in-game
+        /// via the hotbar or a placed turret's inspector - shared by every
+        /// turret of that type this run, separate from the permanent
+        /// main-menu level.
+        /// </summary>
+        public int RunUpgradeLevel => RunUpgradeManager.Instance != null && _data != null ? RunUpgradeManager.Instance.GetLevel(_data.UpgradeSaveKey) : 0;
 
         /// <summary>Current damage per shot, including both the permanent (main menu) and run-only (in-game) upgrade bonuses.</summary>
-        public int CurrentDamage => _data.Damage + _data.DamagePerUpgradeLevel * (_permanentUpgradeLevel + _runUpgradeLevel);
+        public int CurrentDamage => _data.Damage + _data.DamagePerUpgradeLevel * (_permanentUpgradeLevel + RunUpgradeLevel);
 
         private void Awake()
         {
@@ -38,12 +43,6 @@ namespace Game.Buildings
         {
             _data = data;
             _permanentUpgradeLevel = permanentUpgradeLevel;
-        }
-
-        /// <summary>Bumps the run-only upgrade level by one; called after a successful in-game upgrade purchase.</summary>
-        public void AddRunUpgradeLevel()
-        {
-            _runUpgradeLevel++;
         }
 
         private void Update()
