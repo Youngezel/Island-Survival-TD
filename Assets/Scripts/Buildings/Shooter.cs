@@ -17,18 +17,33 @@ namespace Game.Buildings
 
         private Targeting _targeting;
         private BuildingData _data;
-        private int _upgradeLevel;
+        private int _permanentUpgradeLevel;
+        private int _runUpgradeLevel;
         private float _cooldown;
+
+        public BuildingData Data => _data;
+
+        /// <summary>Run-only upgrade level bought in-game via the building inspector; resets every run, separate from the permanent main-menu level.</summary>
+        public int RunUpgradeLevel => _runUpgradeLevel;
+
+        /// <summary>Current damage per shot, including both the permanent (main menu) and run-only (in-game) upgrade bonuses.</summary>
+        public int CurrentDamage => _data.Damage + _data.DamagePerUpgradeLevel * (_permanentUpgradeLevel + _runUpgradeLevel);
 
         private void Awake()
         {
             _targeting = GetComponent<Targeting>();
         }
 
-        public void Initialize(BuildingData data, int upgradeLevel = 0)
+        public void Initialize(BuildingData data, int permanentUpgradeLevel = 0)
         {
             _data = data;
-            _upgradeLevel = upgradeLevel;
+            _permanentUpgradeLevel = permanentUpgradeLevel;
+        }
+
+        /// <summary>Bumps the run-only upgrade level by one; called after a successful in-game upgrade purchase.</summary>
+        public void AddRunUpgradeLevel()
+        {
+            _runUpgradeLevel++;
         }
 
         private void Update()
@@ -59,8 +74,7 @@ namespace Game.Buildings
 
             Projectile projectile = Instantiate(_projectilePrefab, transform.position, Quaternion.identity);
             float splashRadiusWorldUnits = _data.SplashRadius * HexGridManager.Instance.HexStepWorldDistance;
-            int damage = _data.Damage + _data.DamagePerUpgradeLevel * _upgradeLevel;
-            projectile.Initialize(target, _data.ProjectileSpeed, damage, _data.Splash, splashRadiusWorldUnits);
+            projectile.Initialize(target, _data.ProjectileSpeed, CurrentDamage, _data.Splash, splashRadiusWorldUnits);
         }
     }
 }

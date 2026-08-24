@@ -21,6 +21,7 @@ namespace Game.Data
         [SerializeField] private string _upgradeSaveKey;
         [SerializeField] private int _damagePerUpgradeLevel = 1;
         [SerializeField] private int _upgradeCost = 20;
+        [SerializeField] private int _runUpgradeCost = 30;
         [SerializeField] private int _maxUpgradeLevel = 5;
         [SerializeField] private Sprite _icon;
 
@@ -47,7 +48,10 @@ namespace Game.Data
         /// <summary>Base meta-XP cost to buy the next upgrade level; scales with the level already bought.</summary>
         public int UpgradeCost => _upgradeCost;
 
-        /// <summary>Highest upgrade level purchasable in the upgrade shop.</summary>
+        /// <summary>Base in-run coin cost to buy the next run-only upgrade level on a placed building; scales with the level already bought this run.</summary>
+        public int RunUpgradeCost => _runUpgradeCost;
+
+        /// <summary>Highest upgrade level purchasable in the upgrade shop, and separately the highest run-only level purchasable in-game.</summary>
         public int MaxUpgradeLevel => _maxUpgradeLevel;
 
         /// <summary>Icon shown in the hotbar/upgrade shop, matching the in-world sprite.</summary>
