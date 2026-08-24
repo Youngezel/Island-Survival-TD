@@ -27,7 +27,8 @@ namespace Game.Grid
 
         [SerializeField] private UnityEngine.Grid _grid;
         [SerializeField] private Tilemap _groundTilemap;
-        [SerializeField] private TileBase _defaultGroundTile;
+        [SerializeField] private TileBase[] _grassTiles;
+        [SerializeField] private TileBase _coastalTile;
         [SerializeField] private int _tileMaxHealth = 5;
 
         private readonly HashSet<Vector3Int> _occupiedCells = new HashSet<Vector3Int>();
@@ -69,6 +70,7 @@ namespace Game.Grid
         {
             Instance = this;
             ScanExistingTiles();
+            RefreshAllTileVisuals();
         }
 
         private void ScanExistingTiles()
@@ -80,6 +82,48 @@ namespace Game.Grid
                 {
                     _tileCells.Add(cell);
                 }
+            }
+        }
+
+        /// <summary>
+        /// Repaints every already-placed tile with its correct variant -
+        /// sand-ringed coastal art for cells bordering open water, one of
+        /// the pure-grass variants otherwise. Needed once at startup since
+        /// tiles authored directly in the scene predate variant selection.
+        /// </summary>
+        private void RefreshAllTileVisuals()
+        {
+            var cells = new List<Vector3Int>(_tileCells);
+            foreach (Vector3Int cell in cells)
+            {
+                RefreshTileVisual(cell);
+            }
+        }
+
+        /// <summary>Repaints a single cell with the art matching its current neighbors: coastal if any neighbor has no ground tile, otherwise a stable grass variant chosen from the cell's coordinates.</summary>
+        private void RefreshTileVisual(Vector3Int cell)
+        {
+            bool coastal = false;
+            foreach (Vector3Int neighbor in GetNeighbors(cell))
+            {
+                if (!HasGroundTile(neighbor))
+                {
+                    coastal = true;
+                    break;
+                }
+            }
+
+            TileBase tile = coastal ? _coastalTile : _grassTiles[GrassVariantIndex(cell)];
+            _groundTilemap.SetTile(cell, tile);
+        }
+
+        /// <summary>Deterministic pick of a grass variant from cell coordinates, so a given cell always renders the same variant unless it toggles coastal.</summary>
+        private int GrassVariantIndex(Vector3Int cell)
+        {
+            unchecked
+            {
+                int hash = cell.x * 73856093 ^ cell.y * 19349663;
+                return Mathf.Abs(hash) % _grassTiles.Length;
             }
         }
 
@@ -105,11 +149,24 @@ namespace Game.Grid
             return _groundTilemap.HasTile(cell);
         }
 
-        /// <summary>Paints the default ground tile at the given cell (used when a tile is purchased).</summary>
+        /// <summary>
+        /// Paints ground at the given cell (used when a tile is purchased),
+        /// picking coastal or grass art based on its neighbors, then
+        /// refreshes any already-placed neighbors since this new tile may
+        /// turn a previously-coastal one into an interior tile.
+        /// </summary>
         public void PlaceGroundTile(Vector3Int cell)
         {
-            _groundTilemap.SetTile(cell, _defaultGroundTile);
             _tileCells.Add(cell);
+            RefreshTileVisual(cell);
+
+            foreach (Vector3Int neighbor in GetNeighbors(cell))
+            {
+                if (HasGroundTile(neighbor))
+                {
+                    RefreshTileVisual(neighbor);
+                }
+            }
         }
 
         /// <summary>All cells that currently have a ground tile painted on them.</summary>
@@ -147,6 +204,14 @@ namespace Game.Grid
                 _tileHealth.Remove(cell);
                 _tileCells.Remove(cell);
                 SetOccupied(cell, false);
+
+                foreach (Vector3Int neighbor in GetNeighbors(cell))
+                {
+                    if (HasGroundTile(neighbor))
+                    {
+                        RefreshTileVisual(neighbor);
+                    }
+                }
             }
             else
             {

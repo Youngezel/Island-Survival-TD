@@ -54,7 +54,10 @@ namespace Game.EditorTools
             SaveUnitSprite("spr_turret", DrawTurret());
             SaveUnitSprite("spr_turret_long_range", DrawLongRangeTurret());
             SaveUnitSprite("spr_turret_mortar", DrawMortar());
-            SaveTileSprite("spr_tile_grass", DrawHexTile());
+            SaveTileSprite("spr_tile_grass_1", DrawHexTileGrass(1));
+            SaveTileSprite("spr_tile_grass_2", DrawHexTileGrass(2));
+            SaveTileSprite("spr_tile_grass_3", DrawHexTileGrass(3));
+            SaveTileSprite("spr_tile_coastal", DrawHexTileCoastal());
 
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
@@ -342,42 +345,121 @@ namespace Game.EditorTools
         // Environment (64x64 hex tile)
         // ---------------------------------------------------------------
 
-        private static PixelCanvas DrawHexTile()
-        {
-            var c = new PixelCanvas(64);
+        // The real hex-grid cell is 2.0 world units wide (corner-to-corner)
+        // by ~1.732 tall (flat-to-flat) - a 64x56 canvas matches that ratio
+        // at 32 PPU, so tiles butt against each other with no gaps.
+        private const int TileWidth = 64;
+        private const int TileHeight = 56;
 
-            for (int y = 0; y < 64; y++)
+        /// <summary>
+        /// A pure-grass tile with no sand or water pixels at all, for any
+        /// cell that doesn't border open water. Detail props (flowers, a
+        /// rock, a palm) are picked from a fixed pool using <paramref
+        /// name="seed"/> so a handful of distinct-looking variants exist to
+        /// choose between at placement time.
+        /// </summary>
+        private static PixelCanvas DrawHexTileGrass(int seed)
+        {
+            var c = new PixelCanvas(TileWidth, TileHeight);
+
+            for (int y = 0; y < TileHeight; y++)
             {
-                for (int x = 0; x < 64; x++)
+                for (int x = 0; x < TileWidth; x++)
                 {
                     if (!c.InsideFlatTopHex(x, y)) continue;
 
                     Color color;
                     if (y < 3) color = GrassHighlight;
-                    else if (y < 40) color = GrassBase;
-                    else if (y < 48) color = GrassShadow;
-                    else if (y < 58) color = SandShadow;
-                    else if (y < 61) color = SandBase;
-                    else color = Foam;
+                    else if (y < TileHeight - 8) color = GrassBase;
+                    else color = GrassShadow;
 
                     c.SetRaw(x, y, color);
                 }
             }
 
-            c.Rect(20, 10, 3, 2, GrassLight);
-            c.Rect(40, 14, 3, 2, GrassShadow);
-            c.Rect(10, 20, 2, 2, GrassHighlight);
-            c.Rect(28, 8, 2, 2, Gold); // gele bloem
-            c.Rect(36, 30, 2, 2, Danger); // rode bloem
-            c.Rect(46, 24, 6, 4, StoneBase); // rots
-            c.Rect(46, 27, 6, 1, StoneMid);
+            var detailPool = new (int x, int y, int w, int h, Color color)[]
+            {
+                (20, 8, 3, 2, GrassLight),
+                (40, 12, 3, 2, GrassShadow),
+                (10, 16, 2, 2, GrassHighlight),
+                (28, 6, 2, 2, Gold), // gele bloem
+                (36, 24, 2, 2, Danger), // rode bloem
+                (46, 20, 6, 4, StoneBase), // rots
+                (46, 23, 6, 1, StoneMid),
+                (18, 28, 2, 2, GrassLight),
+                (34, 30, 2, 2, GrassHighlight),
+            };
 
-            c.Rect(16, 34, 2, 8, WoodBase); // palmstam
-            c.Rect(12, 30, 5, 2, GrassShadow);
-            c.Rect(17, 28, 8, 2, GrassBase);
-            c.Rect(14, 32, 6, 2, GrassLight);
+            var rng = new System.Random(seed);
+            var order = new System.Collections.Generic.List<int>();
+            for (int i = 0; i < detailPool.Length; i++) order.Add(i);
+            for (int i = order.Count - 1; i > 0; i--)
+            {
+                int j = rng.Next(i + 1);
+                (order[i], order[j]) = (order[j], order[i]);
+            }
 
-            c.Rect(30, 57, 3, 2, Parchment); // schelp
+            int detailCount = Mathf.Min(4, order.Count);
+            for (int i = 0; i < detailCount; i++)
+            {
+                var d = detailPool[order[i]];
+                c.Rect(d.x, d.y, d.w, d.h, d.color);
+            }
+
+            if (seed % 2 == 0)
+            {
+                c.Rect(16, 26, 2, 8, WoodBase); // palmstam
+                c.Rect(12, 22, 5, 2, GrassShadow);
+                c.Rect(17, 20, 8, 2, GrassBase);
+                c.Rect(14, 24, 6, 2, GrassLight);
+            }
+
+            return c;
+        }
+
+        /// <summary>
+        /// A tile bordering open water: grass interior with a sand ring
+        /// inset from the true hex edge, so the sand always stays inside
+        /// the tile's own silhouette. Deliberately has no water/foam pixels
+        /// anywhere - the water itself is a separate background layer, not
+        /// baked onto the tile.
+        /// </summary>
+        private static PixelCanvas DrawHexTileCoastal()
+        {
+            const float innerScale = 0.74f;
+            const float innerScaleOuterBand = 0.86f;
+
+            var c = new PixelCanvas(TileWidth, TileHeight);
+
+            for (int y = 0; y < TileHeight; y++)
+            {
+                for (int x = 0; x < TileWidth; x++)
+                {
+                    if (!c.InsideFlatTopHex(x, y)) continue;
+
+                    Color color;
+                    if (c.InsideFlatTopHex(x, y, innerScale))
+                    {
+                        if (y < 3) color = GrassHighlight;
+                        else if (y < TileHeight - 10) color = GrassBase;
+                        else color = GrassShadow;
+                    }
+                    else if (c.InsideFlatTopHex(x, y, innerScaleOuterBand))
+                    {
+                        color = SandBase;
+                    }
+                    else
+                    {
+                        color = SandShadow;
+                    }
+
+                    c.SetRaw(x, y, color);
+                }
+            }
+
+            c.Rect(28, 22, 2, 2, GrassLight);
+            c.Rect(34, 18, 2, 2, GrassHighlight);
+            c.Rect(30, 38, 3, 2, Parchment); // schelp op het zand
 
             return c;
         }
@@ -434,12 +516,18 @@ namespace Game.EditorTools
         private class PixelCanvas
         {
             private readonly Color[] _pixels;
-            private readonly int _size;
+            private readonly int _width;
+            private readonly int _height;
 
-            public PixelCanvas(int size)
+            public PixelCanvas(int size) : this(size, size)
             {
-                _size = size;
-                _pixels = new Color[size * size];
+            }
+
+            public PixelCanvas(int width, int height)
+            {
+                _width = width;
+                _height = height;
+                _pixels = new Color[width * height];
             }
 
             public void Rect(int x, int y, int w, int h, Color color)
@@ -512,10 +600,27 @@ namespace Game.EditorTools
             {
             }
 
-            public bool InsideFlatTopHex(int x, int y)
+            /// <summary>
+            /// True if (x,y) lies inside a flat-top hex that exactly fills this
+            /// canvas (width = point-to-point, height = flat-to-flat, matching
+            /// the real grid's 2.0 : 1.732 cell proportions). scale &lt; 1 tests
+            /// against a smaller hex shrunk toward the center, for insetting a
+            /// border (e.g. a coastal sand ring) that follows the true hex edge.
+            /// </summary>
+            public bool InsideFlatTopHex(int x, int y, float scale = 1f)
             {
-                float nx = x / (float)_size;
-                float ny = y / (float)_size;
+                float nx = x / (float)_width;
+                float ny = y / (float)_height;
+
+                if (scale < 1f)
+                {
+                    nx = 0.5f + (nx - 0.5f) / scale;
+                    ny = 0.5f + (ny - 0.5f) / scale;
+                    if (nx < 0f || nx > 1f || ny < 0f || ny > 1f)
+                    {
+                        return false;
+                    }
+                }
 
                 if (nx < 0.25f)
                 {
@@ -541,18 +646,18 @@ namespace Game.EditorTools
 
             private void SetTopLeft(int x, int y, Color color)
             {
-                int py = (_size - 1) - y;
-                if (x < 0 || x >= _size || py < 0 || py >= _size)
+                int py = (_height - 1) - y;
+                if (x < 0 || x >= _width || py < 0 || py >= _height)
                 {
                     return;
                 }
 
-                _pixels[py * _size + x] = color;
+                _pixels[py * _width + x] = color;
             }
 
             public Texture2D ToTexture()
             {
-                var tex = new Texture2D(_size, _size, TextureFormat.RGBA32, false);
+                var tex = new Texture2D(_width, _height, TextureFormat.RGBA32, false);
                 tex.filterMode = FilterMode.Point;
                 tex.SetPixels(_pixels);
                 tex.Apply();
