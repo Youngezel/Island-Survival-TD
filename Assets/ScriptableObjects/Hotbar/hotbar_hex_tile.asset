@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: hotbar_hex_tile
   m_EditorClassIdentifier: Assembly-CSharp::Game.Data.HotbarItemData
   _displayName: Hexagon tile
-  _icon: {fileID: 21300000, guid: 8d977aa65cc0b2b42bd1509db5b0d506, type: 3}
+  _icon: {fileID: 21300000, guid: 753e6a43d73b58d4a9fb9ef51585de4c, type: 3}
   _cost: 5
   _isGroundTile: 1
   _buildingPrefab: {fileID: 0}
