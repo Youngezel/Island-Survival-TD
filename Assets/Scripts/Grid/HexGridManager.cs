@@ -27,8 +27,9 @@ namespace Game.Grid
 
         [SerializeField] private UnityEngine.Grid _grid;
         [SerializeField] private Tilemap _groundTilemap;
+        [SerializeField] private Tilemap _coastTilemap;
         [SerializeField] private TileBase[] _grassTiles;
-        [SerializeField] private TileBase _coastalTile;
+        [SerializeField] private TileBase _coastSkirtTile;
         [SerializeField] private int _tileMaxHealth = 5;
 
         private readonly HashSet<Vector3Int> _occupiedCells = new HashSet<Vector3Int>();
@@ -70,7 +71,11 @@ namespace Game.Grid
         {
             Instance = this;
             ScanExistingTiles();
-            RefreshAllTileVisuals();
+
+            foreach (Vector3Int cell in _tileCells)
+            {
+                PaintTile(cell);
+            }
         }
 
         private void ScanExistingTiles()
@@ -86,38 +91,22 @@ namespace Game.Grid
         }
 
         /// <summary>
-        /// Repaints every already-placed tile with its correct variant -
-        /// sand-ringed coastal art for cells bordering open water, one of
-        /// the pure-grass variants otherwise. Needed once at startup since
-        /// tiles authored directly in the scene predate variant selection.
+        /// Paints a land cell: a stable grass variant on the ground layer,
+        /// plus a sand "skirt" underneath sized larger than the true cell
+        /// so it overflows into any neighboring cell. Where a neighbor is
+        /// also land, that neighbor's own ground sprite - sized exactly to
+        /// its cell - covers the overflow; where a neighbor is open water,
+        /// nothing covers it and the sand shows through as a coastline.
+        /// This means sand appears only on edges that actually face open
+        /// water, without needing to inspect neighbors at all here.
         /// </summary>
-        private void RefreshAllTileVisuals()
+        private void PaintTile(Vector3Int cell)
         {
-            var cells = new List<Vector3Int>(_tileCells);
-            foreach (Vector3Int cell in cells)
-            {
-                RefreshTileVisual(cell);
-            }
+            _groundTilemap.SetTile(cell, _grassTiles[GrassVariantIndex(cell)]);
+            _coastTilemap.SetTile(cell, _coastSkirtTile);
         }
 
-        /// <summary>Repaints a single cell with the art matching its current neighbors: coastal if any neighbor has no ground tile, otherwise a stable grass variant chosen from the cell's coordinates.</summary>
-        private void RefreshTileVisual(Vector3Int cell)
-        {
-            bool coastal = false;
-            foreach (Vector3Int neighbor in GetNeighbors(cell))
-            {
-                if (!HasGroundTile(neighbor))
-                {
-                    coastal = true;
-                    break;
-                }
-            }
-
-            TileBase tile = coastal ? _coastalTile : _grassTiles[GrassVariantIndex(cell)];
-            _groundTilemap.SetTile(cell, tile);
-        }
-
-        /// <summary>Deterministic pick of a grass variant from cell coordinates, so a given cell always renders the same variant unless it toggles coastal.</summary>
+        /// <summary>Deterministic pick of a grass variant from cell coordinates, so a given cell always renders the same variant.</summary>
         private int GrassVariantIndex(Vector3Int cell)
         {
             unchecked
@@ -149,24 +138,11 @@ namespace Game.Grid
             return _groundTilemap.HasTile(cell);
         }
 
-        /// <summary>
-        /// Paints ground at the given cell (used when a tile is purchased),
-        /// picking coastal or grass art based on its neighbors, then
-        /// refreshes any already-placed neighbors since this new tile may
-        /// turn a previously-coastal one into an interior tile.
-        /// </summary>
+        /// <summary>Paints ground at the given cell (used when a tile is purchased).</summary>
         public void PlaceGroundTile(Vector3Int cell)
         {
             _tileCells.Add(cell);
-            RefreshTileVisual(cell);
-
-            foreach (Vector3Int neighbor in GetNeighbors(cell))
-            {
-                if (HasGroundTile(neighbor))
-                {
-                    RefreshTileVisual(neighbor);
-                }
-            }
+            PaintTile(cell);
         }
 
         /// <summary>All cells that currently have a ground tile painted on them.</summary>
@@ -201,17 +177,10 @@ namespace Game.Grid
             if (health <= 0)
             {
                 _groundTilemap.SetTile(cell, null);
+                _coastTilemap.SetTile(cell, null);
                 _tileHealth.Remove(cell);
                 _tileCells.Remove(cell);
                 SetOccupied(cell, false);
-
-                foreach (Vector3Int neighbor in GetNeighbors(cell))
-                {
-                    if (HasGroundTile(neighbor))
-                    {
-                        RefreshTileVisual(neighbor);
-                    }
-                }
             }
             else
             {

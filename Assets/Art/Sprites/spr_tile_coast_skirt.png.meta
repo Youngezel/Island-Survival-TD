@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: f7d541e9b32160b46831599232e9a8a6
+guid: 0cbbefe5478aad14d82722a9be9d3669
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 4605552738221123740
-    second: spr_tile_coastal_0
+      213: 2331473801414214461
+    second: spr_tile_coast_skirt_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -152,13 +152,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: spr_tile_coastal_0
+      name: spr_tile_coast_skirt_0
       rect:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 64
-        height: 56
+        width: 80
+        height: 70
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -167,8 +167,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: c986ffb60d53aef30800000000000000
-      internalID: 4605552738221123740
+      spriteID: d338c68d11f0b5020800000000000000
+      internalID: 2331473801414214461
       vertices: []
       indices: 
       edges: []
@@ -187,7 +187,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      spr_tile_coastal_0: 4605552738221123740
+      spr_tile_coast_skirt_0: 2331473801414214461
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

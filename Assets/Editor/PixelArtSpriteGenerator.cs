@@ -57,7 +57,7 @@ namespace Game.EditorTools
             SaveTileSprite("spr_tile_grass_1", DrawHexTileGrass(1));
             SaveTileSprite("spr_tile_grass_2", DrawHexTileGrass(2));
             SaveTileSprite("spr_tile_grass_3", DrawHexTileGrass(3));
-            SaveTileSprite("spr_tile_coastal", DrawHexTileCoastal());
+            SaveTileSprite("spr_tile_coast_skirt", DrawCoastSkirt());
 
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
@@ -418,48 +418,31 @@ namespace Game.EditorTools
         }
 
         /// <summary>
-        /// A tile bordering open water: grass interior with a sand ring
-        /// inset from the true hex edge, so the sand always stays inside
-        /// the tile's own silhouette. Deliberately has no water/foam pixels
-        /// anywhere - the water itself is a separate background layer, not
-        /// baked onto the tile.
+        /// A sand hex drawn oversized relative to the true tile footprint,
+        /// painted on a separate tilemap layer underneath the grass so it
+        /// pokes out past a land cell's own edge. A neighboring land cell's
+        /// grass sprite - sized exactly to its own cell - covers whatever
+        /// portion of this overflow lands inside it, so sand only ever
+        /// shows through on edges that actually face open water. This
+        /// avoids baking a full sand ring into every coastal tile (which
+        /// showed sand even on edges touching another land tile).
         /// </summary>
-        private static PixelCanvas DrawHexTileCoastal()
+        private static PixelCanvas DrawCoastSkirt()
         {
-            const float innerScale = 0.74f;
-            const float innerScaleOuterBand = 0.86f;
+            const int skirtWidth = 80; // 1.25x TileWidth/TileHeight, so it overflows past each cell's true edge
+            const int skirtHeight = 70;
 
-            var c = new PixelCanvas(TileWidth, TileHeight);
+            var c = new PixelCanvas(skirtWidth, skirtHeight);
 
-            for (int y = 0; y < TileHeight; y++)
+            for (int y = 0; y < skirtHeight; y++)
             {
-                for (int x = 0; x < TileWidth; x++)
+                for (int x = 0; x < skirtWidth; x++)
                 {
                     if (!c.InsideFlatTopHex(x, y)) continue;
-
-                    Color color;
-                    if (c.InsideFlatTopHex(x, y, innerScale))
-                    {
-                        if (y < 3) color = GrassHighlight;
-                        else if (y < TileHeight - 10) color = GrassBase;
-                        else color = GrassShadow;
-                    }
-                    else if (c.InsideFlatTopHex(x, y, innerScaleOuterBand))
-                    {
-                        color = SandBase;
-                    }
-                    else
-                    {
-                        color = SandShadow;
-                    }
-
+                    Color color = y < skirtHeight * 0.6f ? SandBase : SandShadow;
                     c.SetRaw(x, y, color);
                 }
             }
-
-            c.Rect(28, 22, 2, 2, GrassLight);
-            c.Rect(34, 18, 2, 2, GrassHighlight);
-            c.Rect(30, 38, 3, 2, Parchment); // schelp op het zand
 
             return c;
         }
