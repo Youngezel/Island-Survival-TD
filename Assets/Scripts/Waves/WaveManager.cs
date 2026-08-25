@@ -54,9 +54,21 @@ namespace Game.Waves
             int enemyCount = 3 + wavesSinceStart * 2 + (wavesSinceStart * wavesSinceStart) / 3;
             int unlockedTypes = Mathf.Clamp(1 + wavesSinceStart / 2, 1, _enemyPrefabPool.Length);
 
-            for (int i = 0; i < enemyCount; i++)
+            // Enemies trickle in one at a time early on; later waves spawn
+            // several at once per tick so the pressure keeps escalating even
+            // as the per-wave enemy count grows more slowly than the burst size.
+            int burstSize = Mathf.Clamp(1 + wavesSinceStart / 4, 1, 5);
+
+            int spawned = 0;
+            while (spawned < enemyCount)
             {
-                SpawnEnemy(unlockedTypes);
+                int thisBurst = Mathf.Min(burstSize, enemyCount - spawned);
+                for (int i = 0; i < thisBurst; i++)
+                {
+                    SpawnEnemy(unlockedTypes);
+                }
+
+                spawned += thisBurst;
                 yield return new WaitForSeconds(_timeBetweenSpawns);
             }
 

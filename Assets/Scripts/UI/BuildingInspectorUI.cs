@@ -39,6 +39,10 @@ namespace Game.UI
         [SerializeField] private NodeRow[] _pathARows = new NodeRow[3];
         [SerializeField] private NodeRow[] _pathBRows = new NodeRow[3];
         [SerializeField] private Button _closeButton;
+        [SerializeField] private Button _sellButton;
+        [SerializeField] private TMP_Text _sellButtonText;
+
+        private const float SellRefundFraction = 0.5f;
 
         private BuildingData _currentData;
         private Building _currentBuilding;
@@ -51,6 +55,7 @@ namespace Game.UI
         private void OnEnable()
         {
             _closeButton.onClick.AddListener(Close);
+            _sellButton.onClick.AddListener(Sell);
 
             for (int i = 0; i < _pathARows.Length; i++)
             {
@@ -171,11 +176,36 @@ namespace Game.UI
             Refresh();
         }
 
+        /// <summary>Sells the specific placed building this panel was opened for, refunding a fraction of its cost - not available when opened from a hotbar slot with no placed instance.</summary>
+        private void Sell()
+        {
+            if (_currentBuilding == null || _currentData == null || CoinWallet.Instance == null)
+            {
+                return;
+            }
+
+            int refund = Mathf.RoundToInt(_currentData.Cost * SellRefundFraction);
+            CoinWallet.Instance.AddCoins(refund);
+            Building buildingToSell = _currentBuilding;
+            Close();
+            buildingToSell.Sell();
+        }
+
         private void Refresh()
         {
             if (_currentData == null)
             {
                 return;
+            }
+
+            if (_sellButton != null)
+            {
+                _sellButton.gameObject.SetActive(_currentBuilding != null);
+                if (_currentBuilding != null && _sellButtonText != null)
+                {
+                    int refund = Mathf.RoundToInt(_currentData.Cost * SellRefundFraction);
+                    _sellButtonText.text = $"VERKOOP\n+{refund} MUNT";
+                }
             }
 
             int tier = RunUpgradeManager.Instance != null ? RunUpgradeManager.Instance.GetTier(_currentData.UpgradeSaveKey) : 0;

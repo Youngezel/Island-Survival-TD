@@ -15,7 +15,7 @@ MonoBehaviour:
   _displayName: Long range turret
   _maxHealth: 20
   _damage: 4
-  _cost: 50
+  _cost: 85
   _range: 6
   _fireRate: 2
   _splash: 0
@@ -27,33 +27,33 @@ MonoBehaviour:
     - _name: Meer Range
       _effect: 1
       _value: 2
-      _unlockCost: 40
-      _applyCost: 80
+      _unlockCost: 55
+      _applyCost: 130
     - _name: Doorborende Kogels
       _effect: 6
       _value: 2
-      _unlockCost: 80
-      _applyCost: 200
+      _unlockCost: 110
+      _applyCost: 320
     - _name: Meer Range
       _effect: 1
       _value: 2
-      _unlockCost: 150
-      _applyCost: 450
+      _unlockCost: 200
+      _applyCost: 700
   _pathB:
     _nodes:
     - _name: Meer Damage
       _effect: 0
       _value: 3
-      _unlockCost: 40
-      _applyCost: 80
+      _unlockCost: 55
+      _applyCost: 130
     - _name: Dubbel Doel
       _effect: 7
       _value: 0
-      _unlockCost: 80
-      _applyCost: 200
+      _unlockCost: 110
+      _applyCost: 320
     - _name: Meer Damage
       _effect: 0
       _value: 3
-      _unlockCost: 150
-      _applyCost: 450
+      _unlockCost: 200
+      _applyCost: 700
   _icon: {fileID: 21300000, guid: eaf6bc8b4d513cd43bae87bceb34f187, type: 3}

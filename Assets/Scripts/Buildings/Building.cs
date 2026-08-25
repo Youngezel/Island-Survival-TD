@@ -14,7 +14,8 @@ namespace Game.Buildings
     /// upgrade path this building type has committed to (see Shooter).
     /// Registers itself so enemies can find and attack it if it stands in
     /// their way to the village. Clicking it (when not mid-placement) opens
-    /// the building inspector to view stats and pick/advance an upgrade path.
+    /// the building inspector to view stats, pick/advance an upgrade path,
+    /// or sell it back.
     /// </summary>
     [RequireComponent(typeof(Health), typeof(Targeting), typeof(Shooter))]
     [RequireComponent(typeof(CircleCollider2D))]
@@ -85,7 +86,18 @@ namespace Game.Buildings
             BuildingInspectorUI.Instance?.Open(_data, this);
         }
 
+        /// <summary>Removes this building via a player-initiated sale, freeing its tile - as opposed to dying to enemy damage.</summary>
+        public void Sell()
+        {
+            RemoveFromGrid();
+        }
+
         private void HandleDeath()
+        {
+            RemoveFromGrid();
+        }
+
+        private void RemoveFromGrid()
         {
             if (HexGridManager.Instance != null)
             {
