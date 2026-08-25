@@ -4659,6 +4659,7 @@ GameObject:
   - component: {fileID: 519420030}
   - component: {fileID: 519420034}
   - component: {fileID: 519420035}
+  - component: {fileID: 519420036}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -4840,6 +4841,19 @@ MonoBehaviour:
   m_CropFrameX: 0
   m_CropFrameY: 0
   m_StretchFill: 0
+--- !u!114 &519420036
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 519420028}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 91d06e9661e3e844a93dee9220643dbe, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Game.Buildings.BuildingClickController
+  _worldCamera: {fileID: 519420031}
 --- !u!1 &547149885
 GameObject:
   m_ObjectHideFlags: 0
@@ -17710,7 +17724,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9323d7c9e463fa34887552fb803582c0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Game.Economy.CoinWallet
-  _coins: 20
+  _coins: 130
 --- !u!114 &1923146555
 MonoBehaviour:
   m_ObjectHideFlags: 0

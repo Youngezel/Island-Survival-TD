@@ -2,9 +2,7 @@ using System.Collections.Generic;
 using Game.Combat;
 using Game.Data;
 using Game.Grid;
-using Game.UI;
 using UnityEngine;
-using UnityEngine.EventSystems;
 
 namespace Game.Buildings
 {
@@ -13,9 +11,9 @@ namespace Game.Buildings
     /// nearest enemy in range at its fire rate, boosted by whatever run-only
     /// upgrade path this building type has committed to (see Shooter).
     /// Registers itself so enemies can find and attack it if it stands in
-    /// their way to the village. Clicking it (when not mid-placement) opens
-    /// the building inspector to view stats, pick/advance an upgrade path,
-    /// or sell it back.
+    /// their way to the village, and so BuildingClickController can find it
+    /// under the cursor to open the building inspector (view stats,
+    /// pick/advance an upgrade path, or sell it back).
     /// </summary>
     [RequireComponent(typeof(Health), typeof(Targeting), typeof(Shooter))]
     [RequireComponent(typeof(CircleCollider2D))]
@@ -64,26 +62,6 @@ namespace Game.Buildings
         {
             ActiveBuildings.Remove(this);
             _health.OnDeath -= HandleDeath;
-        }
-
-        private void OnMouseDown()
-        {
-            if (EventSystem.current != null && EventSystem.current.IsPointerOverGameObject())
-            {
-                return;
-            }
-
-            if (PlacementCursor.Instance != null && PlacementCursor.Instance.SelectedItem != null)
-            {
-                return;
-            }
-
-            if (_data == null || string.IsNullOrEmpty(_data.UpgradeSaveKey))
-            {
-                return;
-            }
-
-            BuildingInspectorUI.Instance?.Open(_data, this);
         }
 
         /// <summary>Removes this building via a player-initiated sale, freeing its tile - as opposed to dying to enemy damage.</summary>
