@@ -19,10 +19,8 @@ namespace Game.Data
         [SerializeField] private float _splashRadius;
         [SerializeField] private float _projectileSpeed = 10f;
         [SerializeField] private string _upgradeSaveKey;
-        [SerializeField] private int _damagePerUpgradeLevel = 1;
-        [SerializeField] private int _upgradeCost = 20;
-        [SerializeField] private int _runUpgradeCost = 30;
-        [SerializeField] private int _maxUpgradeLevel = 5;
+        [SerializeField] private UpgradePath _pathA;
+        [SerializeField] private UpgradePath _pathB;
         [SerializeField] private Sprite _icon;
 
         public string DisplayName => _displayName;
@@ -39,20 +37,14 @@ namespace Game.Data
         /// <summary>World units per second the fired projectile travels at.</summary>
         public float ProjectileSpeed => _projectileSpeed;
 
-        /// <summary>Key into SaveManager's upgrade levels; empty means not upgradeable.</summary>
+        /// <summary>Key into SaveManager's unlocked-tier data; empty means not upgradeable.</summary>
         public string UpgradeSaveKey => _upgradeSaveKey;
 
-        /// <summary>Extra damage granted per upgrade level.</summary>
-        public int DamagePerUpgradeLevel => _damagePerUpgradeLevel;
+        /// <summary>The first of the two mutually-exclusive upgrade paths.</summary>
+        public UpgradePath PathA => _pathA;
 
-        /// <summary>Base meta-XP cost to buy the next upgrade level; scales with the level already bought.</summary>
-        public int UpgradeCost => _upgradeCost;
-
-        /// <summary>Base in-run coin cost to buy the next run-only upgrade level on a placed building; scales with the level already bought this run.</summary>
-        public int RunUpgradeCost => _runUpgradeCost;
-
-        /// <summary>Highest upgrade level purchasable in the upgrade shop, and separately the highest run-only level purchasable in-game.</summary>
-        public int MaxUpgradeLevel => _maxUpgradeLevel;
+        /// <summary>The second of the two mutually-exclusive upgrade paths.</summary>
+        public UpgradePath PathB => _pathB;
 
         /// <summary>Icon shown in the hotbar/upgrade shop, matching the in-world sprite.</summary>
         public Sprite Icon => _icon;

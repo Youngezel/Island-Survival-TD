@@ -50,8 +50,9 @@ namespace Game.Waves
 
         private IEnumerator SpawnWave()
         {
-            int enemyCount = 3 + (CurrentWave - 1);
-            int unlockedTypes = Mathf.Clamp(1 + (CurrentWave - 1) / 2, 1, _enemyPrefabPool.Length);
+            int wavesSinceStart = CurrentWave - 1;
+            int enemyCount = 3 + wavesSinceStart * 2 + (wavesSinceStart * wavesSinceStart) / 3;
+            int unlockedTypes = Mathf.Clamp(1 + wavesSinceStart / 2, 1, _enemyPrefabPool.Length);
 
             for (int i = 0; i < enemyCount; i++)
             {

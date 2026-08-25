@@ -367,13 +367,7 @@ namespace Game.EditorTools
                 for (int x = 0; x < TileWidth; x++)
                 {
                     if (!c.InsideFlatTopHex(x, y)) continue;
-
-                    Color color;
-                    if (y < 3) color = GrassHighlight;
-                    else if (y < TileHeight - 8) color = GrassBase;
-                    else color = GrassShadow;
-
-                    c.SetRaw(x, y, color);
+                    c.SetRaw(x, y, GrassBase);
                 }
             }
 

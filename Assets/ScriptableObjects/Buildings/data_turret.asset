@@ -15,14 +15,45 @@ MonoBehaviour:
   _displayName: Turret
   _maxHealth: 20
   _damage: 5
-  _cost: 10
+  _cost: 35
   _range: 3
   _fireRate: 2
   _splash: 0
   _splashRadius: 0
   _projectileSpeed: 10
   _upgradeSaveKey: turret
-  _damagePerUpgradeLevel: 1
-  _upgradeCost: 20
-  _maxUpgradeLevel: 5
+  _pathA:
+    _nodes:
+    - _name: Meer Damage
+      _effect: 0
+      _value: 3
+      _unlockCost: 40
+      _applyCost: 80
+    - _name: Spreidschot
+      _effect: 3
+      _value: 0
+      _unlockCost: 80
+      _applyCost: 200
+    - _name: Meer Range
+      _effect: 1
+      _value: 1
+      _unlockCost: 150
+      _applyCost: 450
+  _pathB:
+    _nodes:
+    - _name: Vuursnelheid+
+      _effect: 2
+      _value: 0.5
+      _unlockCost: 40
+      _applyCost: 80
+    - _name: Dubbelschot
+      _effect: 4
+      _value: 0
+      _unlockCost: 80
+      _applyCost: 200
+    - _name: Vuurschade
+      _effect: 5
+      _value: 2
+      _unlockCost: 150
+      _applyCost: 450
   _icon: {fileID: 21300000, guid: a77eee7ff2b2a2f42a55e86b4378ca44, type: 3}

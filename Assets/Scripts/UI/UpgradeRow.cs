@@ -1,3 +1,4 @@
+using System;
 using Game.Data;
 using Game.Economy;
 using Game.Systems;
@@ -8,24 +9,27 @@ using UnityEngine.UI;
 namespace Game.UI
 {
     /// <summary>
-    /// One row in the main menu upgrade shop: icon, name, level pips and an
-    /// upgrade button that shows the next level's XP cost, or MAX once the
-    /// building's max upgrade level is reached.
+    /// One building's upgrade row in the main menu: icon, name, and both
+    /// upgrade paths' 3 tiers, each unlockable in order with XP. Unlocking
+    /// a tier here only makes it permanently available - it doesn't apply
+    /// to a run by itself; the player picks/advances one path per building
+    /// type in-game with coins, via BuildingInspectorUI.
     /// </summary>
     public class UpgradeRow : MonoBehaviour
     {
+        [Serializable]
+        private class NodeRow
+        {
+            public Image Background;
+            public TMP_Text Label;
+            public Button Button;
+        }
+
         [SerializeField] private BuildingData _buildingData;
         [SerializeField] private Image _icon;
         [SerializeField] private TMP_Text _nameText;
-        [SerializeField] private TMP_Text _levelText;
-        [SerializeField] private Image[] _pips;
-        [SerializeField] private Button _upgradeButton;
-        [SerializeField] private Image _upgradeButtonBackground;
-        [SerializeField] private TMP_Text _upgradeButtonText;
-
-        private int CurrentLevel => SaveManager.Instance != null ? SaveManager.Instance.GetUpgradeLevel(_buildingData.UpgradeSaveKey) : 0;
-        private bool IsMaxLevel => CurrentLevel >= _buildingData.MaxUpgradeLevel;
-        private int CostForNextLevel => _buildingData.UpgradeCost * (CurrentLevel + 1);
+        [SerializeField] private NodeRow[] _pathARows = new NodeRow[3];
+        [SerializeField] private NodeRow[] _pathBRows = new NodeRow[3];
 
         private void Awake()
         {
@@ -42,12 +46,21 @@ namespace Game.UI
 
         private void OnEnable()
         {
-            _upgradeButton.onClick.AddListener(Upgrade);
+            for (int i = 0; i < _pathARows.Length; i++)
+            {
+                int tierIndex = i;
+                _pathARows[i].Button.onClick.AddListener(() => TryUnlock(true, tierIndex));
+            }
+
+            for (int i = 0; i < _pathBRows.Length; i++)
+            {
+                int tierIndex = i;
+                _pathBRows[i].Button.onClick.AddListener(() => TryUnlock(false, tierIndex));
+            }
         }
 
         private void OnDisable()
         {
-            _upgradeButton.onClick.RemoveListener(Upgrade);
             if (XPWallet.Instance != null)
             {
                 XPWallet.Instance.OnXPChanged -= HandleXPChanged;
@@ -72,66 +85,75 @@ namespace Game.UI
             Refresh();
         }
 
-        private void Upgrade()
+        private void TryUnlock(bool pathA, int tierIndex)
         {
-            if (XPWallet.Instance == null || SaveManager.Instance == null || IsMaxLevel)
+            if (_buildingData == null || XPWallet.Instance == null || SaveManager.Instance == null)
             {
                 return;
             }
 
-            int level = CurrentLevel;
-            if (!XPWallet.Instance.TrySpend(CostForNextLevel))
+            int currentTier = SaveManager.Instance.GetUnlockedTier(_buildingData.UpgradeSaveKey, pathA);
+            if (currentTier != tierIndex)
             {
                 return;
             }
 
-            SaveManager.Instance.SetUpgradeLevel(_buildingData.UpgradeSaveKey, level + 1);
+            UpgradePath path = pathA ? _buildingData.PathA : _buildingData.PathB;
+            UpgradeNode node = path.Nodes[tierIndex];
+
+            if (!XPWallet.Instance.TrySpend(node.UnlockCost))
+            {
+                return;
+            }
+
+            SaveManager.Instance.SetUnlockedTier(_buildingData.UpgradeSaveKey, pathA, tierIndex + 1);
             SaveManager.Instance.Save();
             Refresh();
         }
 
         private void Refresh()
         {
-            int level = CurrentLevel;
+            RefreshPath(_buildingData.PathA, true, _pathARows);
+            RefreshPath(_buildingData.PathB, false, _pathBRows);
+        }
 
-            if (_levelText != null)
+        private void RefreshPath(UpgradePath path, bool isPathA, NodeRow[] rows)
+        {
+            if (path == null || _buildingData == null)
             {
-                _levelText.text = $"LVL {level}";
+                return;
             }
 
-            for (int i = 0; i < _pips.Length; i++)
-            {
-                if (_pips[i] != null)
-                {
-                    _pips[i].color = i < level ? UITheme.Gold : UITheme.Divider;
-                }
-            }
+            int unlockedTier = SaveManager.Instance != null ? SaveManager.Instance.GetUnlockedTier(_buildingData.UpgradeSaveKey, isPathA) : 0;
 
-            if (IsMaxLevel)
+            for (int i = 0; i < rows.Length && i < path.Nodes.Length; i++)
             {
-                _upgradeButton.interactable = false;
-                if (_upgradeButtonBackground != null)
+                UpgradeNode node = path.Nodes[i];
+                NodeRow row = rows[i];
+                bool unlocked = unlockedTier > i;
+                bool isNext = unlockedTier == i;
+
+                if (unlocked)
                 {
-                    _upgradeButtonBackground.color = UITheme.SlotBackground;
+                    row.Label.text = $"{node.Name}\nVRIJGESPEELD";
+                    row.Background.color = UITheme.Gold;
+                    row.Button.interactable = false;
+                    row.Label.color = UITheme.ButtonTextDark;
                 }
-                if (_upgradeButtonText != null)
+                else if (isNext)
                 {
-                    _upgradeButtonText.text = "MAX";
-                    _upgradeButtonText.color = UITheme.TextDisabled;
+                    bool affordable = XPWallet.Instance != null && XPWallet.Instance.XP >= node.UnlockCost;
+                    row.Label.text = $"{node.Name}\n{node.UnlockCost} XP";
+                    row.Background.color = affordable ? UITheme.Gold : UITheme.SlotBackground;
+                    row.Button.interactable = affordable;
+                    row.Label.color = affordable ? UITheme.ButtonTextDark : UITheme.TextDisabled;
                 }
-            }
-            else
-            {
-                bool affordable = XPWallet.Instance != null && XPWallet.Instance.XP >= CostForNextLevel;
-                _upgradeButton.interactable = affordable;
-                if (_upgradeButtonBackground != null)
+                else
                 {
-                    _upgradeButtonBackground.color = affordable ? UITheme.Gold : UITheme.SlotBackground;
-                }
-                if (_upgradeButtonText != null)
-                {
-                    _upgradeButtonText.text = $"UPGRADE\n{CostForNextLevel} XP";
-                    _upgradeButtonText.color = affordable ? UITheme.ButtonTextDark : UITheme.TextDisabled;
+                    row.Label.text = node.Name;
+                    row.Background.color = UITheme.SlotBackground;
+                    row.Button.interactable = false;
+                    row.Label.color = UITheme.TextDisabled;
                 }
             }
         }

@@ -1,3 +1,4 @@
+using System;
 using Game.Buildings;
 using Game.Data;
 using Game.Economy;
@@ -10,14 +11,24 @@ namespace Game.UI
 {
     /// <summary>
     /// Popup opened by clicking a placed turret or its hotbar slot: shows
-    /// its live stats and lets the player buy a run-only upgrade level with
-    /// in-run coins. The level is tracked per building TYPE (RunUpgradeManager),
-    /// so it applies to every turret of that type - already placed and
-    /// future - separate from the permanent per-type levels bought with XP
-    /// in the main menu.
+    /// its live stats and its two upgrade paths. Each path has 3 tiers;
+    /// a tier must first be permanently unlocked with XP in the main menu
+    /// before it can be activated here with in-run coins. Activating the
+    /// first tier of a path commits this building TYPE to that path for
+    /// the rest of the run - the other path locks out entirely, matching
+    /// RunUpgradeManager, which tracks the committed path and reached tier
+    /// per building type (not per placed instance).
     /// </summary>
     public class BuildingInspectorUI : MonoBehaviour
     {
+        [Serializable]
+        private class NodeRow
+        {
+            public Image Background;
+            public TMP_Text Label;
+            public Button Button;
+        }
+
         public static BuildingInspectorUI Instance { get; private set; }
 
         [SerializeField] private GameObject _panel;
@@ -25,11 +36,8 @@ namespace Game.UI
         [SerializeField] private TMP_Text _damageText;
         [SerializeField] private TMP_Text _rangeText;
         [SerializeField] private TMP_Text _fireRateText;
-        [SerializeField] private TMP_Text _levelText;
-        [SerializeField] private Image[] _pips;
-        [SerializeField] private Button _upgradeButton;
-        [SerializeField] private Image _upgradeButtonBackground;
-        [SerializeField] private TMP_Text _upgradeButtonText;
+        [SerializeField] private NodeRow[] _pathARows = new NodeRow[3];
+        [SerializeField] private NodeRow[] _pathBRows = new NodeRow[3];
         [SerializeField] private Button _closeButton;
 
         private BuildingData _currentData;
@@ -42,17 +50,18 @@ namespace Game.UI
 
         private void OnEnable()
         {
-            _upgradeButton.onClick.AddListener(Upgrade);
             _closeButton.onClick.AddListener(Close);
-        }
 
-        private void OnDisable()
-        {
-            _upgradeButton.onClick.RemoveListener(Upgrade);
-            _closeButton.onClick.RemoveListener(Close);
-            if (CoinWallet.Instance != null)
+            for (int i = 0; i < _pathARows.Length; i++)
             {
-                CoinWallet.Instance.OnCoinsChanged -= HandleCoinsChanged;
+                int tierIndex = i;
+                _pathARows[i].Button.onClick.AddListener(() => TryActivate(true, tierIndex));
+            }
+
+            for (int i = 0; i < _pathBRows.Length; i++)
+            {
+                int tierIndex = i;
+                _pathBRows[i].Button.onClick.AddListener(() => TryActivate(false, tierIndex));
             }
         }
 
@@ -63,7 +72,12 @@ namespace Game.UI
             // static Instance yet if this panel's OnEnable runs first.
             if (CoinWallet.Instance != null)
             {
-                CoinWallet.Instance.OnCoinsChanged += HandleCoinsChanged;
+                CoinWallet.Instance.OnCoinsChanged += HandleChanged;
+            }
+
+            if (RunUpgradeManager.Instance != null)
+            {
+                RunUpgradeManager.Instance.OnChanged += HandleKeyChanged;
             }
         }
 
@@ -103,7 +117,7 @@ namespace Game.UI
             Close();
         }
 
-        private void HandleCoinsChanged(int coins)
+        private void HandleChanged(int _)
         {
             if (_currentData != null)
             {
@@ -111,26 +125,49 @@ namespace Game.UI
             }
         }
 
-        private void Upgrade()
+        private void HandleKeyChanged(string key)
         {
-            if (_currentData == null || CoinWallet.Instance == null || RunUpgradeManager.Instance == null)
+            if (_currentData != null && _currentData.UpgradeSaveKey == key)
+            {
+                Refresh();
+            }
+        }
+
+        private void TryActivate(bool pathA, int tierIndex)
+        {
+            if (_currentData == null || CoinWallet.Instance == null || RunUpgradeManager.Instance == null || SaveManager.Instance == null)
             {
                 return;
             }
 
-            int level = RunUpgradeManager.Instance.GetLevel(_currentData.UpgradeSaveKey);
-            if (level >= _currentData.MaxUpgradeLevel)
+            string key = _currentData.UpgradeSaveKey;
+            int unlockedTier = SaveManager.Instance.GetUnlockedTier(key, pathA);
+            if (unlockedTier <= tierIndex)
             {
                 return;
             }
 
-            int cost = _currentData.RunUpgradeCost * (level + 1);
-            if (!CoinWallet.Instance.TrySpend(cost))
+            bool committed = RunUpgradeManager.Instance.HasCommittedPath(key);
+            if (committed && RunUpgradeManager.Instance.IsPathA(key) != pathA)
             {
                 return;
             }
 
-            RunUpgradeManager.Instance.AddLevel(_currentData.UpgradeSaveKey);
+            int currentTier = committed ? RunUpgradeManager.Instance.GetTier(key) : 0;
+            if (currentTier != tierIndex)
+            {
+                return;
+            }
+
+            UpgradePath path = pathA ? _currentData.PathA : _currentData.PathB;
+            UpgradeNode node = path.Nodes[tierIndex];
+
+            if (!CoinWallet.Instance.TrySpend(node.ApplyCost))
+            {
+                return;
+            }
+
+            RunUpgradeManager.Instance.TryActivateNextTier(key, pathA);
             Refresh();
         }
 
@@ -141,10 +178,24 @@ namespace Game.UI
                 return;
             }
 
-            int permanentLevel = SaveManager.Instance != null ? SaveManager.Instance.GetUpgradeLevel(_currentData.UpgradeSaveKey) : 0;
-            int runLevel = RunUpgradeManager.Instance != null ? RunUpgradeManager.Instance.GetLevel(_currentData.UpgradeSaveKey) : 0;
-            int currentDamage = _currentData.Damage + _currentData.DamagePerUpgradeLevel * (permanentLevel + runLevel);
-            bool isMaxLevel = runLevel >= _currentData.MaxUpgradeLevel;
+            int tier = RunUpgradeManager.Instance != null ? RunUpgradeManager.Instance.GetTier(_currentData.UpgradeSaveKey) : 0;
+            bool committed = RunUpgradeManager.Instance != null && RunUpgradeManager.Instance.HasCommittedPath(_currentData.UpgradeSaveKey);
+            bool pathAActive = committed && RunUpgradeManager.Instance.IsPathA(_currentData.UpgradeSaveKey);
+
+            int damageBonus = 0;
+            float rangeBonus = 0f;
+            float fireRateBonus = 0f;
+            UpgradePath activePath = pathAActive ? _currentData.PathA : _currentData.PathB;
+            if (committed && activePath != null)
+            {
+                for (int i = 0; i < tier && i < activePath.Nodes.Length; i++)
+                {
+                    UpgradeNode node = activePath.Nodes[i];
+                    if (node.Effect == UpgradeEffect.Damage) damageBonus += Mathf.RoundToInt(node.Value);
+                    else if (node.Effect == UpgradeEffect.Range) rangeBonus += node.Value;
+                    else if (node.Effect == UpgradeEffect.FireRate) fireRateBonus += node.Value;
+                }
+            }
 
             if (_nameText != null)
             {
@@ -153,58 +204,80 @@ namespace Game.UI
 
             if (_damageText != null)
             {
-                _damageText.text = $"DAMAGE: {currentDamage}";
+                _damageText.text = $"DAMAGE: {_currentData.Damage + damageBonus}";
             }
 
             if (_rangeText != null)
             {
-                _rangeText.text = $"RANGE: {_currentData.Range:0.#} TILES";
+                _rangeText.text = $"RANGE: {(_currentData.Range + rangeBonus):0.#} TILES";
             }
 
             if (_fireRateText != null)
             {
-                _fireRateText.text = $"FIRE RATE: {_currentData.FireRate:0.#}/s";
+                _fireRateText.text = $"FIRE RATE: {(_currentData.FireRate + fireRateBonus):0.#}/s";
             }
 
-            if (_levelText != null)
+            RefreshPath(_currentData.PathA, true, _pathARows);
+            RefreshPath(_currentData.PathB, false, _pathBRows);
+        }
+
+        private void RefreshPath(UpgradePath path, bool isPathA, NodeRow[] rows)
+        {
+            if (path == null || _currentData == null)
             {
-                _levelText.text = $"RUN UPGRADE LVL {runLevel}";
+                return;
             }
 
-            for (int i = 0; i < _pips.Length; i++)
-            {
-                if (_pips[i] != null)
-                {
-                    _pips[i].color = i < runLevel ? UITheme.Gold : UITheme.Divider;
-                }
-            }
+            string key = _currentData.UpgradeSaveKey;
+            int unlockedTier = SaveManager.Instance != null ? SaveManager.Instance.GetUnlockedTier(key, isPathA) : 0;
+            bool committed = RunUpgradeManager.Instance != null && RunUpgradeManager.Instance.HasCommittedPath(key);
+            bool thisPathCommitted = committed && RunUpgradeManager.Instance.IsPathA(key) == isPathA;
+            bool otherPathCommitted = committed && !thisPathCommitted;
+            int activeTier = thisPathCommitted && RunUpgradeManager.Instance != null ? RunUpgradeManager.Instance.GetTier(key) : 0;
 
-            if (isMaxLevel)
+            for (int i = 0; i < rows.Length && i < path.Nodes.Length; i++)
             {
-                _upgradeButton.interactable = false;
-                if (_upgradeButtonBackground != null)
+                UpgradeNode node = path.Nodes[i];
+                NodeRow row = rows[i];
+                bool permanentlyUnlocked = unlockedTier > i;
+                bool isActive = thisPathCommitted && activeTier > i;
+                bool isNextActivatable = permanentlyUnlocked && !otherPathCommitted && !isActive && activeTier == i;
+
+                if (otherPathCommitted)
                 {
-                    _upgradeButtonBackground.color = UITheme.SlotBackground;
+                    row.Label.text = node.Name;
+                    row.Background.color = UITheme.SlotBackground;
+                    row.Button.interactable = false;
+                    row.Label.color = UITheme.TextDisabled;
                 }
-                if (_upgradeButtonText != null)
+                else if (isActive)
                 {
-                    _upgradeButtonText.text = "MAX";
-                    _upgradeButtonText.color = UITheme.TextDisabled;
+                    row.Label.text = $"{node.Name}\nACTIEF";
+                    row.Background.color = UITheme.Gold;
+                    row.Button.interactable = false;
+                    row.Label.color = UITheme.ButtonTextDark;
                 }
-            }
-            else
-            {
-                int cost = _currentData.RunUpgradeCost * (runLevel + 1);
-                bool affordable = CoinWallet.Instance != null && CoinWallet.Instance.Coins >= cost;
-                _upgradeButton.interactable = affordable;
-                if (_upgradeButtonBackground != null)
+                else if (!permanentlyUnlocked)
                 {
-                    _upgradeButtonBackground.color = affordable ? UITheme.Gold : UITheme.SlotBackground;
+                    row.Label.text = $"{node.Name}\n(hoofdmenu)";
+                    row.Background.color = UITheme.SlotBackground;
+                    row.Button.interactable = false;
+                    row.Label.color = UITheme.TextDisabled;
                 }
-                if (_upgradeButtonText != null)
+                else if (isNextActivatable)
                 {
-                    _upgradeButtonText.text = $"UPGRADE\n{cost} COINS";
-                    _upgradeButtonText.color = affordable ? UITheme.ButtonTextDark : UITheme.TextDisabled;
+                    bool affordable = CoinWallet.Instance != null && CoinWallet.Instance.Coins >= node.ApplyCost;
+                    row.Label.text = $"{node.Name}\n{node.ApplyCost} COINS";
+                    row.Background.color = affordable ? UITheme.Gold : UITheme.SlotBackground;
+                    row.Button.interactable = affordable;
+                    row.Label.color = affordable ? UITheme.ButtonTextDark : UITheme.TextDisabled;
+                }
+                else
+                {
+                    row.Label.text = node.Name;
+                    row.Background.color = UITheme.SlotBackground;
+                    row.Button.interactable = false;
+                    row.Label.color = UITheme.TextDisabled;
                 }
             }
         }

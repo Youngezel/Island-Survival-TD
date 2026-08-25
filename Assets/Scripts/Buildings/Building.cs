@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using Game.Combat;
 using Game.Data;
 using Game.Grid;
-using Game.Systems;
 using Game.UI;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -11,10 +10,11 @@ namespace Game.Buildings
 {
     /// <summary>
     /// A turret placed on a hex tile. Automatically targets and damages the
-    /// nearest enemy in range at its fire rate, boosted by its saved upgrade
-    /// level if it has one. Registers itself so enemies can find and attack
-    /// it if it stands in their way to the village. Clicking it (when not
-    /// mid-placement) opens the building inspector for run-only upgrades.
+    /// nearest enemy in range at its fire rate, boosted by whatever run-only
+    /// upgrade path this building type has committed to (see Shooter).
+    /// Registers itself so enemies can find and attack it if it stands in
+    /// their way to the village. Clicking it (when not mid-placement) opens
+    /// the building inspector to view stats and pick/advance an upgrade path.
     /// </summary>
     [RequireComponent(typeof(Health), typeof(Targeting), typeof(Shooter))]
     [RequireComponent(typeof(CircleCollider2D))]
@@ -41,7 +41,7 @@ namespace Game.Buildings
                 _health.SetMaxHealth(_data.MaxHealth);
             }
 
-            _shooter.Initialize(_data, GetUpgradeLevel());
+            _shooter.Initialize(_data);
         }
 
         private void Start()
@@ -83,16 +83,6 @@ namespace Game.Buildings
             }
 
             BuildingInspectorUI.Instance?.Open(_data, this);
-        }
-
-        private int GetUpgradeLevel()
-        {
-            if (_data == null || string.IsNullOrEmpty(_data.UpgradeSaveKey) || SaveManager.Instance == null)
-            {
-                return 0;
-            }
-
-            return SaveManager.Instance.GetUpgradeLevel(_data.UpgradeSaveKey);
         }
 
         private void HandleDeath()

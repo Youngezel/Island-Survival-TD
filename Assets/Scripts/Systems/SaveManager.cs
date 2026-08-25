@@ -42,29 +42,30 @@ namespace Game.Systems
             File.WriteAllText(SavePath, json);
         }
 
-        public int GetUpgradeLevel(string key)
+        /// <summary>How many tiers (0-3) of the given path are permanently unlocked for this building type.</summary>
+        public int GetUnlockedTier(string key, bool pathA)
         {
             switch (key)
             {
-                case "turret": return Current.turretUpgradeLevel;
-                case "long_range_turret": return Current.longRangeTurretUpgradeLevel;
-                case "mortar": return Current.mortarUpgradeLevel;
+                case "turret": return pathA ? Current.turretPathATier : Current.turretPathBTier;
+                case "long_range_turret": return pathA ? Current.longRangeTurretPathATier : Current.longRangeTurretPathBTier;
+                case "mortar": return pathA ? Current.mortarPathATier : Current.mortarPathBTier;
                 default: return 0;
             }
         }
 
-        public void SetUpgradeLevel(string key, int level)
+        public void SetUnlockedTier(string key, bool pathA, int tier)
         {
             switch (key)
             {
                 case "turret":
-                    Current.turretUpgradeLevel = level;
+                    if (pathA) Current.turretPathATier = tier; else Current.turretPathBTier = tier;
                     break;
                 case "long_range_turret":
-                    Current.longRangeTurretUpgradeLevel = level;
+                    if (pathA) Current.longRangeTurretPathATier = tier; else Current.longRangeTurretPathBTier = tier;
                     break;
                 case "mortar":
-                    Current.mortarUpgradeLevel = level;
+                    if (pathA) Current.mortarPathATier = tier; else Current.mortarPathBTier = tier;
                     break;
             }
         }

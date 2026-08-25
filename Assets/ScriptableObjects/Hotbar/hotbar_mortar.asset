@@ -14,6 +14,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Game.Data.HotbarItemData
   _displayName: Mortar
   _icon: {fileID: 21300000, guid: e7b12291e152b9e42ac8289070d65891, type: 3}
-  _cost: 20
+  _cost: 70
   _isGroundTile: 0
   _buildingPrefab: {fileID: 6890931483390816781, guid: 11ff04d73eaef354d836c5fe5a6b209b, type: 3}

@@ -15,14 +15,45 @@ MonoBehaviour:
   _displayName: Mortar
   _maxHealth: 20
   _damage: 3
-  _cost: 20
+  _cost: 70
   _range: 8
   _fireRate: 0.5
   _splash: 1
   _splashRadius: 1.5
   _projectileSpeed: 6
   _upgradeSaveKey: mortar
-  _damagePerUpgradeLevel: 1
-  _upgradeCost: 30
-  _maxUpgradeLevel: 5
+  _pathA:
+    _nodes:
+    - _name: Meer Range
+      _effect: 1
+      _value: 2
+      _unlockCost: 40
+      _applyCost: 80
+    - _name: Splash Schade
+      _effect: 8
+      _value: 0.75
+      _unlockCost: 80
+      _applyCost: 200
+    - _name: Meer Range
+      _effect: 1
+      _value: 2
+      _unlockCost: 150
+      _applyCost: 450
+  _pathB:
+    _nodes:
+    - _name: Dubbelschot
+      _effect: 4
+      _value: 0
+      _unlockCost: 40
+      _applyCost: 80
+    - _name: Spreidschot
+      _effect: 3
+      _value: 0
+      _unlockCost: 80
+      _applyCost: 200
+    - _name: Meer Damage
+      _effect: 0
+      _value: 3
+      _unlockCost: 150
+      _applyCost: 450
   _icon: {fileID: 21300000, guid: e7b12291e152b9e42ac8289070d65891, type: 3}

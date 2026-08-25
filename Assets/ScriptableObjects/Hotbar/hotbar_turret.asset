@@ -14,6 +14,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Game.Data.HotbarItemData
   _displayName: Turret
   _icon: {fileID: 21300000, guid: a77eee7ff2b2a2f42a55e86b4378ca44, type: 3}
-  _cost: 10
+  _cost: 35
   _isGroundTile: 0
   _buildingPrefab: {fileID: 795963616512479594, guid: 7c37db1d911c85d42af848c66a9afad1, type: 3}
