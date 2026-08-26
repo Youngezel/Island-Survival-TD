@@ -33,10 +33,16 @@ namespace Game.Buildings
         }
 
         [SerializeField] private Projectile _projectilePrefab;
+        [SerializeField] private Transform _headTransform;
+        [SerializeField] private SpriteRenderer _headRenderer;
+        [SerializeField] private Sprite[] _fireFrames;
+        [SerializeField] private float _fireFrameDuration = 0.05f;
 
         private Targeting _targeting;
         private BuildingData _data;
         private float _cooldown;
+        private Sprite _headIdleSprite;
+        private Coroutine _fireAnimationCoroutine;
 
         public BuildingData Data => _data;
 
@@ -59,6 +65,10 @@ namespace Game.Buildings
         private void Awake()
         {
             _targeting = GetComponent<Targeting>();
+            if (_headRenderer != null)
+            {
+                _headIdleSprite = _headRenderer.sprite;
+            }
         }
 
         public void Initialize(BuildingData data)
@@ -116,6 +126,11 @@ namespace Game.Buildings
             float rangeWorldUnits = (_data.Range + effects.RangeBonus) * HexGridManager.Instance.HexStepWorldDistance;
             float fireRate = Mathf.Max(0.05f, _data.FireRate + effects.FireRateBonus);
 
+            // Found every frame (not just when off cooldown) so the head can
+            // keep tracking the nearest enemy continuously between shots.
+            Enemy aimTarget = _targeting.FindNearestEnemyInRange(rangeWorldUnits);
+            RotateHeadToward(aimTarget);
+
             if (_cooldown > 0f)
             {
                 return;
@@ -138,26 +153,70 @@ namespace Game.Buildings
                 return;
             }
 
-            Enemy primaryTarget = _targeting.FindNearestEnemyInRange(rangeWorldUnits);
-            if (primaryTarget == null)
+            if (aimTarget == null)
             {
                 return;
             }
 
             if (effects.SequentialDoubleShot)
             {
-                StartCoroutine(FireSequential(primaryTarget, effects, rangeWorldUnits));
+                StartCoroutine(FireSequential(aimTarget, effects, rangeWorldUnits));
             }
             else if (effects.SpreadShot)
             {
-                FireSpread(primaryTarget, effects);
+                FireSpread(aimTarget, effects);
             }
             else
             {
-                FireAt(primaryTarget, effects);
+                FireAt(aimTarget, effects);
             }
 
             _cooldown = 1f / fireRate;
+        }
+
+        /// <summary>Rotates the head sprite to face the target; the head art is drawn pointing "up" as its 0-degree reference.</summary>
+        private void RotateHeadToward(Enemy target)
+        {
+            if (_headTransform == null || target == null)
+            {
+                return;
+            }
+
+            Vector3 direction = target.transform.position - transform.position;
+            if (direction.sqrMagnitude < 0.0001f)
+            {
+                return;
+            }
+
+            float angle = Mathf.Atan2(direction.x, direction.y) * Mathf.Rad2Deg;
+            _headTransform.rotation = Quaternion.Euler(0f, 0f, -angle);
+        }
+
+        private void PlayFireAnimation()
+        {
+            if (_headRenderer == null || _fireFrames == null || _fireFrames.Length == 0)
+            {
+                return;
+            }
+
+            if (_fireAnimationCoroutine != null)
+            {
+                StopCoroutine(_fireAnimationCoroutine);
+            }
+
+            _fireAnimationCoroutine = StartCoroutine(FireAnimationRoutine());
+        }
+
+        private IEnumerator FireAnimationRoutine()
+        {
+            foreach (Sprite frame in _fireFrames)
+            {
+                _headRenderer.sprite = frame;
+                yield return new WaitForSeconds(_fireFrameDuration);
+            }
+
+            _headRenderer.sprite = _headIdleSprite;
+            _fireAnimationCoroutine = null;
         }
 
         private void FireAt(Enemy target, ActiveEffects effects)
@@ -171,6 +230,7 @@ namespace Game.Buildings
             float splashRadiusWorldUnits = (_data.SplashRadius + effects.SplashRadiusBonus) * HexGridManager.Instance.HexStepWorldDistance;
             bool splash = _data.Splash || effects.SplashRadiusBonus > 0f;
             projectile.Initialize(target, _data.ProjectileSpeed, _data.Damage + effects.DamageBonus, splash, splashRadiusWorldUnits, effects.PierceCount, effects.FireDamagePerSecond);
+            PlayFireAnimation();
         }
 
         /// <summary>Fires the real homing shot at the target plus two straight pellets angled off to either side.</summary>

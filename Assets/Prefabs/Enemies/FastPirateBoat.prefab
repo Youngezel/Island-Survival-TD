@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 8115361490742621045}
   - component: {fileID: 3213377747767704192}
   - component: {fileID: 6681067418265282835}
+  - component: {fileID: 1235969744662171165}
   m_Layer: 0
   m_Name: FastPirateBoat
   m_TagString: Untagged
@@ -120,3 +121,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Game.Enemies.Enemy
   _data: {fileID: 11400000, guid: 7e6b115c5e82f824f8ee63ee22ca545b, type: 2}
   _projectilePrefab: {fileID: 3866059157763710130, guid: aecb9bc482b0c844b8dd3579f1994996, type: 3}
+--- !u!114 &1235969744662171165
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6395433214604493499}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d2038dbc0dcafda49b5d6473edb9cd65, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Game.VFX.SpriteFlipbook
+  _frames:
+  - {fileID: 21300000, guid: b6af7f7c7c329ad429bd690017339d2f, type: 3}
+  - {fileID: 21300000, guid: e4c35e017e14669429bcacb7d795d710, type: 3}
+  - {fileID: 21300000, guid: 4319427ead3adc243a1ba3d9c4ea4e0e, type: 3}
+  - {fileID: 21300000, guid: da03f8d223bd5ca428030b88362b0606, type: 3}
+  _framesPerSecond: 6
+  _randomStartOffset: 1
