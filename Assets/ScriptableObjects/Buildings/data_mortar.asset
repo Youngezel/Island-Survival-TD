@@ -29,7 +29,7 @@ MonoBehaviour:
       _value: 2
       _unlockCost: 55
       _applyCost: 130
-    - _name: Splash Schade
+    - _name: Grotere Splash Radius
       _effect: 8
       _value: 0.75
       _unlockCost: 110

@@ -58,6 +58,7 @@ namespace Game.EditorTools
             SaveTileSprite("spr_tile_grass_2", DrawHexTileGrass(2));
             SaveTileSprite("spr_tile_grass_3", DrawHexTileGrass(3));
             SaveTileSprite("spr_tile_coast_skirt", DrawCoastSkirt());
+            SaveSprite("spr_explosion", DrawExplosion(), pivotBottomCenter: false, ppu: 32);
 
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
@@ -338,6 +339,27 @@ namespace Game.EditorTools
             c.Rect(27, 24, 3, 8, WoodBase); // steunblok rechts
 
             c.HealthBarAnchor(16, 1);
+            return c;
+        }
+
+        // ---------------------------------------------------------------
+        // Effects
+        // ---------------------------------------------------------------
+
+        /// <summary>
+        /// A radial burst used for impact VFX. Drawn centered so it can be
+        /// scaled up/down uniformly (small fixed hit-spark for the turret
+        /// and long-range turret, or stretched to match the mortar's actual
+        /// splash radius) without needing separate art per size.
+        /// </summary>
+        private static PixelCanvas DrawExplosion()
+        {
+            var c = new PixelCanvas(32);
+            c.Circle(16, 16, 15, new Color(DangerDark.r, DangerDark.g, DangerDark.b, 0.6f));
+            c.Circle(16, 16, 12, DangerDark);
+            c.Circle(16, 16, 9, Danger);
+            c.Circle(16, 16, 6, Gold);
+            c.Circle(16, 16, 3, Parchment);
             return c;
         }
 

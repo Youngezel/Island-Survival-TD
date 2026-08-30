@@ -20,7 +20,11 @@ namespace Game.UI
     {
         [SerializeField] private Button _menuButton;
         [SerializeField] private GameObject _menuPanel;
+        [SerializeField] private GameObject _mainCard;
+        [SerializeField] private GameObject _settingsCard;
         [SerializeField] private Button _closeButton;
+        [SerializeField] private Button _settingsButton;
+        [SerializeField] private Button _backButton;
         [SerializeField] private Button _autoStartButton;
         [SerializeField] private TMP_Text _autoStartButtonText;
         [SerializeField] private Button _quitButton;
@@ -33,6 +37,8 @@ namespace Game.UI
         {
             _menuButton.onClick.AddListener(ToggleMenu);
             _closeButton.onClick.AddListener(CloseMenu);
+            _settingsButton.onClick.AddListener(OpenSettings);
+            _backButton.onClick.AddListener(CloseSettings);
             _autoStartButton.onClick.AddListener(ToggleAutoStart);
             _quitButton.onClick.AddListener(Quit);
         }
@@ -41,6 +47,8 @@ namespace Game.UI
         {
             _menuButton.onClick.RemoveListener(ToggleMenu);
             _closeButton.onClick.RemoveListener(CloseMenu);
+            _settingsButton.onClick.RemoveListener(OpenSettings);
+            _backButton.onClick.RemoveListener(CloseSettings);
             _autoStartButton.onClick.RemoveListener(ToggleAutoStart);
             _quitButton.onClick.RemoveListener(Quit);
         }
@@ -86,6 +94,7 @@ namespace Game.UI
             _wasPausedBeforeOpening = PauseController.Instance.IsPaused;
             PauseController.Instance.SetPaused(true);
             _menuPanel.SetActive(true);
+            CloseSettings();
         }
 
         private void CloseMenu()
@@ -98,6 +107,20 @@ namespace Game.UI
             _isOpen = false;
             _menuPanel.SetActive(false);
             PauseController.Instance.SetPaused(_wasPausedBeforeOpening);
+        }
+
+        /// <summary>Swaps the main card out for the nested settings card - still the same fully-blocking panel, just a different page of it.</summary>
+        private void OpenSettings()
+        {
+            _mainCard.SetActive(false);
+            _settingsCard.SetActive(true);
+        }
+
+        /// <summary>Also used to reset the menu back to its main page whenever it's (re)opened.</summary>
+        private void CloseSettings()
+        {
+            _settingsCard.SetActive(false);
+            _mainCard.SetActive(true);
         }
 
         private void ToggleAutoStart()

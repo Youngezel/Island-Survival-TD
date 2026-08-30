@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &7518638361775225155
+--- !u!1 &734142450493394351
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8,23 +8,23 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 3841595565247200545}
-  - component: {fileID: 5281384055398756378}
-  - component: {fileID: 3866059157763710130}
+  - component: {fileID: 8458054526976346323}
+  - component: {fileID: 1792878483735129917}
+  - component: {fileID: 2394551911360230754}
   m_Layer: 0
-  m_Name: Projectile
+  m_Name: ImpactEffect
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &3841595565247200545
+--- !u!4 &8458054526976346323
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7518638361775225155}
+  m_GameObject: {fileID: 734142450493394351}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
@@ -33,14 +33,14 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!212 &5281384055398756378
+--- !u!212 &1792878483735129917
 SpriteRenderer:
   serializedVersion: 2
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7518638361775225155}
+  m_GameObject: {fileID: 734142450493394351}
   m_Enabled: 1
   m_CastShadows: 0
   m_ReceiveShadows: 0
@@ -80,28 +80,31 @@ SpriteRenderer:
   m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 10
+  m_SortingOrder: 15
   m_MaskInteraction: 0
-  m_Sprite: {fileID: 21300000, guid: 4fa8be5a4d6d96a40bbfe9de0e3e9f16, type: 3}
+  m_Sprite: {fileID: 21300000, guid: f79a5bd77039d834fb63e50bad514332, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 0.5, y: 0.5}
+  m_Size: {x: 1, y: 1}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_SpriteSortPoint: 0
---- !u!114 &3866059157763710130
+--- !u!114 &2394551911360230754
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7518638361775225155}
+  m_GameObject: {fileID: 734142450493394351}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 593bbbef2cfac8c429d3b71efb4a2c1b, type: 3}
+  m_Script: {fileID: 11500000, guid: 581e4ecb395bc274db453ce828f875a1, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Game.Combat.Projectile
-  _impactEffectPrefab: {fileID: 2394551911360230754, guid: 3d7d2a8fdd19be3418b85dbf9bf33f1e, type: 3}
+  m_EditorClassIdentifier: Assembly-CSharp::Game.Combat.ImpactEffect
+  _spriteRenderer: {fileID: 1792878483735129917}
+  _growDuration: 0.08
+  _holdDuration: 0.03
+  _fadeDuration: 0.15

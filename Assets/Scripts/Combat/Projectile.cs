@@ -17,6 +17,13 @@ namespace Game.Combat
     /// </summary>
     public class Projectile : MonoBehaviour
     {
+        // Fixed visual size for a non-splash hit (turret / long-range
+        // turret) - the mortar's splash hits instead use the real splash
+        // radius so the effect matches which enemies actually took damage.
+        private const float SmallImpactRadius = 0.35f;
+
+        [SerializeField] private ImpactEffect _impactEffectPrefab;
+
         private Enemy _target;
         private Vector3 _lastKnownTargetPosition;
         private float _speed;
@@ -97,6 +104,8 @@ namespace Game.Combat
                         DamageEnemy(enemy);
                     }
                 }
+
+                SpawnImpactEffect(_splashRadiusWorldUnits);
             }
             else if (_onHit != null)
             {
@@ -109,6 +118,8 @@ namespace Game.Combat
                 {
                     ApplyPierce(_target);
                 }
+
+                SpawnImpactEffect(SmallImpactRadius);
             }
             else if (_arrivalHitRadius > 0f)
             {
@@ -116,10 +127,23 @@ namespace Game.Combat
                 if (nearest != null)
                 {
                     DamageEnemy(nearest);
+                    SpawnImpactEffect(SmallImpactRadius);
                 }
             }
 
             Destroy(gameObject);
+        }
+
+        /// <summary>Spawns the shared impact-VFX prefab at this projectile's current position, sized to the given world-space radius.</summary>
+        private void SpawnImpactEffect(float radius)
+        {
+            if (_impactEffectPrefab == null)
+            {
+                return;
+            }
+
+            ImpactEffect effect = Instantiate(_impactEffectPrefab, transform.position, Quaternion.identity);
+            effect.SetRadius(radius);
         }
 
         /// <summary>Sweeps forward from the impact point in the shot's travel direction, damaging up to _pierceCount additional enemies it passes near.</summary>
