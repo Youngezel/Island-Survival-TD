@@ -29,7 +29,8 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 936999808283966170}
   m_Father: {fileID: 8161175975278619339}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &2849469788825621153
@@ -233,6 +234,33 @@ MonoBehaviour:
   - {fileID: 21300000, guid: 9dd26673effdaa04399171c78cf5cccd, type: 3}
   - {fileID: 21300000, guid: ad034ff6ed1f63f40a0e0b9bcaa7bfc2, type: 3}
   _fireFrameDuration: 0.05
+  _flashRenderer: {fileID: 5409990989790990600}
+  _pathAVisuals:
+  - Head: {fileID: 21300000, guid: cf3ee9783bfcc914eafa1422621d7780, type: 3}
+    FlashFrame1: {fileID: 21300000, guid: e8a894ebb65e88140b33010ec3a90af2, type: 3}
+    FlashFrame2: {fileID: 21300000, guid: ad89b67db843fb6418837d2870953dab, type: 3}
+    Projectile: {fileID: 21300000, guid: f747049dde362ac448a0881d55a771a5, type: 3}
+  - Head: {fileID: 21300000, guid: dfd7e56a38eef1047861ddf20632bdc9, type: 3}
+    FlashFrame1: {fileID: 21300000, guid: 0798a39a1acb33746a16853cf66d1824, type: 3}
+    FlashFrame2: {fileID: 21300000, guid: d815cf4451ff1a64881fc0d84152702d, type: 3}
+    Projectile: {fileID: 21300000, guid: f747049dde362ac448a0881d55a771a5, type: 3}
+  - Head: {fileID: 21300000, guid: 0d47effe6d3748d488631362ff4d2313, type: 3}
+    FlashFrame1: {fileID: 21300000, guid: 918592bef82f6ee41ab8ba6040c22a22, type: 3}
+    FlashFrame2: {fileID: 21300000, guid: ea6ea9d260d371a4a9b40c50e2b5d5b0, type: 3}
+    Projectile: {fileID: 21300000, guid: f747049dde362ac448a0881d55a771a5, type: 3}
+  _pathBVisuals:
+  - Head: {fileID: 21300000, guid: 537a391bc6c049044bd72731c8bb7b06, type: 3}
+    FlashFrame1: {fileID: 21300000, guid: ef212deb3a0821244a042eed8b4da7e9, type: 3}
+    FlashFrame2: {fileID: 21300000, guid: 4a407b09c656d9d47b35d36ac387da6e, type: 3}
+    Projectile: {fileID: 21300000, guid: 17a8f2cfedc4f9349a0008fdb17ca647, type: 3}
+  - Head: {fileID: 21300000, guid: c1f86dd912c39cb4f83cea0c1eb60a56, type: 3}
+    FlashFrame1: {fileID: 21300000, guid: 6200832486f34af4c82cca6b58b66fa7, type: 3}
+    FlashFrame2: {fileID: 21300000, guid: 45732c32e4f27964d95a05f8a01c3132, type: 3}
+    Projectile: {fileID: 21300000, guid: 17a8f2cfedc4f9349a0008fdb17ca647, type: 3}
+  - Head: {fileID: 21300000, guid: 9339f6fdf8d21fc4b837574f6ac70eb6, type: 3}
+    FlashFrame1: {fileID: 21300000, guid: 18de40a2944e80e418673c7b71d4ef93, type: 3}
+    FlashFrame2: {fileID: 21300000, guid: 8d37c0bc6fd6c714c8d3b20bc5e63baa, type: 3}
+    Projectile: {fileID: 21300000, guid: 17a8f2cfedc4f9349a0008fdb17ca647, type: 3}
 --- !u!114 &8192147185545988195
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -282,3 +310,94 @@ CircleCollider2D:
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
   m_Radius: 0.4
+--- !u!1 &7879651940047288241
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 936999808283966170}
+  - component: {fileID: 5409990989790990600}
+  m_Layer: 0
+  m_Name: Flash
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &936999808283966170
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7879651940047288241}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 2191717168372240803}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!212 &5409990989790990600
+SpriteRenderer:
+  serializedVersion: 2
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7879651940047288241}
+  m_Enabled: 0
+  m_CastShadows: 0
+  m_ReceiveShadows: 0
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 0
+  m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 0
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 7
+  m_MaskInteraction: 0
+  m_Sprite: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_FlipX: 0
+  m_FlipY: 0
+  m_DrawMode: 0
+  m_Size: {x: 1, y: 1}
+  m_AdaptiveModeThreshold: 0.5
+  m_SpriteTileMode: 0
+  m_WasSpriteAssigned: 0
+  m_SpriteSortPoint: 0

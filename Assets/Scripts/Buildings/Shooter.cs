@@ -32,6 +32,23 @@ namespace Game.Buildings
             public int PierceCount;
             public float FireDamagePerSecond;
             public float SplashRadiusBonus;
+            public Sprite ProjectileSprite;
+        }
+
+        /// <summary>
+        /// The look of one committed tier: the head art to switch to, its
+        /// two-frame muzzle flash (shown as an overlay on top of the head,
+        /// not a swap of it - multi-barrel tiers bake every muzzle into the
+        /// same overlay), and the projectile sprite that tier's shots use.
+        /// Leave any field empty to keep whatever was already showing.
+        /// </summary>
+        [Serializable]
+        private struct TierVisual
+        {
+            public Sprite Head;
+            public Sprite FlashFrame1;
+            public Sprite FlashFrame2;
+            public Sprite Projectile;
         }
 
         [SerializeField] private Projectile _projectilePrefab;
@@ -39,6 +56,14 @@ namespace Game.Buildings
         [SerializeField] private SpriteRenderer _headRenderer;
         [SerializeField] private Sprite[] _fireFrames;
         [SerializeField] private float _fireFrameDuration = 0.05f;
+
+        // Per-tier art for a committed path, index 0 = tier 1. Empty/default
+        // on the village and on any turret that hasn't upgraded yet, which
+        // both just keep using the base prefab's head and _fireFrames.
+        [SerializeField] private SpriteRenderer _flashRenderer;
+        [SerializeField] private TierVisual[] _pathAVisuals = new TierVisual[3];
+        [SerializeField] private TierVisual[] _pathBVisuals = new TierVisual[3];
+        private const float FlashFrameDuration = 0.11f;
 
         private Targeting _targeting;
         private BuildingData _data;
@@ -87,8 +112,38 @@ namespace Game.Buildings
             _hasCommittedPath = true;
             _committedPathIsA = pathA;
             _tier++;
+            RefreshHeadVisual();
             OnUpgradeChanged?.Invoke();
             return true;
+        }
+
+        /// <summary>Switches the head sprite to this tier's art, if a variant is set for it - the base prefab's head keeps showing otherwise.</summary>
+        private void RefreshHeadVisual()
+        {
+            if (_headRenderer == null)
+            {
+                return;
+            }
+
+            TierVisual visual = CurrentTierVisual();
+            if (visual.Head != null)
+            {
+                _headRenderer.sprite = visual.Head;
+                _headIdleSprite = visual.Head;
+            }
+        }
+
+        /// <summary>The current committed tier's visual set, or a default (all-null) one before any path is committed.</summary>
+        private TierVisual CurrentTierVisual()
+        {
+            if (!_hasCommittedPath)
+            {
+                return default;
+            }
+
+            TierVisual[] visuals = _committedPathIsA ? _pathAVisuals : _pathBVisuals;
+            int index = _tier - 1;
+            return index >= 0 && index < visuals.Length ? visuals[index] : default;
         }
 
         /// <summary>Current damage per shot, including any active run-only path bonus.</summary>
@@ -121,6 +176,8 @@ namespace Game.Buildings
             {
                 return effects;
             }
+
+            effects.ProjectileSprite = CurrentTierVisual().Projectile;
 
             UpgradePath path = _committedPathIsA ? _data.PathA : _data.PathB;
             int tier = _tier;
@@ -241,17 +298,37 @@ namespace Game.Buildings
 
         private void PlayFireAnimation()
         {
-            if (_headRenderer == null || _fireFrames == null || _fireFrames.Length == 0)
-            {
-                return;
-            }
-
             if (_fireAnimationCoroutine != null)
             {
                 StopCoroutine(_fireAnimationCoroutine);
             }
 
-            _fireAnimationCoroutine = StartCoroutine(FireAnimationRoutine());
+            TierVisual visual = CurrentTierVisual();
+            if (_hasCommittedPath && _flashRenderer != null && visual.FlashFrame1 != null && visual.FlashFrame2 != null)
+            {
+                // Committed tiers keep a constant (upgraded) head sprite and
+                // flash a muzzle overlay on top of it instead - multi-barrel
+                // tiers bake every muzzle into that one overlay sprite.
+                _fireAnimationCoroutine = StartCoroutine(FlashAnimationRoutine(visual));
+            }
+            else if (_headRenderer != null && _fireFrames != null && _fireFrames.Length > 0)
+            {
+                // No upgrade committed yet - the original swap-the-head-sprite animation.
+                _fireAnimationCoroutine = StartCoroutine(FireAnimationRoutine());
+            }
+        }
+
+        private IEnumerator FlashAnimationRoutine(TierVisual visual)
+        {
+            _flashRenderer.sprite = visual.FlashFrame1;
+            _flashRenderer.enabled = true;
+            yield return new WaitForSeconds(FlashFrameDuration);
+
+            _flashRenderer.sprite = visual.FlashFrame2;
+            yield return new WaitForSeconds(FlashFrameDuration);
+
+            _flashRenderer.enabled = false;
+            _fireAnimationCoroutine = null;
         }
 
         private IEnumerator FireAnimationRoutine()
@@ -277,6 +354,7 @@ namespace Game.Buildings
             float splashRadiusWorldUnits = (_data.SplashRadius + effects.SplashRadiusBonus) * HexGridManager.Instance.HexStepWorldDistance;
             bool splash = _data.Splash || effects.SplashRadiusBonus > 0f;
             projectile.Initialize(target, _data.ProjectileSpeed, _data.Damage + effects.DamageBonus, splash, splashRadiusWorldUnits, effects.PierceCount, effects.FireDamagePerSecond);
+            projectile.SetSprite(effects.ProjectileSprite);
             PlayFireAnimation();
         }
 
@@ -338,6 +416,8 @@ namespace Game.Buildings
                     Vector3 endPoint = transform.position + spreadDirection * distance;
                     pellet.InitializeAtPoint(endPoint, _data.ProjectileSpeed, _data.Damage + effects.DamageBonus, hitRadius);
                 }
+
+                pellet.SetSprite(effects.ProjectileSprite);
             }
         }
 

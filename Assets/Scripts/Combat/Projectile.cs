@@ -24,6 +24,7 @@ namespace Game.Combat
 
         [SerializeField] private ImpactEffect _impactEffectPrefab;
         [SerializeField] private FireVfx _fireVfxPrefab;
+        [SerializeField] private SpriteRenderer _spriteRenderer;
 
         private Enemy _target;
         private Vector3 _lastKnownTargetPosition;
@@ -65,6 +66,15 @@ namespace Game.Combat
             _speed = speed;
             _damage = damage;
             _arrivalHitRadius = arrivalHitRadius;
+        }
+
+        /// <summary>Overrides the default sprite - used by an upgraded turret to show that tier's projectile art instead of the base one. No-op if either is missing.</summary>
+        public void SetSprite(Sprite sprite)
+        {
+            if (sprite != null && _spriteRenderer != null)
+            {
+                _spriteRenderer.sprite = sprite;
+            }
         }
 
         private void Update()
