@@ -101,9 +101,24 @@ namespace Game.Buildings
                     case UpgradeEffect.Damage: effects.DamageBonus += Mathf.RoundToInt(node.Value); break;
                     case UpgradeEffect.Range: effects.RangeBonus += node.Value; break;
                     case UpgradeEffect.FireRate: effects.FireRateBonus += node.Value; break;
-                    case UpgradeEffect.SpreadShot: effects.SpreadShot = true; break;
-                    case UpgradeEffect.SequentialDoubleShot: effects.SequentialDoubleShot = true; break;
-                    case UpgradeEffect.MultiTargetShot: effects.MultiTargetShot = true; break;
+                    // Shot patterns are mutually exclusive - a later tier's
+                    // pattern replaces an earlier one instead of stacking,
+                    // unlike the flat bonuses above.
+                    case UpgradeEffect.SpreadShot:
+                        effects.SpreadShot = true;
+                        effects.SequentialDoubleShot = false;
+                        effects.MultiTargetShot = false;
+                        break;
+                    case UpgradeEffect.SequentialDoubleShot:
+                        effects.SequentialDoubleShot = true;
+                        effects.SpreadShot = false;
+                        effects.MultiTargetShot = false;
+                        break;
+                    case UpgradeEffect.MultiTargetShot:
+                        effects.MultiTargetShot = true;
+                        effects.SpreadShot = false;
+                        effects.SequentialDoubleShot = false;
+                        break;
                     case UpgradeEffect.PiercingShot: effects.PierceCount += Mathf.RoundToInt(node.Value); break;
                     case UpgradeEffect.FireDamage: effects.FireDamagePerSecond += node.Value; break;
                     case UpgradeEffect.SplashDamage: effects.SplashRadiusBonus += node.Value; break;

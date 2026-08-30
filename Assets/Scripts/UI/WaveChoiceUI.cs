@@ -1,5 +1,6 @@
 using Game.Data;
 using Game.Economy;
+using Game.Systems;
 using Game.Waves;
 using TMPro;
 using UnityEngine;
@@ -8,40 +9,33 @@ using UnityEngine.UI;
 namespace Game.UI
 {
     /// <summary>
-    /// Shown between waves: the player picks either a coin bonus or a free
-    /// hex tile to place, within a countdown - if it runs out, the coin
-    /// bonus (the left card) is chosen automatically. Confirming closes the
-    /// panel and starts the next wave.
+    /// Shown between waves: pauses the game (Time.timeScale = 0) so the
+    /// player can freely place and upgrade buildings without time pressure -
+    /// UI input still works while paused. The player picks either a coin
+    /// bonus or a free hex tile, then presses "start next wave" whenever
+    /// ready to resume (at whatever speed GameSpeedController is set to).
     /// </summary>
     public class WaveChoiceUI : MonoBehaviour
     {
+        /// <summary>True while the build-phase panel is open, so PauseController doesn't also try to pause/unpause on top of it.</summary>
+        public static bool IsBuildPhaseActive { get; private set; }
+
         [SerializeField] private GameObject _panel;
         [SerializeField] private TMP_Text _waveSurvivedText;
-        [SerializeField] private TMP_Text _timerText;
-        [SerializeField] private Image _timerBarFill;
         [SerializeField] private Button _coinsButton;
         [SerializeField] private Button _tileButton;
+        [SerializeField] private Button _startNextWaveButton;
         [SerializeField] private HotbarItemData _freeTileItem;
         [SerializeField] private int _coinBonus = 15;
-        [SerializeField] private float _decisionTimeSeconds = 8f;
 
-        private float _timerBarMaxWidth;
-        private float _remainingTime;
-        private bool _waitingForChoice;
-
-        private void Awake()
-        {
-            if (_timerBarFill != null)
-            {
-                _timerBarMaxWidth = _timerBarFill.rectTransform.sizeDelta.x;
-            }
-        }
+        private bool _hasChosenReward;
 
         private void OnEnable()
         {
             WaveManager.OnWaveCleared += HandleWaveCleared;
             _coinsButton.onClick.AddListener(ChooseCoins);
             _tileButton.onClick.AddListener(ChooseTile);
+            _startNextWaveButton.onClick.AddListener(StartNextWave);
         }
 
         private void OnDisable()
@@ -49,6 +43,7 @@ namespace Game.UI
             WaveManager.OnWaveCleared -= HandleWaveCleared;
             _coinsButton.onClick.RemoveListener(ChooseCoins);
             _tileButton.onClick.RemoveListener(ChooseTile);
+            _startNextWaveButton.onClick.RemoveListener(StartNextWave);
         }
 
         private void HandleWaveCleared(int waveNumber)
@@ -58,60 +53,56 @@ namespace Game.UI
                 _waveSurvivedText.text = $"WAVE {waveNumber} OVERLEEFD";
             }
 
-            _remainingTime = _decisionTimeSeconds;
-            _waitingForChoice = true;
-            RefreshTimer(WaveManager.Instance != null ? WaveManager.Instance.CurrentWave + 1 : waveNumber + 1);
+            _hasChosenReward = false;
+            _coinsButton.interactable = true;
+            _tileButton.interactable = true;
+            _startNextWaveButton.interactable = false;
+
+            IsBuildPhaseActive = true;
+            Time.timeScale = 0f;
             _panel.SetActive(true);
-        }
-
-        private void Update()
-        {
-            if (!_waitingForChoice)
-            {
-                return;
-            }
-
-            _remainingTime -= Time.deltaTime;
-            RefreshTimer(WaveManager.Instance != null ? WaveManager.Instance.CurrentWave + 1 : 0);
-
-            if (_remainingTime <= 0f)
-            {
-                ChooseCoins();
-            }
-        }
-
-        private void RefreshTimer(int nextWaveNumber)
-        {
-            float clamped = Mathf.Max(0f, _remainingTime);
-
-            if (_timerText != null)
-            {
-                _timerText.text = $"WAVE {nextWaveNumber} START OVER 0:{Mathf.CeilToInt(clamped):00} - KIEZEN IS VERPLICHT";
-            }
-
-            if (_timerBarFill != null)
-            {
-                float ratio = _decisionTimeSeconds > 0f ? clamped / _decisionTimeSeconds : 0f;
-                _timerBarFill.rectTransform.sizeDelta = new Vector2(_timerBarMaxWidth * Mathf.Clamp01(ratio), _timerBarFill.rectTransform.sizeDelta.y);
-            }
         }
 
         private void ChooseCoins()
         {
-            _waitingForChoice = false;
+            if (_hasChosenReward)
+            {
+                return;
+            }
+
+            _hasChosenReward = true;
             CoinWallet.Instance.AddCoins(_coinBonus);
-            Close();
+            LockRewardChoice();
         }
 
         private void ChooseTile()
         {
-            _waitingForChoice = false;
+            if (_hasChosenReward)
+            {
+                return;
+            }
+
+            _hasChosenReward = true;
             PlacementCursor.Instance.SelectItem(_freeTileItem, free: true);
-            Close();
+            LockRewardChoice();
         }
 
-        private void Close()
+        private void LockRewardChoice()
         {
+            _coinsButton.interactable = false;
+            _tileButton.interactable = false;
+            _startNextWaveButton.interactable = true;
+        }
+
+        private void StartNextWave()
+        {
+            if (!_hasChosenReward)
+            {
+                return;
+            }
+
+            IsBuildPhaseActive = false;
+            Time.timeScale = GameSpeedController.Instance != null ? GameSpeedController.Instance.CurrentSpeed : 1f;
             _panel.SetActive(false);
             WaveManager.Instance.StartNextWave();
         }

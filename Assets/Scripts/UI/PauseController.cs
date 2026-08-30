@@ -16,7 +16,7 @@ namespace Game.UI
 
         private void Update()
         {
-            if (GameOverController.IsGameOver || Keyboard.current == null)
+            if (GameOverController.IsGameOver || WaveChoiceUI.IsBuildPhaseActive || Keyboard.current == null)
             {
                 return;
             }
@@ -30,7 +30,7 @@ namespace Game.UI
         private void SetPaused(bool paused)
         {
             _isPaused = paused;
-            Time.timeScale = paused ? 0f : 1f;
+            Time.timeScale = paused ? 0f : (GameSpeedController.Instance != null ? GameSpeedController.Instance.CurrentSpeed : 1f);
             if (_pausePanel != null)
             {
                 _pausePanel.SetActive(paused);
