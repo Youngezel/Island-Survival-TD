@@ -1,5 +1,6 @@
 using Game.Data;
 using Game.Economy;
+using Game.Systems;
 using Game.Waves;
 using TMPro;
 using UnityEngine;
@@ -11,9 +12,10 @@ namespace Game.UI
     /// Shown between waves: forces the game paused via PauseController (UI
     /// input still works while paused) so the player can freely place and
     /// upgrade buildings without time pressure. Pick either a coin bonus or
-    /// a free hex tile, then resume with the same HUD pause button used
-    /// during combat - there's no dedicated "start next wave" button, since
-    /// resuming and starting the next wave are the same action here.
+    /// a free hex tile, then either the next wave starts on its own
+    /// (GameSettings.AutoStartNextWave) or the resume button becomes usable
+    /// - that button only ever resumes the wave-clear pause, it can't pause
+    /// the game mid-wave (that's what the hamburger menu is for).
     /// </summary>
     public class WaveChoiceUI : MonoBehaviour
     {
@@ -21,6 +23,7 @@ namespace Game.UI
         [SerializeField] private TMP_Text _waveSurvivedText;
         [SerializeField] private Button _coinsButton;
         [SerializeField] private Button _tileButton;
+        [SerializeField] private Button _resumeButton;
         [SerializeField] private HotbarItemData _freeTileItem;
         [SerializeField] private int _coinBonus = 15;
 
@@ -32,6 +35,7 @@ namespace Game.UI
             WaveManager.OnWaveCleared += HandleWaveCleared;
             _coinsButton.onClick.AddListener(ChooseCoins);
             _tileButton.onClick.AddListener(ChooseTile);
+            _resumeButton.onClick.AddListener(HandleResumeButtonClicked);
             PauseController.OnPauseChanged += HandlePauseChanged;
         }
 
@@ -40,6 +44,7 @@ namespace Game.UI
             WaveManager.OnWaveCleared -= HandleWaveCleared;
             _coinsButton.onClick.RemoveListener(ChooseCoins);
             _tileButton.onClick.RemoveListener(ChooseTile);
+            _resumeButton.onClick.RemoveListener(HandleResumeButtonClicked);
             PauseController.OnPauseChanged -= HandlePauseChanged;
         }
 
@@ -54,6 +59,7 @@ namespace Game.UI
             _waitingToStartNextWave = true;
             _coinsButton.interactable = true;
             _tileButton.interactable = true;
+            _resumeButton.interactable = true;
 
             _panel.SetActive(true);
             PauseController.Instance.SetPaused(true);
@@ -69,6 +75,7 @@ namespace Game.UI
             _hasChosenReward = true;
             CoinWallet.Instance.AddCoins(_coinBonus);
             _panel.SetActive(false);
+            MaybeAutoStart();
         }
 
         private void ChooseTile()
@@ -81,9 +88,33 @@ namespace Game.UI
             _hasChosenReward = true;
             PlacementCursor.Instance.SelectItem(_freeTileItem, free: true);
             _panel.SetActive(false);
+            MaybeAutoStart();
         }
 
-        /// <summary>When the shared pause state resumes while a wave was waiting to start, that resume is what kicks off the next wave.</summary>
+        private void MaybeAutoStart()
+        {
+            if (!GameSettings.AutoStartNextWave || !_waitingToStartNextWave)
+            {
+                return;
+            }
+
+            _waitingToStartNextWave = false;
+            StartNextWave();
+            PauseController.Instance.SetPaused(false);
+        }
+
+        /// <summary>The resume button only ever un-pauses the wave-clear pause - a no-op the rest of the time, since it must never pause an active wave.</summary>
+        private void HandleResumeButtonClicked()
+        {
+            if (!_waitingToStartNextWave)
+            {
+                return;
+            }
+
+            PauseController.Instance.SetPaused(false);
+        }
+
+        /// <summary>Reacts to any resume, including one triggered elsewhere (e.g. the hamburger menu closing) while a wave was waiting to start.</summary>
         private void HandlePauseChanged(bool paused)
         {
             if (paused || !_waitingToStartNextWave)
@@ -92,8 +123,14 @@ namespace Game.UI
             }
 
             _waitingToStartNextWave = false;
+            StartNextWave();
+        }
 
-            // Resumed before picking a reward (e.g. via the pause button) - default to the coin bonus rather than losing it.
+        /// <summary>Grants the fallback reward if none was picked, closes the panel, and starts the next wave. Does not touch pause state - callers already have.</summary>
+        private void StartNextWave()
+        {
+            _resumeButton.interactable = false;
+
             if (!_hasChosenReward)
             {
                 CoinWallet.Instance.AddCoins(_coinBonus);
