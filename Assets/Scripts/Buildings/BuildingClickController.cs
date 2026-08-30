@@ -17,6 +17,9 @@ namespace Game.Buildings
     {
         [SerializeField] private Camera _worldCamera;
 
+        // Reused every click to avoid allocating a new array each frame.
+        private readonly Collider2D[] _overlapResults = new Collider2D[16];
+
         private void Awake()
         {
             if (_worldCamera == null)
@@ -46,13 +49,24 @@ namespace Game.Buildings
             Vector3 worldPosition = _worldCamera.ScreenToWorldPoint(new Vector3(screenPosition.x, screenPosition.y, -_worldCamera.transform.position.z));
             worldPosition.z = 0f;
 
-            Collider2D hit = Physics2D.OverlapPoint(worldPosition);
-            if (hit == null)
+            // OverlapPoint would return just one collider, in no guaranteed
+            // order - MapBounds (a map-wide trigger used by the camera
+            // confiner) overlaps every building on the map, and either one
+            // being a trigger means it can "win" over the actual building
+            // underneath the click, silently swallowing it. Check every
+            // collider at this point instead and pick the one that's a
+            // building.
+            int count = Physics2D.OverlapPoint(worldPosition, new ContactFilter2D().NoFilter(), _overlapResults);
+            Building building = null;
+            for (int i = 0; i < count; i++)
             {
-                return;
+                building = _overlapResults[i].GetComponent<Building>();
+                if (building != null)
+                {
+                    break;
+                }
             }
 
-            Building building = hit.GetComponent<Building>();
             if (building == null || building.Data == null || string.IsNullOrEmpty(building.Data.UpgradeSaveKey))
             {
                 return;
