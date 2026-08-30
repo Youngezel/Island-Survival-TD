@@ -56,7 +56,7 @@ namespace Game.Buildings
             // underneath the click, silently swallowing it. Check every
             // collider at this point instead and pick the one that's a
             // building.
-            int count = Physics2D.OverlapPoint(worldPosition, new ContactFilter2D().NoFilter(), _overlapResults);
+            int count = Physics2D.OverlapPoint(worldPosition, ContactFilter2D.noFilter, _overlapResults);
             Building building = null;
             for (int i = 0; i < count; i++)
             {
