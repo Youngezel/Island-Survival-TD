@@ -1,3 +1,4 @@
+using System;
 using Game.Systems;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -5,18 +6,21 @@ using UnityEngine.InputSystem;
 namespace Game.UI
 {
     /// <summary>
-    /// Escape or the HUD pause button toggles a pause indicator and
-    /// freezes/unfreezes Time.timeScale. The indicator doesn't block clicks
-    /// to the hotbar/game view (its background has raycastTarget off) - like
-    /// the between-wave build phase, pausing is meant to let the player
-    /// freely place and upgrade buildings, not lock them out behind a menu.
-    /// Ignored once the game is already over (that has its own freeze).
+    /// Escape or the HUD pause button freezes/unfreezes Time.timeScale.
+    /// There's no on-screen "paused" indicator - the HUD button's own label
+    /// (PAUZE/HERVAT) is the only sign. Pausing never blocks the hotbar or
+    /// building UI, so placing/upgrading works the same whether paused
+    /// manually or by WaveChoiceUI between waves, which also drives this
+    /// same paused state (see SetPaused/OnPauseChanged) rather than
+    /// managing Time.timeScale on its own. Ignored once the game is
+    /// already over (that has its own freeze).
     /// </summary>
     public class PauseController : MonoBehaviour
     {
         public static PauseController Instance { get; private set; }
 
-        [SerializeField] private GameObject _pausePanel;
+        /// <summary>Fired whenever the paused state changes, from any source (Escape, the HUD button, or WaveChoiceUI).</summary>
+        public static event Action<bool> OnPauseChanged;
 
         private bool _isPaused;
 
@@ -29,21 +33,21 @@ namespace Game.UI
 
         private void Update()
         {
-            if (GameOverController.IsGameOver || WaveChoiceUI.IsBuildPhaseActive || Keyboard.current == null)
+            if (GameOverController.IsGameOver || Keyboard.current == null)
             {
                 return;
             }
 
             if (Keyboard.current.escapeKey.wasPressedThisFrame)
             {
-                SetPaused(!_isPaused);
+                TogglePause();
             }
         }
 
-        /// <summary>Toggles pause from the HUD button; ignored under the same conditions Escape is.</summary>
+        /// <summary>Toggles pause, e.g. from the HUD button; ignored once the game is over.</summary>
         public void TogglePause()
         {
-            if (GameOverController.IsGameOver || WaveChoiceUI.IsBuildPhaseActive)
+            if (GameOverController.IsGameOver)
             {
                 return;
             }
@@ -51,14 +55,12 @@ namespace Game.UI
             SetPaused(!_isPaused);
         }
 
-        private void SetPaused(bool paused)
+        /// <summary>Pauses or resumes directly - used by WaveChoiceUI to force a pause on wave-clear regardless of the current state.</summary>
+        public void SetPaused(bool paused)
         {
             _isPaused = paused;
             Time.timeScale = paused ? 0f : (GameSpeedController.Instance != null ? GameSpeedController.Instance.CurrentSpeed : 1f);
-            if (_pausePanel != null)
-            {
-                _pausePanel.SetActive(paused);
-            }
+            OnPauseChanged?.Invoke(paused);
         }
     }
 }
