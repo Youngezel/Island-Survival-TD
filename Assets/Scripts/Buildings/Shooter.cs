@@ -211,7 +211,7 @@ namespace Game.Buildings
             }
             else if (effects.SpreadShot)
             {
-                FireSpread(aimTarget, effects);
+                StartCoroutine(FireSpread(aimTarget, effects, rangeWorldUnits));
             }
             else
             {
@@ -281,45 +281,29 @@ namespace Game.Buildings
         }
 
         /// <summary>
-        /// Fires the real homing shot at the target plus two more pellets -
-        /// each homes in on another nearby enemy if one is in range, so the
-        /// upgrade reliably hits multiple targets instead of only doing
-        /// something when enemies happen to be standing at a fixed spread
-        /// angle. Falls back to firing at that fixed angled point (as
-        /// before) when there's no other enemy around for a pellet to take.
+        /// Fires at the target, then - just like SequentialDoubleShot, as a
+        /// quick two-shot burst - fires again shortly after. The difference
+        /// from a plain double shot is the second shot prefers a DIFFERENT
+        /// nearby enemy over re-hitting the same one, spreading the burst
+        /// across two targets instead of doubling up on one; falls back to
+        /// the same target (like a double shot would) if no other enemy is
+        /// in range.
         /// </summary>
-        private void FireSpread(Enemy target, ActiveEffects effects)
+        private IEnumerator FireSpread(Enemy firstTarget, ActiveEffects effects, float rangeWorldUnits)
         {
-            FireAt(target, effects);
+            FireAt(firstTarget, effects);
+            yield return new WaitForSeconds(0.15f);
 
-            if (_projectilePrefab == null)
+            List<Enemy> nearby = _targeting.FindNearestEnemiesInRange(rangeWorldUnits, 2);
+            nearby.Remove(firstTarget);
+
+            Enemy secondTarget = nearby.Count > 0
+                ? nearby[0]
+                : (firstTarget != null && !firstTarget.IsDead ? firstTarget : _targeting.FindNearestEnemyInRange(rangeWorldUnits));
+
+            if (secondTarget != null)
             {
-                return;
-            }
-
-            float rangeWorldUnits = (_data.Range + effects.RangeBonus) * HexGridManager.Instance.HexStepWorldDistance;
-            List<Enemy> nearby = _targeting.FindNearestEnemiesInRange(rangeWorldUnits, 3);
-            nearby.Remove(target);
-
-            Vector3 toTarget = target.transform.position - transform.position;
-            float distance = toTarget.magnitude;
-            Vector3 direction = toTarget.normalized;
-            float hitRadius = 0.5f * HexGridManager.Instance.HexStepWorldDistance;
-            float[] spreadAngles = { -18f, 18f };
-
-            for (int i = 0; i < spreadAngles.Length; i++)
-            {
-                Projectile pellet = Instantiate(_projectilePrefab, transform.position, Quaternion.identity);
-                if (i < nearby.Count)
-                {
-                    pellet.Initialize(nearby[i], _data.ProjectileSpeed, _data.Damage + effects.DamageBonus, false, 0f);
-                }
-                else
-                {
-                    Vector3 spreadDirection = Quaternion.Euler(0f, 0f, spreadAngles[i]) * direction;
-                    Vector3 endPoint = transform.position + spreadDirection * distance;
-                    pellet.InitializeAtPoint(endPoint, _data.ProjectileSpeed, _data.Damage + effects.DamageBonus, hitRadius);
-                }
+                FireAt(secondTarget, effects);
             }
         }
 
