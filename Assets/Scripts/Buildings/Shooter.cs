@@ -280,7 +280,14 @@ namespace Game.Buildings
             PlayFireAnimation();
         }
 
-        /// <summary>Fires the real homing shot at the target plus two straight pellets angled off to either side.</summary>
+        /// <summary>
+        /// Fires the real homing shot at the target plus two more pellets -
+        /// each homes in on another nearby enemy if one is in range, so the
+        /// upgrade reliably hits multiple targets instead of only doing
+        /// something when enemies happen to be standing at a fixed spread
+        /// angle. Falls back to firing at that fixed angled point (as
+        /// before) when there's no other enemy around for a pellet to take.
+        /// </summary>
         private void FireSpread(Enemy target, ActiveEffects effects)
         {
             FireAt(target, effects);
@@ -290,18 +297,29 @@ namespace Game.Buildings
                 return;
             }
 
+            float rangeWorldUnits = (_data.Range + effects.RangeBonus) * HexGridManager.Instance.HexStepWorldDistance;
+            List<Enemy> nearby = _targeting.FindNearestEnemiesInRange(rangeWorldUnits, 3);
+            nearby.Remove(target);
+
             Vector3 toTarget = target.transform.position - transform.position;
             float distance = toTarget.magnitude;
             Vector3 direction = toTarget.normalized;
             float hitRadius = 0.5f * HexGridManager.Instance.HexStepWorldDistance;
-
             float[] spreadAngles = { -18f, 18f };
-            foreach (float angle in spreadAngles)
+
+            for (int i = 0; i < spreadAngles.Length; i++)
             {
-                Vector3 spreadDirection = Quaternion.Euler(0f, 0f, angle) * direction;
-                Vector3 endPoint = transform.position + spreadDirection * distance;
                 Projectile pellet = Instantiate(_projectilePrefab, transform.position, Quaternion.identity);
-                pellet.InitializeAtPoint(endPoint, _data.ProjectileSpeed, _data.Damage + effects.DamageBonus, hitRadius);
+                if (i < nearby.Count)
+                {
+                    pellet.Initialize(nearby[i], _data.ProjectileSpeed, _data.Damage + effects.DamageBonus, false, 0f);
+                }
+                else
+                {
+                    Vector3 spreadDirection = Quaternion.Euler(0f, 0f, spreadAngles[i]) * direction;
+                    Vector3 endPoint = transform.position + spreadDirection * distance;
+                    pellet.InitializeAtPoint(endPoint, _data.ProjectileSpeed, _data.Damage + effects.DamageBonus, hitRadius);
+                }
             }
         }
 
