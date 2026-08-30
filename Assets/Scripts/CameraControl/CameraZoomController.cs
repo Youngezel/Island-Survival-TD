@@ -16,7 +16,7 @@ namespace Game.CameraControl
         [SerializeField] private CinemachineCamera _virtualCamera;
         [SerializeField] private float _zoomStep = 0.5f;
         [SerializeField] private float _minOrthographicSize = 3f;
-        [SerializeField] private float _maxOrthographicSize = 9f;
+        [SerializeField] private float _maxOrthographicSize = 16f;
 
         private void Update()
         {
