@@ -1,4 +1,3 @@
-using Game.Buildings;
 using Game.Data;
 using Game.Economy;
 using Game.Grid;
@@ -12,14 +11,16 @@ namespace Game.UI
 {
     /// <summary>
     /// A hotbar button representing one purchasable building or hex tile.
-    /// A plain click (turret items only) opens the building inspector to
-    /// view stats and buy a run-only upgrade. Press and drag onto the map
-    /// to place it - releasing over the map places at that hex, releasing
-    /// back over UI cancels. Shows a gold border while a drag from this
-    /// slot is in progress and grays out its cost label while unaffordable,
-    /// per the visual identity spec.
+    /// Press and drag onto the map to place it - releasing over the map
+    /// places at that hex, releasing back over UI cancels. Upgrades are no
+    /// longer available from here: since each placed turret now upgrades
+    /// independently, there's no single shared "this building type" state
+    /// left to show from an unplaced hotbar slot - click an actual placed
+    /// turret instead. Shows a gold border while a drag from this slot is
+    /// in progress and grays out its cost label while unaffordable, per the
+    /// visual identity spec.
     /// </summary>
-    public class HotbarSlot : MonoBehaviour, IPointerClickHandler, IBeginDragHandler, IDragHandler, IEndDragHandler
+    public class HotbarSlot : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler
     {
         [SerializeField] private HotbarItemData _item;
         [SerializeField] private Image _icon;
@@ -70,23 +71,6 @@ namespace Game.UI
             }
 
             RefreshAffordability();
-        }
-
-        /// <summary>A plain click (no drag) opens the inspector for turret items; the ground tile has no stats to show.</summary>
-        public void OnPointerClick(PointerEventData eventData)
-        {
-            if (_item == null || _item.BuildingPrefab == null)
-            {
-                return;
-            }
-
-            Building building = _item.BuildingPrefab.GetComponent<Building>();
-            if (building == null || building.Data == null || string.IsNullOrEmpty(building.Data.UpgradeSaveKey))
-            {
-                return;
-            }
-
-            BuildingInspectorUI.Instance?.Open(building.Data);
         }
 
         public void OnBeginDrag(PointerEventData eventData)

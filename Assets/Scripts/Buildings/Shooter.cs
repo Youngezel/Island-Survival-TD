@@ -1,20 +1,22 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Game.Combat;
 using Game.Data;
 using Game.Enemies;
 using Game.Grid;
-using Game.Systems;
 using UnityEngine;
 
 namespace Game.Buildings
 {
     /// <summary>
     /// Automatically fires at the nearest enemy in range, at a fixed fire
-    /// rate, applying whatever effects are active from this building type's
-    /// committed run-only upgrade path (see RunUpgradeManager). Shared by
-    /// the village and every turret - the village never has an
-    /// UpgradeSaveKey, so it just falls back to its plain base stats.
+    /// rate, applying whatever effects are active from this specific placed
+    /// building's committed run-only upgrade path. Each Shooter instance
+    /// tracks its own path/tier independently - upgrading one turret never
+    /// affects any other turret of the same type. Shared by the village and
+    /// every turret - the village never has an UpgradeSaveKey, so it just
+    /// falls back to its plain base stats.
     /// </summary>
     [RequireComponent(typeof(Targeting))]
     public class Shooter : MonoBehaviour
@@ -44,14 +46,50 @@ namespace Game.Buildings
         private Sprite _headIdleSprite;
         private Coroutine _fireAnimationCoroutine;
 
+        // This placed building's own run-only upgrade progress - separate
+        // from every other instance of the same building type.
+        private bool _hasCommittedPath;
+        private bool _committedPathIsA;
+        private int _tier;
+
         public BuildingData Data => _data;
 
-        /// <summary>How many tiers (0-3) of this building type's committed run-only path are active.</summary>
-        public int RunUpgradeTier => RunUpgradeManager.Instance != null && _data != null ? RunUpgradeManager.Instance.GetTier(_data.UpgradeSaveKey) : 0;
+        /// <summary>Fired whenever this instance's committed path or tier changes, so its open inspector (if any) can refresh.</summary>
+        public event Action OnUpgradeChanged;
 
-        public bool HasCommittedPath => RunUpgradeManager.Instance != null && _data != null && RunUpgradeManager.Instance.HasCommittedPath(_data.UpgradeSaveKey);
+        /// <summary>How many tiers (0-3) of this instance's committed run-only path are active.</summary>
+        public int RunUpgradeTier => _tier;
 
-        public bool IsPathACommitted => RunUpgradeManager.Instance != null && _data != null && RunUpgradeManager.Instance.IsPathA(_data.UpgradeSaveKey);
+        public bool HasCommittedPath => _hasCommittedPath;
+
+        public bool IsPathACommitted => _hasCommittedPath && _committedPathIsA;
+
+        /// <summary>
+        /// Activates the next tier of the given path on this instance,
+        /// committing it to that path if none is committed yet. Returns
+        /// false without changing anything if the other path is already
+        /// committed, or this path is already fully activated - the caller
+        /// (BuildingInspectorUI) is responsible for checking the tier is
+        /// permanently unlocked and spending the coins before calling this.
+        /// </summary>
+        public bool TryActivateNextTier(bool pathA)
+        {
+            if (_hasCommittedPath && _committedPathIsA != pathA)
+            {
+                return false;
+            }
+
+            if (_hasCommittedPath && _tier >= 3)
+            {
+                return false;
+            }
+
+            _hasCommittedPath = true;
+            _committedPathIsA = pathA;
+            _tier++;
+            OnUpgradeChanged?.Invoke();
+            return true;
+        }
 
         /// <summary>Current damage per shot, including any active run-only path bonus.</summary>
         public int CurrentDamage => _data.Damage + ComputeActiveEffects().DamageBonus;
@@ -79,19 +117,13 @@ namespace Game.Buildings
         private ActiveEffects ComputeActiveEffects()
         {
             var effects = new ActiveEffects();
-            if (_data == null || RunUpgradeManager.Instance == null || string.IsNullOrEmpty(_data.UpgradeSaveKey))
+            if (_data == null || string.IsNullOrEmpty(_data.UpgradeSaveKey) || !_hasCommittedPath)
             {
                 return effects;
             }
 
-            if (!RunUpgradeManager.Instance.HasCommittedPath(_data.UpgradeSaveKey))
-            {
-                return effects;
-            }
-
-            bool isPathA = RunUpgradeManager.Instance.IsPathA(_data.UpgradeSaveKey);
-            UpgradePath path = isPathA ? _data.PathA : _data.PathB;
-            int tier = RunUpgradeManager.Instance.GetTier(_data.UpgradeSaveKey);
+            UpgradePath path = _committedPathIsA ? _data.PathA : _data.PathB;
+            int tier = _tier;
 
             for (int i = 0; i < tier && path != null && i < path.Nodes.Length; i++)
             {

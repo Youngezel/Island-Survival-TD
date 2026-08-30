@@ -23,6 +23,7 @@ namespace Game.Combat
         private const float SmallImpactRadius = 0.35f;
 
         [SerializeField] private ImpactEffect _impactEffectPrefab;
+        [SerializeField] private FireVfx _fireVfxPrefab;
 
         private Enemy _target;
         private Vector3 _lastKnownTargetPosition;
@@ -204,7 +205,7 @@ namespace Game.Combat
                     burning = enemy.gameObject.AddComponent<Burning>();
                 }
 
-                burning.Apply(health, _fireDamagePerSecond);
+                burning.Apply(health, _fireDamagePerSecond, _fireVfxPrefab);
             }
         }
     }

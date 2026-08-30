@@ -59,6 +59,8 @@ namespace Game.EditorTools
             SaveTileSprite("spr_tile_grass_3", DrawHexTileGrass(3));
             SaveTileSprite("spr_tile_coast_skirt", DrawCoastSkirt());
             SaveSprite("spr_explosion", DrawExplosion(), pivotBottomCenter: false, ppu: 32);
+            SaveSprite("spr_fire_flame_a", DrawFireFlame(false), pivotBottomCenter: true, ppu: 32);
+            SaveSprite("spr_fire_flame_b", DrawFireFlame(true), pivotBottomCenter: true, ppu: 32);
 
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
@@ -360,6 +362,25 @@ namespace Game.EditorTools
             c.Circle(16, 16, 9, Danger);
             c.Circle(16, 16, 6, Gold);
             c.Circle(16, 16, 3, Parchment);
+            return c;
+        }
+
+        /// <summary>
+        /// A small flame licking upward, used as a looping burn indicator on
+        /// enemies hit by fire-damage upgrades. Two variants (alternated at
+        /// runtime) give it a flicker: the second leans and stretches
+        /// slightly taller than the first.
+        /// </summary>
+        private static PixelCanvas DrawFireFlame(bool variant)
+        {
+            var c = new PixelCanvas(16, 20);
+            int lean = variant ? 1 : 0;
+            int tipHeight = variant ? 18 : 15;
+
+            c.Circle(8, 4, 5, DangerDark);
+            c.Circle(8 + lean, 9, 4, Danger);
+            c.Circle(8 + lean * 2, tipHeight - 3, 3, Gold);
+            c.Circle(8 + lean * 2, tipHeight, 1, Parchment);
             return c;
         }
 

@@ -10,14 +10,14 @@ using UnityEngine.UI;
 namespace Game.UI
 {
     /// <summary>
-    /// Popup opened by clicking a placed turret or its hotbar slot: shows
-    /// its live stats and its two upgrade paths. Each path has 3 tiers;
-    /// a tier must first be permanently unlocked with XP in the main menu
-    /// before it can be activated here with in-run coins. Activating the
-    /// first tier of a path commits this building TYPE to that path for
-    /// the rest of the run - the other path locks out entirely, matching
-    /// RunUpgradeManager, which tracks the committed path and reached tier
-    /// per building type (not per placed instance).
+    /// Popup opened by clicking a placed turret: shows its live stats and
+    /// its two upgrade paths. Each path has 3 tiers; a tier must first be
+    /// permanently unlocked with XP in the main menu before it can be
+    /// activated here with in-run coins. Activating the first tier of a
+    /// path commits this specific placed building (its Shooter) to that
+    /// path for the rest of the run - the other path locks out entirely,
+    /// but every other turret of the same type keeps upgrading (or not)
+    /// completely independently.
     /// </summary>
     public class BuildingInspectorUI : MonoBehaviour
     {
@@ -79,26 +79,22 @@ namespace Game.UI
             {
                 CoinWallet.Instance.OnCoinsChanged += HandleChanged;
             }
-
-            if (RunUpgradeManager.Instance != null)
-            {
-                RunUpgradeManager.Instance.OnChanged += HandleKeyChanged;
-            }
         }
 
         /// <summary>
-        /// Opens the inspector for a building type. <paramref name="building"/>
-        /// is the specific placed instance that was clicked, if any - passing
-        /// it lets the panel auto-close if that turret dies while open; pass
-        /// null when opened from a hotbar slot, before anything is placed.
+        /// Opens the inspector for the specific placed turret that was
+        /// clicked - its stats and upgrade path belong to that instance
+        /// alone. Also lets the panel auto-close if that turret dies or
+        /// refresh if its upgrade state changes while open.
         /// </summary>
-        public void Open(BuildingData data, Building building = null)
+        public void Open(BuildingData data, Building building)
         {
             _currentData = data;
             _currentBuilding = building;
             if (_currentBuilding != null)
             {
                 _currentBuilding.Health.OnDeath += HandleBuildingDied;
+                _currentBuilding.Shooter.OnUpgradeChanged += HandleUpgradeChanged;
             }
 
             _panel.SetActive(true);
@@ -110,6 +106,7 @@ namespace Game.UI
             if (_currentBuilding != null)
             {
                 _currentBuilding.Health.OnDeath -= HandleBuildingDied;
+                _currentBuilding.Shooter.OnUpgradeChanged -= HandleUpgradeChanged;
             }
 
             _currentData = null;
@@ -130,9 +127,9 @@ namespace Game.UI
             }
         }
 
-        private void HandleKeyChanged(string key)
+        private void HandleUpgradeChanged()
         {
-            if (_currentData != null && _currentData.UpgradeSaveKey == key)
+            if (_currentData != null)
             {
                 Refresh();
             }
@@ -140,11 +137,12 @@ namespace Game.UI
 
         private void TryActivate(bool pathA, int tierIndex)
         {
-            if (_currentData == null || CoinWallet.Instance == null || RunUpgradeManager.Instance == null || SaveManager.Instance == null)
+            if (_currentData == null || _currentBuilding == null || CoinWallet.Instance == null || SaveManager.Instance == null)
             {
                 return;
             }
 
+            Shooter shooter = _currentBuilding.Shooter;
             string key = _currentData.UpgradeSaveKey;
             int unlockedTier = SaveManager.Instance.GetUnlockedTier(key, pathA);
             if (unlockedTier <= tierIndex)
@@ -152,13 +150,13 @@ namespace Game.UI
                 return;
             }
 
-            bool committed = RunUpgradeManager.Instance.HasCommittedPath(key);
-            if (committed && RunUpgradeManager.Instance.IsPathA(key) != pathA)
+            bool committed = shooter.HasCommittedPath;
+            if (committed && shooter.IsPathACommitted != pathA)
             {
                 return;
             }
 
-            int currentTier = committed ? RunUpgradeManager.Instance.GetTier(key) : 0;
+            int currentTier = committed ? shooter.RunUpgradeTier : 0;
             if (currentTier != tierIndex)
             {
                 return;
@@ -172,7 +170,7 @@ namespace Game.UI
                 return;
             }
 
-            RunUpgradeManager.Instance.TryActivateNextTier(key, pathA);
+            shooter.TryActivateNextTier(pathA);
             Refresh();
         }
 
@@ -208,9 +206,10 @@ namespace Game.UI
                 }
             }
 
-            int tier = RunUpgradeManager.Instance != null ? RunUpgradeManager.Instance.GetTier(_currentData.UpgradeSaveKey) : 0;
-            bool committed = RunUpgradeManager.Instance != null && RunUpgradeManager.Instance.HasCommittedPath(_currentData.UpgradeSaveKey);
-            bool pathAActive = committed && RunUpgradeManager.Instance.IsPathA(_currentData.UpgradeSaveKey);
+            Shooter shooter = _currentBuilding != null ? _currentBuilding.Shooter : null;
+            int tier = shooter != null ? shooter.RunUpgradeTier : 0;
+            bool committed = shooter != null && shooter.HasCommittedPath;
+            bool pathAActive = committed && shooter.IsPathACommitted;
 
             int damageBonus = 0;
             float rangeBonus = 0f;
@@ -253,17 +252,18 @@ namespace Game.UI
 
         private void RefreshPath(UpgradePath path, bool isPathA, NodeRow[] rows)
         {
-            if (path == null || _currentData == null)
+            if (path == null || _currentData == null || _currentBuilding == null)
             {
                 return;
             }
 
+            Shooter shooter = _currentBuilding.Shooter;
             string key = _currentData.UpgradeSaveKey;
             int unlockedTier = SaveManager.Instance != null ? SaveManager.Instance.GetUnlockedTier(key, isPathA) : 0;
-            bool committed = RunUpgradeManager.Instance != null && RunUpgradeManager.Instance.HasCommittedPath(key);
-            bool thisPathCommitted = committed && RunUpgradeManager.Instance.IsPathA(key) == isPathA;
+            bool committed = shooter.HasCommittedPath;
+            bool thisPathCommitted = committed && shooter.IsPathACommitted == isPathA;
             bool otherPathCommitted = committed && !thisPathCommitted;
-            int activeTier = thisPathCommitted && RunUpgradeManager.Instance != null ? RunUpgradeManager.Instance.GetTier(key) : 0;
+            int activeTier = thisPathCommitted ? shooter.RunUpgradeTier : 0;
 
             for (int i = 0; i < rows.Length && i < path.Nodes.Length; i++)
             {
