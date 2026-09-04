@@ -107,6 +107,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Game.Combat.Health
   _maxHealth: 1
+  _damageNumberPrefab: {fileID: 989325209535449084, guid: c286a0802af49d04b8219cb0802390b9, type: 3}
 --- !u!114 &7385725000184331525
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -10,6 +10,7 @@ namespace Game.Combat
     public class Health : MonoBehaviour
     {
         [SerializeField] private int _maxHealth = 1;
+        [SerializeField] private DamageNumber _damageNumberPrefab;
 
         public int MaxHealth => _maxHealth;
         public int CurrentHealth { get; private set; }
@@ -38,11 +39,23 @@ namespace Game.Combat
 
             CurrentHealth = Mathf.Max(0, CurrentHealth - amount);
             OnDamaged?.Invoke(amount);
+            SpawnDamageNumber(amount);
 
             if (IsDead)
             {
                 OnDeath?.Invoke();
             }
+        }
+
+        private void SpawnDamageNumber(int amount)
+        {
+            if (_damageNumberPrefab == null)
+            {
+                return;
+            }
+
+            DamageNumber number = Instantiate(_damageNumberPrefab, transform.position, Quaternion.identity);
+            number.SetValue(amount);
         }
     }
 }

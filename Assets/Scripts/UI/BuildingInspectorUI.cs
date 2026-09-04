@@ -2,6 +2,7 @@ using System;
 using Game.Buildings;
 using Game.Data;
 using Game.Economy;
+using Game.Grid;
 using Game.Systems;
 using TMPro;
 using UnityEngine;
@@ -41,6 +42,7 @@ namespace Game.UI
         [SerializeField] private Button _closeButton;
         [SerializeField] private Button _sellButton;
         [SerializeField] private TMP_Text _sellButtonText;
+        [SerializeField] private RangeIndicator _rangeIndicator;
 
         private const float SellRefundFraction = 0.5f;
 
@@ -112,6 +114,25 @@ namespace Game.UI
             _currentData = null;
             _currentBuilding = null;
             _panel.SetActive(false);
+            _rangeIndicator?.Hide();
+        }
+
+        /// <summary>Draws (or updates) the range ring around the inspected turret - called on open and again on Refresh so a range upgrade resizes it live.</summary>
+        private void RefreshRangeIndicator()
+        {
+            if (_rangeIndicator == null)
+            {
+                return;
+            }
+
+            if (_currentBuilding == null || _currentBuilding.Shooter == null || HexGridManager.Instance == null)
+            {
+                _rangeIndicator.Hide();
+                return;
+            }
+
+            float worldRadius = _currentBuilding.Shooter.CurrentRange * HexGridManager.Instance.HexStepWorldDistance;
+            _rangeIndicator.Show(_currentBuilding.transform.position, worldRadius);
         }
 
         private void HandleBuildingDied()
@@ -248,6 +269,7 @@ namespace Game.UI
 
             RefreshPath(_currentData.PathA, true, _pathARows);
             RefreshPath(_currentData.PathB, false, _pathBRows);
+            RefreshRangeIndicator();
         }
 
         private void RefreshPath(UpgradePath path, bool isPathA, NodeRow[] rows)
