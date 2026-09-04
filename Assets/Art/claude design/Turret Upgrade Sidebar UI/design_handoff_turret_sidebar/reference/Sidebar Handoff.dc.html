@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Silkscreen:wght@400;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
+<style>
+  html, body { margin: 0; background: #14101A; }
+  * { image-rendering: pixelated; }
+  a { color: #FFCF3F; }
+  a:hover { color: #F4E4C1; }
+</style>
+</helmet>
+
+<div style="min-height: 100vh; background: #14101A; font-family: 'JetBrains Mono', monospace; color: #F4E4C1; padding: 56px 48px 96px; display: flex; flex-direction: column; gap: 56px;">
+
+  <div style="display: flex; flex-direction: column; gap: 10px; max-width: 900px;">
+    <div style="font-family: Silkscreen, monospace; font-size: 12px; letter-spacing: 2px; color: #9DB0C0;">ISLAND SURVIVAL TD — UI HANDOFF 01</div>
+    <div style="font-family: Silkscreen, monospace; font-size: 32px; line-height: 1.2; color: #FFCF3F;">TURRET UPGRADE SIDEBAR</div>
+    <div style="font-size: 13px; line-height: 1.7; color: #9DB0C0; text-wrap: pretty;">18 sprites, authored 1:1 against the 640&times;360 frame. Point filter, no AA, palette-locked. Full manifest, import settings and 9-slice insets in <code style="color:#F4E4C1">README.md</code>.</div>
+  </div>
+
+  <div style="display: flex; flex-wrap: wrap; gap: 48px; align-items: flex-start;">
+
+    <div style="display: flex; flex-direction: column; gap: 14px;">
+      <div style="font-family: Silkscreen, monospace; font-size: 11px; letter-spacing: 2px; color: #6F8296;">ASSEMBLED &mdash; 2&times;</div>
+      <div style="position: relative; width: 560px; box-sizing: border-box; border-style: solid; border-width: 16px; border-color: #5C3A1E; border-image: url(sprites/spr_ui_panel_sidebar.png) 8 fill stretch; background: #1A1420; padding: 8px; display: flex; flex-direction: column; gap: 0;">
+
+        <div style="display: flex; align-items: flex-start; justify-content: space-between;">
+          <div style="display: flex; flex-direction: column; gap: 8px;">
+            <div style="font-family: Silkscreen, monospace; font-size: 22px; color: #F4E4C1; letter-spacing: 1px;">MORTAR</div>
+            <div style="display: flex; flex-direction: column; gap: 5px; font-family: Silkscreen, monospace; font-size: 13px; color: #9DB0C0;">
+              <div>DAMAGE: <span style="color:#F4E4C1">3</span></div>
+              <div>RANGE: <span style="color:#F4E4C1">8 TILES</span></div>
+              <div>FIRE RATE: <span style="color:#F4E4C1">0.5/S</span></div>
+            </div>
+          </div>
+          <img src="sprites/spr_ui_btn_close.png" alt="close" style="width: 32px; height: 32px; display: block;" />
+        </div>
+
+        <img src="sprites/spr_ui_divider.png" alt="" style="width: 100%; height: 4px; display: block; margin: 22px 0 16px;" />
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+          <div style="font-family: Silkscreen, monospace; font-size: 13px; color: #F4E4C1; text-align: center; letter-spacing: 2px;">PAD A</div>
+          <div style="font-family: Silkscreen, monospace; font-size: 13px; color: #F4E4C1; text-align: center; letter-spacing: 2px;">PAD B</div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px 16px; margin-top: 12px;">
+
+          <div style="position: relative; height: 64px;">
+            <img src="sprites/spr_ui_row_active.png" alt="" style="position: absolute; inset: 0; width: 100%; height: 100%;" />
+            <div style="position: absolute; inset: 0; display: flex; align-items: center; gap: 8px; padding-left: 18px;">
+              <img src="sprites/spr_ui_glyph_check.png" alt="" style="width: 24px; height: 24px;" />
+              <img src="sprites/spr_ui_glyph_range.png" alt="" style="width: 24px; height: 24px;" />
+              <span style="font-family: Silkscreen, monospace; font-size: 12px; color: #FFCF3F;">MEER RANGE</span>
+            </div>
+          </div>
+
+          <div style="position: relative; height: 64px;">
+            <img src="sprites/spr_ui_row_buy.png" alt="" style="position: absolute; inset: 0; width: 100%; height: 100%;" />
+            <div style="position: absolute; inset: 0; display: flex; align-items: center; gap: 8px; padding: 0 12px;">
+              <img src="sprites/spr_ui_glyph_multishot.png" alt="" style="width: 24px; height: 24px; filter: none;" />
+              <span style="font-family: Silkscreen, monospace; font-size: 12px; color: #3D2A12;">DUBBELSCHOT</span>
+              <span style="margin-left: auto; display: flex; align-items: center; gap: 4px;">
+                <img src="sprites/spr_ui_glyph_coin.png" alt="" style="width: 24px; height: 24px;" />
+                <span style="font-family: Silkscreen, monospace; font-size: 12px; color: #3D2A12;">130</span>
+              </span>
+            </div>
+          </div>
+
+          <div style="position: relative; height: 64px;">
+            <img src="sprites/spr_ui_row_pathlocked.png" alt="" style="position: absolute; inset: 0; width: 100%; height: 100%;" />
+            <div style="position: absolute; inset: 0; display: flex; align-items: center; gap: 8px; padding-left: 12px;">
+              <img src="sprites/spr_ui_glyph_cross.png" alt="" style="width: 24px; height: 24px;" />
+              <img src="sprites/spr_ui_glyph_splash.png" alt="" style="width: 24px; height: 24px;" />
+              <span style="font-family: Silkscreen, monospace; font-size: 12px; color: #6F8296;">SPLASH RADIUS</span>
+            </div>
+          </div>
+
+          <div style="position: relative; height: 64px;">
+            <img src="sprites/spr_ui_row_pathlocked.png" alt="" style="position: absolute; inset: 0; width: 100%; height: 100%;" />
+            <div style="position: absolute; inset: 0; display: flex; align-items: center; gap: 8px; padding-left: 12px;">
+              <img src="sprites/spr_ui_glyph_cross.png" alt="" style="width: 24px; height: 24px;" />
+              <img src="sprites/spr_ui_glyph_pierce.png" alt="" style="width: 24px; height: 24px;" />
+              <span style="font-family: Silkscreen, monospace; font-size: 12px; color: #6F8296;">SPREIDSCHOT</span>
+            </div>
+          </div>
+
+          <div style="position: relative; height: 64px;">
+            <img src="sprites/spr_ui_row_locked.png" alt="" style="position: absolute; inset: 0; width: 100%; height: 100%;" />
+            <div style="position: absolute; inset: 0; display: flex; align-items: center; gap: 8px; padding-left: 12px;">
+              <img src="sprites/spr_ui_glyph_padlock.png" alt="" style="width: 24px; height: 24px;" />
+              <span style="font-family: Silkscreen, monospace; font-size: 12px; color: #6F8296; line-height: 1.4;">MEER RANGE<br />(HOOFDMENU)</span>
+            </div>
+          </div>
+
+          <div style="position: relative; height: 64px;">
+            <img src="sprites/spr_ui_row_locked.png" alt="" style="position: absolute; inset: 0; width: 100%; height: 100%;" />
+            <div style="position: absolute; inset: 0; display: flex; align-items: center; gap: 8px; padding-left: 12px;">
+              <img src="sprites/spr_ui_glyph_padlock.png" alt="" style="width: 24px; height: 24px;" />
+              <span style="font-family: Silkscreen, monospace; font-size: 12px; color: #6F8296; line-height: 1.4;">MEER DAMAGE<br />(HOOFDMENU)</span>
+            </div>
+          </div>
+        </div>
+
+        <div style="position: relative; height: 64px; margin-top: 16px;">
+          <img src="sprites/spr_ui_btn_sell.png" alt="" style="position: absolute; inset: 0; width: 100%; height: 100%;" />
+          <div style="position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-family: Silkscreen, monospace; font-size: 14px; color: #F4E4C1; letter-spacing: 1px;">VERKOOP &nbsp;+60 MUNT</div>
+        </div>
+      </div>
+      <div style="font-size: 11px; color: #6F8296; line-height: 1.6; max-width: 560px;">Mock only &mdash; text is UGUI, not baked. Rows shown at 124&times;32 (9-sliced from 256&times;32) as they sit in the two-column grid.</div>
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 28px; flex: 1; min-width: 360px;">
+
+      <div style="display: flex; flex-direction: column; gap: 14px;">
+        <div style="font-family: Silkscreen, monospace; font-size: 11px; letter-spacing: 2px; color: #6F8296;">ROW STATES &mdash; 2&times;, ACTUAL 256&times;32</div>
+        <div style="display: flex; flex-direction: column; gap: 12px;">
+          <div style="display: flex; align-items: center; gap: 16px;">
+            <img src="sprites/spr_ui_row_locked.png" alt="locked" style="width: 512px; height: 64px;" />
+            <div style="font-size: 11px; color: #9DB0C0; line-height: 1.6;">LOCKED<br /><span style="color:#6F8296">needs unlock &middot; insets 6</span></div>
+          </div>
+          <div style="display: flex; align-items: center; gap: 16px;">
+            <img src="sprites/spr_ui_row_buy.png" alt="purchasable" style="width: 512px; height: 64px;" />
+            <div style="font-size: 11px; color: #9DB0C0; line-height: 1.6;">BUY<br /><span style="color:#6F8296">affordable &middot; insets 6</span></div>
+          </div>
+          <div style="display: flex; align-items: center; gap: 16px;">
+            <img src="sprites/spr_ui_row_active.png" alt="active" style="width: 512px; height: 64px;" />
+            <div style="font-size: 11px; color: #9DB0C0; line-height: 1.6;">ACTIVE<br /><span style="color:#6F8296">equipped &middot; L inset 8</span></div>
+          </div>
+          <div style="display: flex; align-items: center; gap: 16px;">
+            <img src="sprites/spr_ui_row_pathlocked.png" alt="path locked" style="width: 512px; height: 64px;" />
+            <div style="font-size: 11px; color: #9DB0C0; line-height: 1.6;">PATH-LOCKED<br /><span style="color:#6F8296">tiled, not sliced</span></div>
+          </div>
+          <div style="display: flex; align-items: center; gap: 16px;">
+            <img src="sprites/spr_ui_btn_sell.png" alt="sell" style="width: 512px; height: 64px;" />
+            <div style="font-size: 11px; color: #9DB0C0; line-height: 1.6;">SELL<br /><span style="color:#6F8296">insets 6</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 14px;">
+        <div style="font-family: Silkscreen, monospace; font-size: 11px; letter-spacing: 2px; color: #6F8296;">PANEL FRAME &mdash; 32&times;32, INSETS 8</div>
+        <div style="display: flex; gap: 24px; align-items: flex-end; flex-wrap: wrap;">
+          <div style="display: flex; flex-direction: column; gap: 8px;">
+            <img src="sprites/spr_ui_panel_sidebar.png" alt="panel source" style="width: 256px; height: 256px; background: #0F0C14;" />
+            <div style="font-size: 11px; color: #6F8296;">source 8&times;</div>
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 8px;">
+            <div style="width: 200px; height: 120px; box-sizing: border-box; border-style: solid; border-width: 16px; border-color: #5C3A1E; border-image: url(sprites/spr_ui_panel_sidebar.png) 8 fill stretch; background: #1A1420;"></div>
+            <div style="font-size: 11px; color: #6F8296;">sliced to 100&times;60 @2&times;</div>
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 8px;">
+            <img src="sprites/spr_ui_divider.png" alt="divider" style="width: 200px; height: 8px;" />
+            <div style="font-size: 11px; color: #6F8296;">divider 32&times;2</div>
+          </div>
+        </div>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 14px;">
+        <div style="font-family: Silkscreen, monospace; font-size: 11px; letter-spacing: 2px; color: #6F8296;">GLYPHS &mdash; 16&times;16, 4&times;</div>
+        <div style="display: flex; flex-wrap: wrap; gap: 12px;">
+          <sc-for list="{{ glyphs }}" as="g" hint-placeholder-count="10">
+            <div style="width: 92px; display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 10px 4px; background: #1A1420; border: 1px solid #3A2A30;">
+              <img src="{{ g.src }}" alt="" style="width: 64px; height: 64px;" />
+              <div style="font-size: 9px; color: #9DB0C0; text-align: center; line-height: 1.4;">{{ g.label }}</div>
+            </div>
+          </sc-for>
+        </div>
+        <div style="font-size: 11px; color: #6F8296; line-height: 1.6; max-width: 620px;">All six type glyphs are single-tone <code style="color:#F4E4C1">#F4E4C1</code> &mdash; detail is carried by empty pixels, not a second color, so they tint cleanly. Tinted per state via <code style="color:#F4E4C1">Image.color</code> &mdash; <code style="color:#F4E4C1">#3D2A12</code> on gold rows, <code style="color:#F4E4C1">#FFCF3F</code> when active, <code style="color:#F4E4C1">#6F8296</code> when locked. Marker glyphs (padlock / check / cross / coin) are pre-colored.</div>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 12px; padding: 20px; background: #1A1420; border: 1px solid #3A2A30;">
+        <div style="font-family: Silkscreen, monospace; font-size: 11px; letter-spacing: 2px; color: #FFCF3F;">PALETTE CHECK</div>
+        <div style="display: flex; flex-wrap: wrap; gap: 6px;">
+          <sc-for list="{{ swatches }}" as="s" hint-placeholder-count="14">
+            <div style="width: 64px;">
+              <div style="height: 32px; background: {{ s.hex }}; border: 1px solid #3A2A30;"></div>
+              <div style="font-size: 8px; color: #6F8296; padding-top: 4px;">{{ s.hex }}</div>
+            </div>
+          </sc-for>
+        </div>
+        <div style="font-size: 11px; color: #9DB0C0; line-height: 1.6;">No hues added. Every pixel in the set is one of these 14 values.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  renderVals() {
+    const g = (n, label) => ({ src: `sprites/spr_ui_glyph_${n}.png`, label });
+    return {
+      glyphs: [
+        g('damage', 'DAMAGE'), g('range', 'RANGE'), g('firerate', 'FIRE RATE'),
+        g('splash', 'SPLASH'), g('pierce', 'PIERCING'), g('multishot', 'MULTI / SPREAD'),
+        g('padlock', 'PADLOCK'), g('check', 'OWNED'), g('cross', 'UNAVAILABLE'), g('coin', 'COIN')
+      ],
+      swatches: ['#1A1420','#221A20','#2A2028','#3A2A30','#8B5A2B','#5C3A1E','#FFCF3F','#C99B1E','#E0503A','#B83A28','#F4E4C1','#9DB0C0','#6F8296','#3D2A12'].map(hex => ({ hex }))
+    };
+  }
+}
+
+</script>
+</body>
+</html>

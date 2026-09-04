@@ -28,6 +28,8 @@ namespace Game.UI
             public Image Background;
             public TMP_Text Label;
             public Button Button;
+            public Image StateGlyph;
+            public Image TypeGlyph;
         }
 
         public static BuildingInspectorUI Instance { get; private set; }
@@ -43,6 +45,27 @@ namespace Game.UI
         [SerializeField] private Button _sellButton;
         [SerializeField] private TMP_Text _sellButtonText;
         [SerializeField] private RangeIndicator _rangeIndicator;
+
+        // Row-state art from the sidebar UI design handoff - swapped onto
+        // NodeRow.Background instead of tinting a flat color rect.
+        [SerializeField] private Sprite _rowLockedSprite;
+        [SerializeField] private Sprite _rowBuySprite;
+        [SerializeField] private Sprite _rowActiveSprite;
+        [SerializeField] private Sprite _rowPathLockedSprite;
+        [SerializeField] private Sprite _glyphPadlock;
+        [SerializeField] private Sprite _glyphCheck;
+        [SerializeField] private Sprite _glyphCross;
+        [SerializeField] private Sprite _glyphDamage;
+        [SerializeField] private Sprite _glyphRange;
+        [SerializeField] private Sprite _glyphFireRate;
+        [SerializeField] private Sprite _glyphSplash;
+        [SerializeField] private Sprite _glyphPierce;
+        [SerializeField] private Sprite _glyphMultiShot;
+
+        // "Purchasable but can't afford it yet" isn't a state the handoff
+        // cut a separate asset for - its own recommendation is row_buy
+        // multiply-tinted with the gold-shadow color instead.
+        private static readonly Color UnaffordableTint = UITheme.GoldShadow;
 
         private const float SellRefundFraction = 0.5f;
 
@@ -295,43 +318,108 @@ namespace Game.UI
                 bool isActive = thisPathCommitted && activeTier > i;
                 bool isNextActivatable = permanentlyUnlocked && !otherPathCommitted && !isActive && activeTier == i;
 
+                if (row.TypeGlyph != null)
+                {
+                    row.TypeGlyph.sprite = GlyphFor(node.Effect);
+                }
+
                 if (otherPathCommitted)
                 {
-                    row.Label.text = node.Name;
-                    row.Background.color = UITheme.SlotBackground;
-                    row.Button.interactable = false;
-                    row.Label.color = UITheme.TextDisabled;
+                    ApplyPathLockedVisual(row, node);
                 }
                 else if (isActive)
                 {
-                    row.Label.text = $"{node.Name}\nACTIEF";
-                    row.Background.color = UITheme.Gold;
-                    row.Button.interactable = false;
-                    row.Label.color = UITheme.ButtonTextDark;
+                    ApplyActiveVisual(row, node);
                 }
                 else if (!permanentlyUnlocked)
                 {
-                    row.Label.text = $"{node.Name}\n(hoofdmenu)";
-                    row.Background.color = UITheme.SlotBackground;
-                    row.Button.interactable = false;
-                    row.Label.color = UITheme.TextDisabled;
+                    ApplyLockedVisual(row, node, "(hoofdmenu)");
                 }
                 else if (isNextActivatable)
                 {
                     bool affordable = CoinWallet.Instance != null && CoinWallet.Instance.Coins >= node.ApplyCost;
-                    row.Label.text = $"{node.Name}\n{node.ApplyCost} COINS";
-                    row.Background.color = affordable ? UITheme.Gold : UITheme.SlotBackground;
-                    row.Button.interactable = affordable;
-                    row.Label.color = affordable ? UITheme.ButtonTextDark : UITheme.TextDisabled;
+                    ApplyBuyVisual(row, node, affordable);
                 }
                 else
                 {
-                    row.Label.text = node.Name;
-                    row.Background.color = UITheme.SlotBackground;
-                    row.Button.interactable = false;
-                    row.Label.color = UITheme.TextDisabled;
+                    // Permanently unlocked but this run hasn't reached this
+                    // tier yet - reads the same as "locked" since it isn't
+                    // reachable until the earlier tiers are bought.
+                    ApplyLockedVisual(row, node, null);
                 }
             }
+        }
+
+        private Sprite GlyphFor(UpgradeEffect effect)
+        {
+            switch (effect)
+            {
+                case UpgradeEffect.Damage: return _glyphDamage;
+                case UpgradeEffect.Range: return _glyphRange;
+                case UpgradeEffect.FireRate: return _glyphFireRate;
+                case UpgradeEffect.SplashDamage: return _glyphSplash;
+                case UpgradeEffect.PiercingShot: return _glyphPierce;
+                case UpgradeEffect.SpreadShot:
+                case UpgradeEffect.SequentialDoubleShot:
+                case UpgradeEffect.MultiTargetShot:
+                    return _glyphMultiShot;
+                case UpgradeEffect.FireDamage:
+                    return _glyphDamage;
+                default:
+                    return null;
+            }
+        }
+
+        private void ApplyLockedVisual(NodeRow row, UpgradeNode node, string suffix)
+        {
+            row.Label.text = suffix != null ? $"{node.Name}\n{suffix}" : node.Name;
+            row.Background.sprite = _rowLockedSprite;
+            row.Background.color = Color.white;
+            row.Button.interactable = false;
+            row.Label.color = UITheme.TextDisabled;
+            SetGlyph(row.StateGlyph, _glyphPadlock, UITheme.TextDisabled);
+        }
+
+        private void ApplyActiveVisual(NodeRow row, UpgradeNode node)
+        {
+            row.Label.text = $"{node.Name}\nACTIEF";
+            row.Background.sprite = _rowActiveSprite;
+            row.Background.color = Color.white;
+            row.Button.interactable = false;
+            row.Label.color = UITheme.Gold;
+            SetGlyph(row.StateGlyph, _glyphCheck, UITheme.Gold);
+        }
+
+        private void ApplyPathLockedVisual(NodeRow row, UpgradeNode node)
+        {
+            row.Label.text = node.Name;
+            row.Background.sprite = _rowPathLockedSprite;
+            row.Background.color = Color.white;
+            row.Button.interactable = false;
+            row.Label.color = UITheme.TextDisabled;
+            SetGlyph(row.StateGlyph, _glyphCross, UITheme.TextDisabled);
+        }
+
+        private void ApplyBuyVisual(NodeRow row, UpgradeNode node, bool affordable)
+        {
+            row.Label.text = $"{node.Name}\n{node.ApplyCost} COINS";
+            row.Background.sprite = _rowBuySprite;
+            row.Background.color = affordable ? Color.white : UnaffordableTint;
+            row.Button.interactable = affordable;
+            row.Label.color = UITheme.ButtonTextDark;
+            SetGlyph(row.StateGlyph, null, UITheme.ButtonTextDark);
+        }
+
+        private static void SetGlyph(Image glyph, Sprite sprite, Color tint)
+        {
+            if (glyph == null)
+            {
+                return;
+            }
+
+            glyph.sprite = sprite;
+            glyph.color = tint;
+            glyph.enabled = sprite != null;
         }
     }
 }
