@@ -5,12 +5,11 @@ using UnityEngine;
 namespace Game.UI
 {
     /// <summary>
-    /// The single source of truth for whether the game is time-frozen:
-    /// WaveChoiceUI pauses this between waves (still lets the player build,
-    /// via the hotbar/inspector which don't depend on Time.timeScale), and
-    /// HamburgerMenuUI pauses this while its fully-blocking menu is open.
-    /// Neither owns "pause" exclusively - SetPaused just reflects the
-    /// current desired state, and OnPauseChanged lets each side react.
+    /// The single source of truth for whether the game is time-frozen.
+    /// Only HamburgerMenuUI pauses this, while its fully-blocking menu is
+    /// open - the between-wave screen (WaveChoiceUI) deliberately does NOT
+    /// touch this, so water, projectiles and everything else keep animating
+    /// while the player picks a reward or places/upgrades buildings.
     /// </summary>
     public class PauseController : MonoBehaviour
     {

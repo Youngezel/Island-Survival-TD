@@ -5,10 +5,10 @@ namespace Game.Systems
     /// <summary>
     /// Tracks the player's chosen game speed (1x/2x, cycled from a HUD
     /// button) and is the single source of truth for what Time.timeScale
-    /// should be whenever the game isn't paused - both PauseController
-    /// (Escape) and WaveChoiceUI (the between-wave build phase) resume to
-    /// CurrentSpeed instead of hardcoding 1, so toggling speed doesn't get
-    /// silently reset by pausing/unpausing.
+    /// should be whenever the game isn't paused - PauseController (Escape)
+    /// resumes to CurrentSpeed instead of hardcoding 1, so toggling speed
+    /// doesn't get silently reset by pausing/unpausing. WaveChoiceUI (the
+    /// between-wave build phase) never touches Time.timeScale at all.
     /// </summary>
     public class GameSpeedController : MonoBehaviour
     {

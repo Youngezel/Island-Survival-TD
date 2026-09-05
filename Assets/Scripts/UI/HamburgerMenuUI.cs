@@ -10,11 +10,11 @@ namespace Game.UI
     /// <summary>
     /// The hamburger menu button (or Escape) opens a fully blocking panel
     /// with a setting and a way to quit to the main menu - unlike the
-    /// between-wave build-phase pause, this locks out all other game
+    /// between-wave build phase (which never touches Time.timeScale at
+    /// all), this actually freezes the game and locks out all other
     /// interaction while open (its background is a normal raycast-blocking
     /// panel). Restores whatever pause state existed before opening when
-    /// closed, so opening it mid build-phase doesn't accidentally resume
-    /// the next wave.
+    /// closed, so opening and closing it mid build-phase is a no-op.
     /// </summary>
     public class HamburgerMenuUI : MonoBehaviour
     {
