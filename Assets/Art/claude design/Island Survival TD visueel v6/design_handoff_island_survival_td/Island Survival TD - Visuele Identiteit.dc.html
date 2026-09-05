@@ -1,0 +1,1000 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="design_doc_mode" content="canvas">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Pirata+One&family=Silkscreen:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  body { margin: 0; background: #10161d; color: #f4e4c1; }
+  a { color: #ffcf3f; text-decoration: none; }
+  a:hover { color: #ffe58a; text-decoration: underline; }
+  * { image-rendering: pixelated; }
+</style>
+</helmet>
+
+<section style="display: flex; flex-direction: column; gap: 48px; padding: 56px; font-family: Silkscreen, monospace;">
+
+  <div style="display: flex; flex-direction: column; gap: 10px; max-width: 900px;">
+    <div style="font-family: 'Pirata One', serif; font-size: 56px; line-height: 1; color: #ffcf3f; letter-spacing: 1px;">Island Survival TD</div>
+    <div style="font-size: 13px; line-height: 2; color: #9db0c0;">Visuele identiteit &mdash; 8 artboards. PPU 32 &middot; flat-top hex 64&times;64 &middot; units 32&times;32 &middot; camera 640&times;360.</div>
+    <div style="display: flex; gap: 8px; flex-wrap: wrap; font-size: 11px; color: #6f8296;">
+      <a href="#1a">1a stijlgids</a><span>/</span><a href="#1b">1b enemies</a><span>/</span><a href="#1c">1c gebouwen</a><span>/</span><a href="#1d">1d omgeving</a><span>/</span><a href="#1e">1e HUD</a><span>/</span><a href="#1f">1f hoofdmenu</a><span>/</span><a href="#1g">1g wave-keuze</a><span>/</span><a href="#1h">1h game over</a>
+    </div>
+  </div>
+
+  <div style="display: flex; flex-wrap: wrap; gap: 48px; align-items: flex-start;">
+
+    <!-- ============ 1a STIJLGIDS ============ -->
+    <div id="1a" style="display: flex; flex-direction: column; gap: 12px;">
+      <div style="display: flex; align-items: center; gap: 10px;">
+        <div style="background: #ffcf3f; color: #1a1420; font-size: 11px; font-weight: 700; padding: 3px 7px;">1a</div>
+        <div style="font-size: 13px; color: #9db0c0;">Stijlgids / moodboard</div>
+      </div>
+
+      <div style="width: 940px; background: #1a2028; border: 4px solid #5c3a1e; box-shadow: inset 0 0 0 4px #8b5a2b; padding: 28px; display: flex; flex-direction: column; gap: 28px;">
+
+        <div style="display: flex; flex-direction: column; gap: 12px;">
+          <div style="font-size: 12px; color: #ffcf3f; letter-spacing: 2px;">PALET &mdash; WATER</div>
+          <div style="display: flex; gap: 0;">
+            <div style="width: 118px; height: 88px; background: #0d2b40; display: flex; align-items: flex-end; padding: 6px; font-size: 9px; color: #7fb4d6;">#0D2B40<br>diep</div>
+            <div style="width: 118px; height: 88px; background: #14496b; display: flex; align-items: flex-end; padding: 6px; font-size: 9px; color: #bfe0f2;">#14496B<br>open zee</div>
+            <div style="width: 118px; height: 88px; background: #2286ad; display: flex; align-items: flex-end; padding: 6px; font-size: 9px; color: #0d2b40;">#2286AD<br>midden</div>
+            <div style="width: 118px; height: 88px; background: #4fc9d9; display: flex; align-items: flex-end; padding: 6px; font-size: 9px; color: #0d2b40;">#4FC9D9<br>ondiep</div>
+            <div style="width: 118px; height: 88px; background: #a9eef2; display: flex; align-items: flex-end; padding: 6px; font-size: 9px; color: #0d2b40;">#A9EEF2<br>schuim</div>
+          </div>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 12px;">
+          <div style="font-size: 12px; color: #ffcf3f; letter-spacing: 2px;">PALET &mdash; LAND</div>
+          <div style="display: flex; gap: 0;">
+            <div style="width: 118px; height: 88px; background: #2f6b38; display: flex; align-items: flex-end; padding: 6px; font-size: 9px; color: #c9e6a8;">#2F6B38<br>gras schaduw</div>
+            <div style="width: 118px; height: 88px; background: #4f9e42; display: flex; align-items: flex-end; padding: 6px; font-size: 9px; color: #133c18;">#4F9E42<br>gras basis</div>
+            <div style="width: 118px; height: 88px; background: #7cc35a; display: flex; align-items: flex-end; padding: 6px; font-size: 9px; color: #133c18;">#7CC35A<br>gras licht</div>
+            <div style="width: 118px; height: 88px; background: #c9a063; display: flex; align-items: flex-end; padding: 6px; font-size: 9px; color: #3d2a12;">#C9A063<br>zand schaduw</div>
+            <div style="width: 118px; height: 88px; background: #e8c88a; display: flex; align-items: flex-end; padding: 6px; font-size: 9px; color: #3d2a12;">#E8C88A<br>zand</div>
+          </div>
+        </div>
+
+        <div style="display: flex; gap: 28px;">
+          <div style="display: flex; flex-direction: column; gap: 12px;">
+            <div style="font-size: 12px; color: #ffcf3f; letter-spacing: 2px;">HOUT &amp; STEEN</div>
+            <div style="display: flex; gap: 0;">
+              <div style="width: 88px; height: 76px; background: #5c3a1e; display: flex; align-items: flex-end; padding: 6px; font-size: 9px; color: #e8c88a;">#5C3A1E</div>
+              <div style="width: 88px; height: 76px; background: #8b5a2b; display: flex; align-items: flex-end; padding: 6px; font-size: 9px; color: #f4e4c1;">#8B5A2B</div>
+              <div style="width: 88px; height: 76px; background: #b98246; display: flex; align-items: flex-end; padding: 6px; font-size: 9px; color: #3d2a12;">#B98246</div>
+              <div style="width: 88px; height: 76px; background: #5c6672; display: flex; align-items: flex-end; padding: 6px; font-size: 9px; color: #dbe3ea;">#5C6672</div>
+              <div style="width: 88px; height: 76px; background: #93a1ad; display: flex; align-items: flex-end; padding: 6px; font-size: 9px; color: #232a31;">#93A1AD</div>
+            </div>
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 12px;">
+            <div style="font-size: 12px; color: #ffcf3f; letter-spacing: 2px;">UI-ACCENTEN</div>
+            <div style="display: flex; gap: 0;">
+              <div style="width: 88px; height: 76px; background: #ffcf3f; display: flex; align-items: flex-end; padding: 6px; font-size: 9px; color: #3d2a12;">goud</div>
+              <div style="width: 88px; height: 76px; background: #e0503a; display: flex; align-items: flex-end; padding: 6px; font-size: 9px; color: #2a0e08;">gevaar</div>
+              <div style="width: 88px; height: 76px; background: #f4e4c1; display: flex; align-items: flex-end; padding: 6px; font-size: 9px; color: #3d2a12;">perkament</div>
+              <div style="width: 88px; height: 76px; background: #1a1420; display: flex; align-items: flex-end; padding: 6px; font-size: 9px; color: #f4e4c1;">UI donker</div>
+            </div>
+          </div>
+        </div>
+
+        <div style="display: flex; gap: 28px; align-items: flex-start;">
+          <div style="flex: 1; display: flex; flex-direction: column; gap: 14px;">
+            <div style="font-size: 12px; color: #ffcf3f; letter-spacing: 2px;">TYPOGRAFIE</div>
+            <div style="background: #12181f; border: 3px solid #5c3a1e; padding: 18px; display: flex; flex-direction: column; gap: 14px;">
+              <div>
+                <div style="font-family: 'Pirata One', serif; font-size: 44px; line-height: 1; color: #ffcf3f;">Island Survival</div>
+                <div style="font-size: 10px; color: #6f8296; margin-top: 6px;">Pirata One &mdash; alleen titels &amp; schermkoppen, 32px+</div>
+              </div>
+              <div>
+                <div style="font-size: 20px; color: #f4e4c1;">WAVE 12 &middot; 340 MUNT</div>
+                <div style="font-size: 10px; color: #6f8296; margin-top: 6px;">Silkscreen &mdash; alle HUD/knoppen. Native 8px of 16px, nooit tussenmaten</div>
+              </div>
+              <div style="font-size: 12px; color: #9db0c0; line-height: 1.9;">Regel: UI-tekst altijd op heel pixel-raster. Geen anti-aliasing, geen letterspacing onder 16px.</div>
+            </div>
+          </div>
+
+          <div style="width: 380px; display: flex; flex-direction: column; gap: 14px;">
+            <div style="font-size: 12px; color: #ffcf3f; letter-spacing: 2px;">ART-DIRECTION REFERENTIE</div>
+            <div style="height: 150px; background: repeating-linear-gradient(45deg, #1e2630 0 6px, #232c37 6px 12px); border: 3px solid #5c3a1e; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px;">
+              <div style="font-size: 11px; color: #ffcf3f;">[ referentiebeeld ]</div>
+              <div style="font-size: 10px; color: #6f8296; text-align: center; line-height: 1.8; max-width: 280px;">zonnig tropisch eiland, top-down<br>hoog contrast, 3-tint shading</div>
+            </div>
+            <div style="height: 150px; background: repeating-linear-gradient(45deg, #1e2630 0 6px, #232c37 6px 12px); border: 3px solid #5c3a1e; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px;">
+              <div style="font-size: 11px; color: #ffcf3f;">[ referentiebeeld ]</div>
+              <div style="font-size: 10px; color: #6f8296; text-align: center; line-height: 1.8; max-width: 280px;">piraten-silhouetten op water<br>speels, geen horror</div>
+            </div>
+          </div>
+        </div>
+
+        <div style="display: flex; gap: 0; border: 3px solid #5c3a1e;">
+          <div style="flex: 1; padding: 16px; background: #12181f; font-size: 11px; line-height: 2; color: #9db0c0;"><span style="color: #ffcf3f;">3&ndash;4 TINTEN</span> per materiaal: schaduw, basis, licht, accentlijn. Geen gradients.</div>
+          <div style="flex: 1; padding: 16px; background: #151c24; font-size: 11px; line-height: 2; color: #9db0c0;"><span style="color: #ffcf3f;">SILHOUET EERST</span> &mdash; elk sprite moet leesbaar zijn als &eacute;&eacute;nkleurige vorm op 32px.</div>
+          <div style="flex: 1; padding: 16px; background: #12181f; font-size: 11px; line-height: 2; color: #9db0c0;"><span style="color: #ffcf3f;">1px OUTLINE</span> donkerder dan de basis, nooit puur zwart.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ 1b ENEMIES ============ -->
+    <div id="1b" style="display: flex; flex-direction: column; gap: 12px;">
+      <div style="display: flex; align-items: center; gap: 10px;">
+        <div style="background: #ffcf3f; color: #1a1420; font-size: 11px; font-weight: 700; padding: 3px 7px;">1b</div>
+        <div style="font-size: 13px; color: #9db0c0;">Enemies &mdash; 4 piratenbootjes</div>
+      </div>
+
+      <div style="width: 940px; background: #1a2028; border: 4px solid #5c3a1e; box-shadow: inset 0 0 0 4px #8b5a2b; padding: 28px; display: flex; flex-direction: column; gap: 22px;">
+        <div style="font-size: 11px; color: #6f8296; line-height: 2;">Alle sprites 32&times;32, 4&times; vergroot. Silhouetten hieronder: <span style="color: #ffcf3f;">romplengte, mast-hoogte en zeilvorm</span> zijn de onderscheidende assen &mdash; kleur is secundair.</div>
+
+        <div style="display: flex; gap: 20px;">
+
+          <!-- basis -->
+          <div style="flex: 1; display: flex; flex-direction: column; gap: 10px;">
+            <div style="position: relative; height: 148px; background: #14496b; border: 3px solid #0d2b40;">
+              <div style="position: absolute; left: 0; right: 0; bottom: 0; height: 32px; background: #2286ad;"></div>
+              <div style="position: absolute; left: 8px; top: 124px; width: 36px; height: 4px; background: #4fc9d9;"></div>
+              <div style="position: absolute; left: 76px; top: 132px; width: 44px; height: 4px; background: #4fc9d9;"></div>
+              <div style="position: absolute; left: 20px; top: 140px; width: 24px; height: 4px; background: #a9eef2;"></div>
+              <div style="position: absolute; left: 18px; top: 114px; width: 28px; height: 4px; background: #a9eef2;"></div>
+              <div style="position: absolute; left: 34px; top: 118px; width: 44px; height: 4px; background: #a9eef2;"></div>
+              <div style="position: absolute; left: 22px; top: 100px; width: 8px; height: 14px; background: #5c3a1e;"></div>
+              <div style="position: absolute; left: 30px; top: 96px; width: 68px; height: 20px; background: #8b5a2b; clip-path: polygon(0 0, 100% 0, 88% 100%, 12% 100%);"></div>
+              <div style="position: absolute; left: 30px; top: 96px; width: 68px; height: 4px; background: #b98246;"></div>
+              <div style="position: absolute; left: 34px; top: 104px; width: 60px; height: 4px; background: #6f4520;"></div>
+              <div style="position: absolute; left: 38px; top: 110px; width: 52px; height: 6px; background: #5c3a1e; clip-path: polygon(0 0, 100% 0, 88% 100%, 12% 100%);"></div>
+              <div style="position: absolute; left: 44px; top: 88px; width: 8px; height: 8px; background: #e8c88a;"></div>
+              <div style="position: absolute; left: 44px; top: 84px; width: 8px; height: 4px; background: #e0503a;"></div>
+              <div style="position: absolute; left: 84px; top: 88px; width: 12px; height: 8px; background: #b98246;"></div>
+              <div style="position: absolute; left: 84px; top: 90px; width: 12px; height: 2px; background: #5c3a1e;"></div>
+              <div style="position: absolute; left: 60px; top: 44px; width: 8px; height: 52px; background: #5c3a1e;"></div>
+              <div style="position: absolute; left: 56px; top: 52px; width: 48px; height: 4px; background: #8b5a2b;"></div>
+              <div style="position: absolute; left: 68px; top: 56px; width: 36px; height: 36px; background: #f4e4c1;"></div>
+              <div style="position: absolute; left: 68px; top: 68px; width: 36px; height: 8px; background: #e0503a;"></div>
+              <div style="position: absolute; left: 96px; top: 56px; width: 8px; height: 36px; background: #dbc9a0;"></div>
+              <div style="position: absolute; left: 68px; top: 88px; width: 36px; height: 4px; background: #c4b18c;"></div>
+              <div style="position: absolute; left: 60px; top: 30px; width: 4px; height: 14px; background: #5c3a1e;"></div>
+              <div style="position: absolute; left: 64px; top: 30px; width: 20px; height: 8px; background: #e0503a; clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);"></div>
+            </div>
+            <div style="position: relative; height: 148px; background: #12181f; border: 3px solid #0d2b40;">
+              <div style="position: absolute; left: 30px; top: 96px; width: 68px; height: 20px; background: #060a0e; clip-path: polygon(0 0, 100% 0, 88% 100%, 12% 100%);"></div>
+              <div style="position: absolute; left: 60px; top: 52px; width: 8px; height: 44px; background: #060a0e;"></div>
+              <div style="position: absolute; left: 68px; top: 56px; width: 32px; height: 32px; background: #060a0e;"></div>
+            </div>
+            <div style="font-size: 12px; color: #f4e4c1;">Pirate boat</div>
+            <div style="font-size: 10px; color: #6f8296; line-height: 1.9;">Korte romp, vierkant zeil, rode vlag. De maatstaf: alle andere types wijken hier zichtbaar van af.</div>
+          </div>
+
+          <!-- fast -->
+          <div style="flex: 1; display: flex; flex-direction: column; gap: 10px;">
+            <div style="position: relative; height: 148px; background: #14496b; border: 3px solid #0d2b40;">
+              <div style="position: absolute; left: 0; right: 0; bottom: 0; height: 32px; background: #2286ad;"></div>
+              <div style="position: absolute; left: 60px; top: 126px; width: 48px; height: 4px; background: #4fc9d9;"></div>
+              <div style="position: absolute; left: 12px; top: 136px; width: 36px; height: 4px; background: #4fc9d9;"></div>
+              <div style="position: absolute; left: 72px; top: 142px; width: 28px; height: 4px; background: #a9eef2;"></div>
+              <div style="position: absolute; left: 20px; top: 100px; width: 20px; height: 4px; background: #5c3a1e;"></div>
+              <div style="position: absolute; left: 12px; top: 104px; width: 104px; height: 12px; background: #b98246; clip-path: polygon(0 0, 100% 0, 92% 100%, 16% 100%);"></div>
+              <div style="position: absolute; left: 12px; top: 104px; width: 104px; height: 3px; background: #dbc9a0;"></div>
+              <div style="position: absolute; left: 20px; top: 112px; width: 88px; height: 6px; background: #8b5a2b; clip-path: polygon(0 0, 100% 0, 90% 100%, 10% 100%);"></div>
+              <div style="position: absolute; left: 104px; top: 98px; width: 16px; height: 4px; background: #5c3a1e;"></div>
+              <div style="position: absolute; left: 40px; top: 96px; width: 6px; height: 8px; background: #e8c88a;"></div>
+              <div style="position: absolute; left: 56px; top: 32px; width: 6px; height: 72px; background: #5c3a1e;"></div>
+              <div style="position: absolute; left: 62px; top: 44px; width: 40px; height: 52px; background: #f4e4c1; clip-path: polygon(0 0, 100% 100%, 0 100%);"></div>
+              <div style="position: absolute; left: 62px; top: 72px; width: 26px; height: 24px; background: #dbc9a0; clip-path: polygon(0 0, 100% 100%, 0 100%);"></div>
+              <div style="position: absolute; left: 62px; top: 60px; width: 14px; height: 4px; background: #4fc9d9;"></div>
+              <div style="position: absolute; left: 30px; top: 64px; width: 26px; height: 32px; background: #f4e4c1; clip-path: polygon(100% 0, 100% 100%, 0 100%);"></div>
+              <div style="position: absolute; left: 30px; top: 84px; width: 20px; height: 12px; background: #dbc9a0; clip-path: polygon(100% 0, 100% 100%, 0 100%);"></div>
+              <div style="position: absolute; left: 56px; top: 22px; width: 4px; height: 10px; background: #5c3a1e;"></div>
+              <div style="position: absolute; left: 60px; top: 22px; width: 16px; height: 6px; background: #e0503a;"></div>
+              <div style="position: absolute; left: 4px; top: 114px; width: 48px; height: 6px; background: #a9eef2;"></div>
+              <div style="position: absolute; left: 0; top: 122px; width: 32px; height: 4px; background: #4fc9d9;"></div>
+              <div style="position: absolute; left: 8px; top: 108px; width: 20px; height: 4px; background: #a9eef2;"></div>
+            </div>
+            <div style="position: relative; height: 148px; background: #12181f; border: 3px solid #0d2b40;">
+              <div style="position: absolute; left: 12px; top: 104px; width: 104px; height: 12px; background: #060a0e; clip-path: polygon(0 0, 100% 0, 92% 100%, 16% 100%);"></div>
+              <div style="position: absolute; left: 56px; top: 40px; width: 6px; height: 64px; background: #060a0e;"></div>
+              <div style="position: absolute; left: 62px; top: 44px; width: 40px; height: 52px; background: #060a0e; clip-path: polygon(0 0, 100% 100%, 0 100%);"></div>
+            </div>
+            <div style="font-size: 12px; color: #f4e4c1;">Fast pirate boat</div>
+            <div style="font-size: 10px; color: #6f8296; line-height: 1.9;">Lange platte romp, hoge dunne mast, schuin driehoekszeil. Boegschuim leest als snelheid.</div>
+          </div>
+
+          <!-- strong -->
+          <div style="flex: 1; display: flex; flex-direction: column; gap: 10px;">
+            <div style="position: relative; height: 148px; background: #14496b; border: 3px solid #0d2b40;">
+              <div style="position: absolute; left: 0; right: 0; bottom: 0; height: 32px; background: #2286ad;"></div>
+              <div style="position: absolute; left: 8px; top: 132px; width: 40px; height: 4px; background: #4fc9d9;"></div>
+              <div style="position: absolute; left: 72px; top: 138px; width: 44px; height: 4px; background: #4fc9d9;"></div>
+              <div style="position: absolute; left: 10px; top: 88px; width: 108px; height: 32px; background: #5c3a1e; clip-path: polygon(0 0, 100% 0, 94% 100%, 6% 100%);"></div>
+              <div style="position: absolute; left: 10px; top: 88px; width: 108px; height: 4px; background: #8b5a2b;"></div>
+              <div style="position: absolute; left: 14px; top: 108px; width: 100px; height: 4px; background: #4a2e17;"></div>
+              <div style="position: absolute; left: 16px; top: 114px; width: 96px; height: 6px; background: #4a2e17; clip-path: polygon(0 0, 100% 0, 94% 100%, 6% 100%);"></div>
+              <div style="position: absolute; left: 20px; top: 92px; width: 16px; height: 16px; background: #93a1ad;"></div>
+              <div style="position: absolute; left: 20px; top: 104px; width: 16px; height: 4px; background: #5c6672;"></div>
+              <div style="position: absolute; left: 44px; top: 92px; width: 16px; height: 16px; background: #93a1ad;"></div>
+              <div style="position: absolute; left: 44px; top: 104px; width: 16px; height: 4px; background: #5c6672;"></div>
+              <div style="position: absolute; left: 68px; top: 92px; width: 16px; height: 16px; background: #93a1ad;"></div>
+              <div style="position: absolute; left: 68px; top: 104px; width: 16px; height: 4px; background: #5c6672;"></div>
+              <div style="position: absolute; left: 92px; top: 92px; width: 16px; height: 16px; background: #93a1ad;"></div>
+              <div style="position: absolute; left: 92px; top: 104px; width: 16px; height: 4px; background: #5c6672;"></div>
+              <div style="position: absolute; left: 116px; top: 84px; width: 12px; height: 8px; background: #5c3a1e;"></div>
+              <div style="position: absolute; left: 56px; top: 36px; width: 12px; height: 52px; background: #5c3a1e;"></div>
+              <div style="position: absolute; left: 48px; top: 26px; width: 28px; height: 12px; background: #8b5a2b;"></div>
+              <div style="position: absolute; left: 48px; top: 34px; width: 28px; height: 4px; background: #5c3a1e;"></div>
+              <div style="position: absolute; left: 32px; top: 44px; width: 64px; height: 40px; background: #dbc9a0;"></div>
+              <div style="position: absolute; left: 32px; top: 76px; width: 64px; height: 8px; background: #c4b18c;"></div>
+              <div style="position: absolute; left: 50px; top: 44px; width: 4px; height: 40px; background: #c4b18c;"></div>
+              <div style="position: absolute; left: 74px; top: 44px; width: 4px; height: 40px; background: #c4b18c;"></div>
+              <div style="position: absolute; left: 56px; top: 54px; width: 12px; height: 12px; background: #f4e4c1;"></div>
+              <div style="position: absolute; left: 58px; top: 58px; width: 3px; height: 3px; background: #5c3a1e;"></div>
+              <div style="position: absolute; left: 64px; top: 58px; width: 3px; height: 3px; background: #5c3a1e;"></div>
+              <div style="position: absolute; left: 56px; top: 16px; width: 4px; height: 10px; background: #5c3a1e;"></div>
+              <div style="position: absolute; left: 60px; top: 16px; width: 22px; height: 8px; background: #1a1420;"></div>
+              <div style="position: absolute; left: 4px; top: 120px; width: 120px; height: 6px; background: #a9eef2;"></div>
+              <div style="position: absolute; left: 12px; top: 128px; width: 96px; height: 4px; background: #4fc9d9;"></div>
+            </div>
+            <div style="position: relative; height: 148px; background: #12181f; border: 3px solid #0d2b40;">
+              <div style="position: absolute; left: 10px; top: 88px; width: 108px; height: 32px; background: #060a0e; clip-path: polygon(0 0, 100% 0, 94% 100%, 6% 100%);"></div>
+              <div style="position: absolute; left: 56px; top: 40px; width: 12px; height: 48px; background: #060a0e;"></div>
+              <div style="position: absolute; left: 32px; top: 44px; width: 64px; height: 40px; background: #060a0e;"></div>
+            </div>
+            <div style="font-size: 12px; color: #f4e4c1;">Strong pirate boat</div>
+            <div style="font-size: 10px; color: #6f8296; line-height: 1.9;">Brede blokkige romp met stalen plaatjes, breed dubbel zeil. Vult bijna de hele 32px-tile.</div>
+          </div>
+
+          <!-- distance -->
+          <div style="flex: 1; display: flex; flex-direction: column; gap: 10px;">
+            <div style="position: relative; height: 148px; background: #14496b; border: 3px solid #0d2b40;">
+              <div style="position: absolute; left: 0; right: 0; bottom: 0; height: 32px; background: #2286ad;"></div>
+              <div style="position: absolute; left: 12px; top: 128px; width: 44px; height: 4px; background: #4fc9d9;"></div>
+              <div style="position: absolute; left: 80px; top: 138px; width: 36px; height: 4px; background: #4fc9d9;"></div>
+              <div style="position: absolute; left: 16px; top: 100px; width: 8px; height: 12px; background: #5c3a1e;"></div>
+              <div style="position: absolute; left: 24px; top: 96px; width: 76px; height: 20px; background: #8b5a2b; clip-path: polygon(0 0, 100% 0, 90% 100%, 10% 100%);"></div>
+              <div style="position: absolute; left: 24px; top: 96px; width: 76px; height: 4px; background: #b98246;"></div>
+              <div style="position: absolute; left: 28px; top: 104px; width: 68px; height: 4px; background: #6f4520;"></div>
+              <div style="position: absolute; left: 32px; top: 110px; width: 60px; height: 6px; background: #5c3a1e; clip-path: polygon(0 0, 100% 0, 90% 100%, 10% 100%);"></div>
+              <div style="position: absolute; left: 76px; top: 72px; width: 24px; height: 24px; background: #93a1ad;"></div>
+              <div style="position: absolute; left: 76px; top: 88px; width: 24px; height: 8px; background: #5c6672;"></div>
+              <div style="position: absolute; left: 96px; top: 78px; width: 32px; height: 12px; background: #5c6672;"></div>
+              <div style="position: absolute; left: 124px; top: 74px; width: 8px; height: 20px; background: #93a1ad;"></div>
+              <div style="position: absolute; left: 104px; top: 78px; width: 4px; height: 12px; background: #3f474f;"></div>
+              <div style="position: absolute; left: 114px; top: 78px; width: 4px; height: 12px; background: #3f474f;"></div>
+              <div style="position: absolute; left: 56px; top: 84px; width: 12px; height: 12px; background: #b98246;"></div>
+              <div style="position: absolute; left: 56px; top: 88px; width: 12px; height: 3px; background: #5c3a1e;"></div>
+              <div style="position: absolute; left: 44px; top: 52px; width: 8px; height: 44px; background: #5c3a1e;"></div>
+              <div style="position: absolute; left: 20px; top: 60px; width: 24px; height: 28px; background: #f4e4c1;"></div>
+              <div style="position: absolute; left: 20px; top: 72px; width: 24px; height: 6px; background: #e0503a;"></div>
+              <div style="position: absolute; left: 20px; top: 60px; width: 8px; height: 28px; background: #dbc9a0;"></div>
+              <div style="position: absolute; left: 44px; top: 40px; width: 18px; height: 8px; background: #1a1420;"></div>
+              <div style="position: absolute; left: 66px; top: 88px; width: 8px; height: 8px; background: #e8c88a;"></div>
+              <div style="position: absolute; left: 20px; top: 116px; width: 36px; height: 4px; background: #a9eef2;"></div>
+              <div style="position: absolute; left: 44px; top: 120px; width: 44px; height: 4px; background: #a9eef2;"></div>
+            </div>
+            <div style="position: relative; height: 148px; background: #12181f; border: 3px solid #0d2b40;">
+              <div style="position: absolute; left: 24px; top: 96px; width: 76px; height: 20px; background: #060a0e; clip-path: polygon(0 0, 100% 0, 90% 100%, 10% 100%);"></div>
+              <div style="position: absolute; left: 92px; top: 80px; width: 36px; height: 12px; background: #060a0e;"></div>
+              <div style="position: absolute; left: 76px; top: 76px; width: 20px; height: 20px; background: #060a0e;"></div>
+              <div style="position: absolute; left: 44px; top: 60px; width: 8px; height: 36px; background: #060a0e;"></div>
+              <div style="position: absolute; left: 20px; top: 64px; width: 24px; height: 24px; background: #060a0e;"></div>
+            </div>
+            <div style="font-size: 12px; color: #f4e4c1;">Distance pirate boat</div>
+            <div style="font-size: 10px; color: #6f8296; line-height: 1.9;">Kanonloop steekt buiten de romp uit &mdash; het silhouet heeft een harde horizontale punt. Klein zeil achteraan.</div>
+          </div>
+        </div>
+
+        <div style="display: flex; gap: 0; border: 3px solid #5c3a1e;">
+          <div style="flex: 1; padding: 14px; background: #12181f; font-size: 10px; line-height: 2; color: #9db0c0;">Vlagkleur = fractie/tier, nooit het enige verschil.</div>
+          <div style="flex: 1; padding: 14px; background: #151c24; font-size: 10px; line-height: 2; color: #9db0c0;">Health bar 1px boven de mast, 12&times;2px, rood op donker.</div>
+          <div style="flex: 1; padding: 14px; background: #12181f; font-size: 10px; line-height: 2; color: #9db0c0;">Loop-animatie: 2 frames deining, 4px verticaal.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ 1c GEBOUWEN ============ -->
+    <div id="1c" style="display: flex; flex-direction: column; gap: 12px;">
+      <div style="display: flex; align-items: center; gap: 10px;">
+        <div style="background: #ffcf3f; color: #1a1420; font-size: 11px; font-weight: 700; padding: 3px 7px;">1c</div>
+        <div style="font-size: 13px; color: #9db0c0;">Gebouwen &mdash; dorp + 3 torens</div>
+      </div>
+
+      <div style="width: 940px; background: #1a2028; border: 4px solid #5c3a1e; box-shadow: inset 0 0 0 4px #8b5a2b; padding: 28px; display: flex; flex-direction: column; gap: 24px;">
+
+        <div style="display: flex; gap: 28px; align-items: flex-start;">
+          <div style="position: relative; width: 320px; height: 260px; background: #14496b; border: 3px solid #0d2b40; display: flex; align-items: center; justify-content: center;">
+            <div style="position: relative; width: 256px; height: 256px;">
+              <div style="position: absolute; left: 0; top: 0; width: 256px; height: 256px; background: #4f9e42; clip-path: polygon(25% 0, 75% 0, 100% 50%, 75% 100%, 25% 100%, 0 50%);"></div>
+              <div style="position: absolute; left: 0; top: 176px; width: 256px; height: 80px; background: #2f6b38; clip-path: polygon(25% 0, 75% 0, 100% 50%, 75% 100%, 25% 100%, 0 50%);"></div>
+              <div style="position: absolute; left: 0; top: 216px; width: 256px; height: 40px; background: #c9a063; clip-path: polygon(19% 0, 81% 0, 75% 100%, 25% 100%);"></div>
+              <div style="position: absolute; left: 40px; top: 60px; width: 12px; height: 12px; background: #7cc35a;"></div>
+              <div style="position: absolute; left: 208px; top: 132px; width: 12px; height: 12px; background: #7cc35a;"></div>
+              <div style="position: absolute; left: 32px; top: 148px; width: 12px; height: 12px; background: #ffcf3f;"></div>
+              <div style="position: absolute; left: 60px; top: 196px; width: 16px; height: 8px; background: #b98246;"></div>
+              <div style="position: absolute; left: 88px; top: 204px; width: 16px; height: 8px; background: #b98246;"></div>
+              <div style="position: absolute; left: 68px; top: 116px; width: 120px; height: 64px; background: #b98246;"></div>
+              <div style="position: absolute; left: 68px; top: 116px; width: 120px; height: 4px; background: #dbc9a0;"></div>
+              <div style="position: absolute; left: 68px; top: 132px; width: 120px; height: 4px; background: #8b5a2b;"></div>
+              <div style="position: absolute; left: 68px; top: 156px; width: 120px; height: 24px; background: #8b5a2b;"></div>
+              <div style="position: absolute; left: 68px; top: 172px; width: 120px; height: 8px; background: #5c3a1e;"></div>
+              <div style="position: absolute; left: 56px; top: 76px; width: 144px; height: 44px; background: #e0503a; clip-path: polygon(12% 100%, 50% 0, 88% 100%);"></div>
+              <div style="position: absolute; left: 56px; top: 100px; width: 144px; height: 8px; background: #b83a28; clip-path: polygon(19% 0, 81% 0, 88% 100%, 12% 100%);"></div>
+              <div style="position: absolute; left: 56px; top: 112px; width: 144px; height: 8px; background: #b83a28; clip-path: polygon(6% 0, 94% 0, 88% 100%, 12% 100%);"></div>
+              <div style="position: absolute; left: 52px; top: 112px; width: 152px; height: 8px; background: #8b5a2b;"></div>
+              <div style="position: absolute; left: 116px; top: 144px; width: 24px; height: 36px; background: #5c3a1e;"></div>
+              <div style="position: absolute; left: 116px; top: 144px; width: 24px; height: 4px; background: #4a2e17;"></div>
+              <div style="position: absolute; left: 134px; top: 160px; width: 4px; height: 4px; background: #ffcf3f;"></div>
+              <div style="position: absolute; left: 84px; top: 136px; width: 24px; height: 20px; background: #4fc9d9;"></div>
+              <div style="position: absolute; left: 84px; top: 144px; width: 24px; height: 4px; background: #5c3a1e;"></div>
+              <div style="position: absolute; left: 94px; top: 136px; width: 4px; height: 20px; background: #5c3a1e;"></div>
+              <div style="position: absolute; left: 152px; top: 136px; width: 24px; height: 20px; background: #4fc9d9;"></div>
+              <div style="position: absolute; left: 152px; top: 144px; width: 24px; height: 4px; background: #5c3a1e;"></div>
+              <div style="position: absolute; left: 162px; top: 136px; width: 4px; height: 20px; background: #5c3a1e;"></div>
+              <div style="position: absolute; left: 76px; top: 84px; width: 16px; height: 32px; background: #93a1ad;"></div>
+              <div style="position: absolute; left: 76px; top: 84px; width: 16px; height: 6px; background: #5c6672;"></div>
+              <div style="position: absolute; left: 78px; top: 68px; width: 8px; height: 8px; background: #dbe3ea; opacity: 0.7;"></div>
+              <div style="position: absolute; left: 86px; top: 56px; width: 12px; height: 10px; background: #dbe3ea; opacity: 0.45;"></div>
+              <div style="position: absolute; left: 196px; top: 48px; width: 8px; height: 52px; background: #5c3a1e;"></div>
+              <div style="position: absolute; left: 204px; top: 48px; width: 32px; height: 18px; background: #ffcf3f; clip-path: polygon(0 0, 100% 0, 80% 50%, 100% 100%, 0 100%);"></div>
+              <div style="position: absolute; left: 204px; top: 56px; width: 24px; height: 4px; background: #c99b1e;"></div>
+              <div style="position: absolute; left: 192px; top: 44px; width: 16px; height: 6px; background: #8b5a2b;"></div>
+            </div>
+          </div>
+
+          <div style="flex: 1; display: flex; flex-direction: column; gap: 12px;">
+            <div style="font-family: 'Pirata One', serif; font-size: 32px; color: #ffcf3f; line-height: 1;">Het dorp</div>
+            <div style="font-size: 11px; color: #9db0c0; line-height: 2;">Het enige gebouw met een <span style="color: #ffcf3f;">warm rood dak</span> en een gouden vlag &mdash; nergens anders in het spel komt die combinatie voor. Zit altijd op de middelste tegel en is 1,5&times; zo hoog als een toren, zodat de blik er direct naartoe gaat.</div>
+            <div style="display: flex; flex-direction: column; gap: 8px; border: 3px solid #5c3a1e; background: #12181f; padding: 14px;">
+              <div style="font-size: 10px; color: #6f8296; line-height: 2;">&middot; sprite 32&times;32, rustpositie 2 frames (rook uit de schoorsteen)</div>
+              <div style="font-size: 10px; color: #6f8296; line-height: 2;">&middot; bij schade: dak verkleurt naar #8b3a2b, vlag hangt half</div>
+              <div style="font-size: 10px; color: #6f8296; line-height: 2;">&middot; health boven het dorp gebeurt in de HUD, niet op de tile</div>
+            </div>
+          </div>
+        </div>
+
+        <div style="display: flex; gap: 20px;">
+
+          <!-- turret -->
+          <div style="flex: 1; display: flex; flex-direction: column; gap: 10px;">
+            <div style="position: relative; height: 200px; background: #14496b; border: 3px solid #0d2b40; display: flex; align-items: center; justify-content: center;">
+              <div style="position: relative; width: 192px; height: 192px;">
+                <div style="position: absolute; left: 0; top: 0; width: 192px; height: 192px; background: #4f9e42; clip-path: polygon(25% 0, 75% 0, 100% 50%, 75% 100%, 25% 100%, 0 50%);"></div>
+                <div style="position: absolute; left: 0; top: 132px; width: 192px; height: 60px; background: #2f6b38; clip-path: polygon(25% 0, 75% 0, 100% 50%, 75% 100%, 25% 100%, 0 50%);"></div>
+                <div style="position: absolute; left: 0; top: 132px; width: 192px; height: 30px; background: #c9a063; clip-path: polygon(19% 0, 81% 0, 88% 60%, 75% 100%, 25% 100%, 12% 60%);"></div>
+                <div style="position: absolute; left: 30px; top: 48px; width: 9px; height: 9px; background: #7cc35a;"></div>
+                <div style="position: absolute; left: 150px; top: 96px; width: 9px; height: 9px; background: #7cc35a;"></div>
+                <div style="position: absolute; left: 60px; top: 96px; width: 72px; height: 42px; background: #93a1ad;"></div>
+                <div style="position: absolute; left: 60px; top: 96px; width: 72px; height: 6px; background: #b6c1cb;"></div>
+                <div style="position: absolute; left: 60px; top: 111px; width: 72px; height: 3px; background: #5c6672;"></div>
+                <div style="position: absolute; left: 84px; top: 102px; width: 3px; height: 9px; background: #5c6672;"></div>
+                <div style="position: absolute; left: 108px; top: 114px; width: 3px; height: 12px; background: #5c6672;"></div>
+                <div style="position: absolute; left: 60px; top: 126px; width: 72px; height: 12px; background: #5c6672;"></div>
+                <div style="position: absolute; left: 42px; top: 120px; width: 21px; height: 18px; background: #b98246;"></div>
+                <div style="position: absolute; left: 42px; top: 129px; width: 21px; height: 4px; background: #8b5a2b;"></div>
+                <div style="position: absolute; left: 129px; top: 123px; width: 18px; height: 15px; background: #8b5a2b;"></div>
+                <div style="position: absolute; left: 132px; top: 126px; width: 12px; height: 4px; background: #5c3a1e;"></div>
+                <div style="position: absolute; left: 72px; top: 72px; width: 48px; height: 30px; background: #8b5a2b;"></div>
+                <div style="position: absolute; left: 72px; top: 72px; width: 48px; height: 6px; background: #b98246;"></div>
+                <div style="position: absolute; left: 72px; top: 90px; width: 48px; height: 4px; background: #5c3a1e;"></div>
+                <div style="position: absolute; left: 114px; top: 78px; width: 42px; height: 12px; background: #5c6672;"></div>
+                <div style="position: absolute; left: 114px; top: 78px; width: 42px; height: 4px; background: #93a1ad;"></div>
+                <div style="position: absolute; left: 150px; top: 75px; width: 8px; height: 18px; background: #93a1ad;"></div>
+                <div style="position: absolute; left: 78px; top: 60px; width: 12px; height: 12px; background: #e0503a;"></div>
+                <div style="position: absolute; left: 96px; top: 108px; width: 12px; height: 12px; background: #3f474f;"></div>
+              </div>
+            </div>
+            <div style="font-size: 12px; color: #f4e4c1;">Turret</div>
+            <div style="font-size: 10px; color: #6f8296; line-height: 1.9;">Breed stenen voetstuk, korte loop. Compact en laag &mdash; het referentiepunt voor de andere twee.</div>
+          </div>
+
+          <!-- long range -->
+          <div style="flex: 1; display: flex; flex-direction: column; gap: 10px;">
+            <div style="position: relative; height: 200px; background: #14496b; border: 3px solid #0d2b40; display: flex; align-items: center; justify-content: center;">
+              <div style="position: relative; width: 192px; height: 192px;">
+                <div style="position: absolute; left: 0; top: 0; width: 192px; height: 192px; background: #4f9e42; clip-path: polygon(25% 0, 75% 0, 100% 50%, 75% 100%, 25% 100%, 0 50%);"></div>
+                <div style="position: absolute; left: 0; top: 132px; width: 192px; height: 60px; background: #2f6b38; clip-path: polygon(25% 0, 75% 0, 100% 50%, 75% 100%, 25% 100%, 0 50%);"></div>
+                <div style="position: absolute; left: 0; top: 132px; width: 192px; height: 30px; background: #c9a063; clip-path: polygon(19% 0, 81% 0, 88% 60%, 75% 100%, 25% 100%, 12% 60%);"></div>
+                <div style="position: absolute; left: 36px; top: 60px; width: 9px; height: 9px; background: #7cc35a;"></div>
+                <div style="position: absolute; left: 144px; top: 108px; width: 9px; height: 9px; background: #7cc35a;"></div>
+                <div style="position: absolute; left: 60px; top: 120px; width: 72px; height: 18px; background: #5c6672;"></div>
+                <div style="position: absolute; left: 60px; top: 120px; width: 72px; height: 4px; background: #93a1ad;"></div>
+                <div style="position: absolute; left: 78px; top: 60px; width: 36px; height: 78px; background: #93a1ad;"></div>
+                <div style="position: absolute; left: 78px; top: 60px; width: 8px; height: 78px; background: #b6c1cb;"></div>
+                <div style="position: absolute; left: 106px; top: 60px; width: 8px; height: 78px; background: #5c6672;"></div>
+                <div style="position: absolute; left: 78px; top: 84px; width: 36px; height: 3px; background: #5c6672;"></div>
+                <div style="position: absolute; left: 78px; top: 105px; width: 36px; height: 3px; background: #5c6672;"></div>
+                <div style="position: absolute; left: 88px; top: 90px; width: 12px; height: 15px; background: #1a1420;"></div>
+                <div style="position: absolute; left: 66px; top: 42px; width: 60px; height: 24px; background: #8b5a2b;"></div>
+                <div style="position: absolute; left: 66px; top: 42px; width: 60px; height: 5px; background: #b98246;"></div>
+                <div style="position: absolute; left: 66px; top: 58px; width: 60px; height: 4px; background: #5c3a1e;"></div>
+                <div style="position: absolute; left: 84px; top: 18px; width: 24px; height: 24px; background: #f4e4c1; clip-path: polygon(50% 0, 100% 100%, 0 100%);"></div>
+                <div style="position: absolute; left: 96px; top: 18px; width: 12px; height: 24px; background: #dbc9a0; clip-path: polygon(0 0, 100% 100%, 0 100%);"></div>
+                <div style="position: absolute; left: 92px; top: 6px; width: 4px; height: 14px; background: #5c3a1e;"></div>
+                <div style="position: absolute; left: 96px; top: 6px; width: 16px; height: 6px; background: #e0503a;"></div>
+                <div style="position: absolute; left: 120px; top: 48px; width: 30px; height: 8px; background: #5c6672;"></div>
+                <div style="position: absolute; left: 120px; top: 48px; width: 30px; height: 3px; background: #93a1ad;"></div>
+                <div style="position: absolute; left: 126px; top: 66px; width: 6px; height: 54px; background: #8b5a2b;"></div>
+                <div style="position: absolute; left: 120px; top: 78px; width: 18px; height: 4px; background: #b98246;"></div>
+                <div style="position: absolute; left: 120px; top: 96px; width: 18px; height: 4px; background: #b98246;"></div>
+                <div style="position: absolute; left: 48px; top: 120px; width: 18px; height: 15px; background: #b98246;"></div>
+              </div>
+            </div>
+            <div style="font-size: 12px; color: #f4e4c1;">Long range turret</div>
+            <div style="font-size: 10px; color: #6f8296; line-height: 1.9;">Smalle hoge toren met uitkijkpunt en spits dak. Steekt boven de tegel uit; dunste silhouet van de drie.</div>
+          </div>
+
+          <!-- mortar -->
+          <div style="flex: 1; display: flex; flex-direction: column; gap: 10px;">
+            <div style="position: relative; height: 200px; background: #14496b; border: 3px solid #0d2b40; display: flex; align-items: center; justify-content: center;">
+              <div style="position: relative; width: 192px; height: 192px;">
+                <div style="position: absolute; left: 0; top: 0; width: 192px; height: 192px; background: #4f9e42; clip-path: polygon(25% 0, 75% 0, 100% 50%, 75% 100%, 25% 100%, 0 50%);"></div>
+                <div style="position: absolute; left: 0; top: 132px; width: 192px; height: 60px; background: #2f6b38; clip-path: polygon(25% 0, 75% 0, 100% 50%, 75% 100%, 25% 100%, 0 50%);"></div>
+                <div style="position: absolute; left: 0; top: 132px; width: 192px; height: 30px; background: #c9a063; clip-path: polygon(19% 0, 81% 0, 88% 60%, 75% 100%, 25% 100%, 12% 60%);"></div>
+                <div style="position: absolute; left: 24px; top: 72px; width: 9px; height: 9px; background: #7cc35a;"></div>
+                <div style="position: absolute; left: 156px; top: 96px; width: 9px; height: 9px; background: #7cc35a;"></div>
+                <div style="position: absolute; left: 42px; top: 102px; width: 108px; height: 36px; background: #5c6672;"></div>
+                <div style="position: absolute; left: 42px; top: 102px; width: 108px; height: 6px; background: #93a1ad;"></div>
+                <div style="position: absolute; left: 42px; top: 117px; width: 108px; height: 3px; background: #3f474f;"></div>
+                <div style="position: absolute; left: 66px; top: 108px; width: 3px; height: 9px; background: #3f474f;"></div>
+                <div style="position: absolute; left: 120px; top: 108px; width: 3px; height: 9px; background: #3f474f;"></div>
+                <div style="position: absolute; left: 42px; top: 126px; width: 108px; height: 12px; background: #3f474f;"></div>
+                <div style="position: absolute; left: 36px; top: 120px; width: 12px; height: 18px; background: #8b5a2b;"></div>
+                <div style="position: absolute; left: 144px; top: 120px; width: 12px; height: 18px; background: #8b5a2b;"></div>
+                <div style="position: absolute; left: 60px; top: 66px; width: 72px; height: 42px; background: #93a1ad; clip-path: polygon(0 100%, 18% 0, 82% 0, 100% 100%);"></div>
+                <div style="position: absolute; left: 60px; top: 66px; width: 24px; height: 42px; background: #b6c1cb; clip-path: polygon(0 100%, 54% 0, 100% 0, 100% 100%);"></div>
+                <div style="position: absolute; left: 60px; top: 84px; width: 72px; height: 4px; background: #5c6672; clip-path: polygon(4% 0, 96% 0, 100% 100%, 0 100%);"></div>
+                <div style="position: absolute; left: 78px; top: 48px; width: 36px; height: 24px; background: #3f474f;"></div>
+                <div style="position: absolute; left: 78px; top: 48px; width: 36px; height: 6px; background: #5c6672;"></div>
+                <div style="position: absolute; left: 84px; top: 54px; width: 24px; height: 18px; background: #23282e;"></div>
+                <div style="position: absolute; left: 90px; top: 24px; width: 12px; height: 12px; background: #ffcf3f;"></div>
+                <div style="position: absolute; left: 84px; top: 12px; width: 6px; height: 6px; background: #ffcf3f; opacity: 0.7;"></div>
+                <div style="position: absolute; left: 108px; top: 30px; width: 6px; height: 6px; background: #ffcf3f; opacity: 0.5;"></div>
+                <div style="position: absolute; left: 30px; top: 96px; width: 12px; height: 12px; background: #3f474f; border-radius: 50%;"></div>
+                <div style="position: absolute; left: 45px; top: 90px; width: 12px; height: 12px; background: #3f474f; border-radius: 50%;"></div>
+                <div style="position: absolute; left: 150px; top: 108px; width: 12px; height: 12px; background: #23282e; border-radius: 50%;"></div>
+              </div>
+            </div>
+            <div style="font-size: 12px; color: #f4e4c1;">Mortar</div>
+            <div style="font-size: 10px; color: #6f8296; line-height: 1.9;">Laag, breed en zwaar, met wijde trechtermond die omhoog wijst. Silhouet is een trapezium, geen loop.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ 1d OMGEVING ============ -->
+    <div id="1d" style="display: flex; flex-direction: column; gap: 12px;">
+      <div style="display: flex; align-items: center; gap: 10px;">
+        <div style="background: #ffcf3f; color: #1a1420; font-size: 11px; font-weight: 700; padding: 3px 7px;">1d</div>
+        <div style="font-size: 13px; color: #9db0c0;">Omgeving &mdash; hex-tegel &amp; uitdijend eiland</div>
+      </div>
+
+      <div style="width: 940px; background: #1a2028; border: 4px solid #5c3a1e; box-shadow: inset 0 0 0 4px #8b5a2b; padding: 28px; display: flex; flex-direction: column; gap: 24px;">
+
+        <div style="display: flex; gap: 28px; align-items: flex-start;">
+          <div style="display: flex; flex-direction: column; gap: 10px;">
+            <div style="font-size: 12px; color: #ffcf3f; letter-spacing: 2px;">GRONDTEGEL 64&times;64</div>
+            <div style="position: relative; width: 256px; height: 256px; background: #14496b; border: 3px solid #0d2b40;">
+              <div style="position: absolute; left: 0; top: 0; width: 256px; height: 256px; background: #4f9e42; clip-path: polygon(25% 0, 75% 0, 100% 50%, 75% 100%, 25% 100%, 0 50%);"></div>
+              <div style="position: absolute; left: 0; top: 0; width: 256px; height: 40px; background: #7cc35a; clip-path: polygon(25% 0, 75% 0, 87% 100%, 13% 100%);"></div>
+              <div style="position: absolute; left: 0; top: 200px; width: 256px; height: 56px; background: #c9a063; clip-path: polygon(13% 0, 87% 0, 75% 100%, 25% 100%);"></div>
+              <div style="position: absolute; left: 0; top: 236px; width: 256px; height: 20px; background: #e8c88a; clip-path: polygon(8% 0, 92% 0, 75% 100%, 25% 100%);"></div>
+              <div style="position: absolute; left: 0; top: 248px; width: 256px; height: 12px; background: #a9eef2; clip-path: polygon(6% 0, 94% 0, 75% 100%, 25% 100%);"></div>
+              <div style="position: absolute; left: 64px; top: 36px; width: 128px; height: 12px; background: #a3d97f; clip-path: polygon(0 0, 100% 0, 94% 100%, 6% 100%);"></div>
+              <div style="position: absolute; left: 76px; top: 64px; width: 12px; height: 12px; background: #7cc35a;"></div>
+              <div style="position: absolute; left: 96px; top: 96px; width: 16px; height: 16px; background: #7cc35a;"></div>
+              <div style="position: absolute; left: 92px; top: 92px; width: 8px; height: 8px; background: #a3d97f;"></div>
+              <div style="position: absolute; left: 148px; top: 128px; width: 16px; height: 16px; background: #2f6b38;"></div>
+              <div style="position: absolute; left: 164px; top: 124px; width: 8px; height: 8px; background: #7cc35a;"></div>
+              <div style="position: absolute; left: 112px; top: 164px; width: 16px; height: 16px; background: #7cc35a;"></div>
+              <div style="position: absolute; left: 60px; top: 132px; width: 12px; height: 12px; background: #2f6b38;"></div>
+              <div style="position: absolute; left: 180px; top: 76px; width: 12px; height: 12px; background: #2f6b38;"></div>
+              <div style="position: absolute; left: 136px; top: 60px; width: 8px; height: 8px; background: #ffcf3f;"></div>
+              <div style="position: absolute; left: 84px; top: 148px; width: 8px; height: 8px; background: #e0503a;"></div>
+              <div style="position: absolute; left: 160px; top: 176px; width: 24px; height: 16px; background: #93a1ad;"></div>
+              <div style="position: absolute; left: 160px; top: 184px; width: 24px; height: 8px; background: #5c6672;"></div>
+              <div style="position: absolute; left: 116px; top: 108px; width: 8px; height: 32px; background: #8b5a2b;"></div>
+              <div style="position: absolute; left: 100px; top: 96px; width: 20px; height: 8px; background: #2f6b38;"></div>
+              <div style="position: absolute; left: 120px; top: 96px; width: 20px; height: 8px; background: #4f9e42;"></div>
+              <div style="position: absolute; left: 104px; top: 88px; width: 32px; height: 8px; background: #4f9e42;"></div>
+              <div style="position: absolute; left: 112px; top: 140px; width: 12px; height: 4px; background: #6f4520;"></div>
+              <div style="position: absolute; left: 200px; top: 216px; width: 12px; height: 8px; background: #f4e4c1;"></div>
+              <div style="position: absolute; left: 56px; top: 212px; width: 8px; height: 8px; background: #dbc9a0;"></div>
+            </div>
+            <div style="font-size: 10px; color: #6f8296; line-height: 1.9; width: 256px;">Flat-top hex. Bovenrand licht gras, onderrand zandstrand &mdash; geeft de tegel volume zonder losse shading-sprite.</div>
+          </div>
+
+          <div style="flex: 1; display: flex; flex-direction: column; gap: 10px;">
+            <div style="font-size: 12px; color: #ffcf3f; letter-spacing: 2px;">TEGELVARIANTEN</div>
+            <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+              <div style="display: flex; flex-direction: column; gap: 6px; align-items: center;">
+                <div style="position: relative; width: 96px; height: 96px; background: #4f9e42; clip-path: polygon(25% 0, 75% 0, 100% 50%, 75% 100%, 25% 100%, 0 50%);">
+                  <div style="position: absolute; left: 24px; top: 12px; width: 48px; height: 6px; background: #a3d97f;"></div>
+                  <div style="position: absolute; left: 0; top: 76px; width: 96px; height: 20px; background: #2f6b38;"></div>
+                  <div style="position: absolute; left: 30px; top: 40px; width: 6px; height: 6px; background: #7cc35a;"></div>
+                  <div style="position: absolute; left: 56px; top: 56px; width: 6px; height: 6px; background: #2f6b38;"></div>
+                  <div style="position: absolute; left: 44px; top: 26px; width: 4px; height: 4px; background: #ffcf3f;"></div>
+                </div>
+                <div style="font-size: 9px; color: #6f8296;">gras</div>
+              </div>
+              <div style="display: flex; flex-direction: column; gap: 6px; align-items: center;">
+                <div style="position: relative; width: 96px; height: 96px; background: #e8c88a; clip-path: polygon(25% 0, 75% 0, 100% 50%, 75% 100%, 25% 100%, 0 50%);">
+                  <div style="position: absolute; left: 0; top: 74px; width: 96px; height: 22px; background: #c9a063;"></div>
+                  <div style="position: absolute; left: 34px; top: 34px; width: 6px; height: 6px; background: #c9a063;"></div>
+                  <div style="position: absolute; left: 58px; top: 52px; width: 8px; height: 4px; background: #dbc9a0;"></div>
+                  <div style="position: absolute; left: 42px; top: 66px; width: 6px; height: 4px; background: #f4e4c1;"></div>
+                </div>
+                <div style="font-size: 9px; color: #6f8296;">zand</div>
+              </div>
+              <div style="display: flex; flex-direction: column; gap: 6px; align-items: center;">
+                <div style="position: relative; width: 96px; height: 96px; background: #2f6b38; clip-path: polygon(25% 0, 75% 0, 100% 50%, 75% 100%, 25% 100%, 0 50%);">
+                  <div style="position: absolute; left: 24px; top: 10px; width: 48px; height: 6px; background: #4f9e42;"></div>
+                  <div style="position: absolute; left: 44px; top: 40px; width: 6px; height: 26px; background: #8b5a2b;"></div>
+                  <div style="position: absolute; left: 34px; top: 34px; width: 12px; height: 6px; background: #4f9e42;"></div>
+                  <div style="position: absolute; left: 48px; top: 34px; width: 12px; height: 6px; background: #7cc35a;"></div>
+                  <div style="position: absolute; left: 40px; top: 28px; width: 18px; height: 6px; background: #4f9e42;"></div>
+                  <div style="position: absolute; left: 22px; top: 60px; width: 6px; height: 6px; background: #4f9e42;"></div>
+                </div>
+                <div style="font-size: 9px; color: #6f8296;">jungle</div>
+              </div>
+              <div style="display: flex; flex-direction: column; gap: 6px; align-items: center;">
+                <div style="width: 96px; height: 96px; background: #4fc9d9; box-shadow: inset 0 0 0 6px #ffcf3f; clip-path: polygon(25% 0, 75% 0, 100% 50%, 75% 100%, 25% 100%, 0 50%);"></div>
+                <div style="font-size: 9px; color: #6f8296;">plaatsbaar</div>
+              </div>
+              <div style="display: flex; flex-direction: column; gap: 6px; align-items: center;">
+                <div style="width: 96px; height: 96px; background: #14496b; box-shadow: inset 0 0 0 6px #e0503a; clip-path: polygon(25% 0, 75% 0, 100% 50%, 75% 100%, 25% 100%, 0 50%);"></div>
+                <div style="font-size: 9px; color: #6f8296;">geblokkeerd</div>
+              </div>
+            </div>
+            <div style="font-size: 10px; color: #6f8296; line-height: 2; margin-top: 6px;">Hover/selectie is altijd een <span style="color: #ffcf3f;">2px binnenrand</span> in goud of rood, nooit een kleurvulling &mdash; anders verdwijnt het gebouw erop.</div>
+          </div>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 10px;">
+          <div style="font-size: 12px; color: #ffcf3f; letter-spacing: 2px;">EILAND &mdash; 9 TEGELS AANEEN + OPEN WATER</div>
+          <div style="position: relative; width: 100%; height: 340px; background: #14496b; border: 3px solid #0d2b40; overflow: hidden;">
+            <div style="position: absolute; left: 0; top: 0; right: 0; bottom: 0; background: repeating-linear-gradient(90deg, #14496b 0 24px, #175074 24px 48px); opacity: 0.6;"></div>
+            <div style="position: absolute; left: 236px; top: 32px; width: 400px; height: 276px; background: #4fc9d9; opacity: 0.35; border-radius: 50%;"></div>
+            <div style="position: absolute; left: 288px; top: 106px; width: 128px; height: 128px; background: #4f9e42; clip-path: polygon(25% 0, 75% 0, 100% 50%, 75% 100%, 25% 100%, 0 50%);"></div>
+            <div style="position: absolute; left: 384px; top: 42px; width: 128px; height: 128px; background: #4f9e42; clip-path: polygon(25% 0, 75% 0, 100% 50%, 75% 100%, 25% 100%, 0 50%);"></div>
+            <div style="position: absolute; left: 384px; top: 170px; width: 128px; height: 128px; background: #4f9e42; clip-path: polygon(25% 0, 75% 0, 100% 50%, 75% 100%, 25% 100%, 0 50%);"></div>
+            <div style="position: absolute; left: 480px; top: 106px; width: 128px; height: 128px; background: #e8c88a; clip-path: polygon(25% 0, 75% 0, 100% 50%, 75% 100%, 25% 100%, 0 50%);"></div>
+            <div style="position: absolute; left: 192px; top: 42px; width: 128px; height: 128px; background: #2f6b38; clip-path: polygon(25% 0, 75% 0, 100% 50%, 75% 100%, 25% 100%, 0 50%);"></div>
+            <div style="position: absolute; left: 192px; top: 170px; width: 128px; height: 128px; background: #4f9e42; clip-path: polygon(25% 0, 75% 0, 100% 50%, 75% 100%, 25% 100%, 0 50%);"></div>
+            <div style="position: absolute; left: 96px; top: 106px; width: 128px; height: 128px; background: #e8c88a; clip-path: polygon(25% 0, 75% 0, 100% 50%, 75% 100%, 25% 100%, 0 50%);"></div>
+            <div style="position: absolute; left: 576px; top: 42px; width: 128px; height: 128px; background: #4fc9d9; box-shadow: inset 0 0 0 8px #ffcf3f; clip-path: polygon(25% 0, 75% 0, 100% 50%, 75% 100%, 25% 100%, 0 50%);"></div>
+            <div style="position: absolute; left: 576px; top: 170px; width: 128px; height: 128px; background: #4fc9d9; box-shadow: inset 0 0 0 8px #ffcf3f; clip-path: polygon(25% 0, 75% 0, 100% 50%, 75% 100%, 25% 100%, 0 50%);"></div>
+            <div style="position: absolute; left: 400px; top: 156px; width: 96px; height: 32px; background: #b98246;"></div>
+            <div style="position: absolute; left: 400px; top: 124px; width: 96px; height: 32px; background: #e0503a; clip-path: polygon(12% 100%, 50% 0, 88% 100%);"></div>
+            <div style="position: absolute; left: 740px; top: 240px; width: 68px; height: 20px; background: #8b5a2b; clip-path: polygon(0 0, 100% 0, 88% 100%, 12% 100%);"></div>
+            <div style="position: absolute; left: 770px; top: 196px; width: 8px; height: 44px; background: #5c3a1e;"></div>
+            <div style="position: absolute; left: 778px; top: 200px; width: 32px; height: 32px; background: #f4e4c1;"></div>
+            <div style="position: absolute; left: 300px; top: 118px; width: 8px; height: 28px; background: #8b5a2b;"></div>
+            <div style="position: absolute; left: 288px; top: 110px; width: 16px; height: 8px; background: #2f6b38;"></div>
+            <div style="position: absolute; left: 304px; top: 110px; width: 16px; height: 8px; background: #4f9e42;"></div>
+            <div style="position: absolute; left: 294px; top: 102px; width: 24px; height: 8px; background: #4f9e42;"></div>
+            <div style="position: absolute; left: 206px; top: 90px; width: 8px; height: 24px; background: #8b5a2b;"></div>
+            <div style="position: absolute; left: 194px; top: 82px; width: 16px; height: 8px; background: #2f6b38;"></div>
+            <div style="position: absolute; left: 210px; top: 82px; width: 16px; height: 8px; background: #4f9e42;"></div>
+            <div style="position: absolute; left: 232px; top: 218px; width: 8px; height: 24px; background: #8b5a2b;"></div>
+            <div style="position: absolute; left: 220px; top: 210px; width: 16px; height: 8px; background: #2f6b38;"></div>
+            <div style="position: absolute; left: 236px; top: 210px; width: 16px; height: 8px; background: #4f9e42;"></div>
+            <div style="position: absolute; left: 424px; top: 220px; width: 16px; height: 8px; background: #2f6b38;"></div>
+            <div style="position: absolute; left: 440px; top: 236px; width: 8px; height: 8px; background: #7cc35a;"></div>
+            <div style="position: absolute; left: 516px; top: 150px; width: 20px; height: 12px; background: #93a1ad;"></div>
+            <div style="position: absolute; left: 516px; top: 156px; width: 20px; height: 6px; background: #5c6672;"></div>
+            <div style="position: absolute; left: 268px; top: 78px; width: 12px; height: 8px; background: #ffcf3f;"></div>
+            <div style="position: absolute; left: 336px; top: 232px; width: 12px; height: 8px; background: #e0503a;"></div>
+            <div style="position: absolute; left: 424px; top: 188px; width: 48px; height: 8px; background: #c9a063;"></div>
+            <div style="position: absolute; left: 432px; top: 196px; width: 8px; height: 8px; background: #b98246;"></div>
+            <div style="position: absolute; left: 448px; top: 204px; width: 8px; height: 8px; background: #b98246;"></div>
+            <div style="position: absolute; left: 104px; top: 216px; width: 40px; height: 6px; background: #a9eef2;"></div>
+            <div style="position: absolute; left: 152px; top: 234px; width: 32px; height: 6px; background: #a9eef2;"></div>
+            <div style="position: absolute; left: 216px; top: 296px; width: 48px; height: 6px; background: #a9eef2;"></div>
+            <div style="position: absolute; left: 320px; top: 22px; width: 44px; height: 6px; background: #a9eef2;"></div>
+            <div style="position: absolute; left: 440px; top: 18px; width: 36px; height: 6px; background: #a9eef2;"></div>
+            <div style="position: absolute; left: 40px; top: 60px; width: 56px; height: 5px; background: #4fc9d9;"></div>
+            <div style="position: absolute; left: 24px; top: 140px; width: 40px; height: 5px; background: #4fc9d9;"></div>
+            <div style="position: absolute; left: 56px; top: 210px; width: 52px; height: 5px; background: #4fc9d9;"></div>
+            <div style="position: absolute; left: 660px; top: 90px; width: 56px; height: 5px; background: #4fc9d9;"></div>
+            <div style="position: absolute; left: 700px; top: 160px; width: 44px; height: 5px; background: #4fc9d9;"></div>
+            <div style="position: absolute; left: 640px; top: 260px; width: 60px; height: 5px; background: #4fc9d9;"></div>
+            <div style="position: absolute; left: 120px; top: 20px; width: 48px; height: 5px; background: #4fc9d9;"></div>
+            <div style="position: absolute; left: 736px; top: 232px; width: 76px; height: 6px; background: #a9eef2;"></div>
+            <div style="position: absolute; left: 24px; top: 314px; font-size: 10px; color: #a9eef2;">open water &mdash; spawnzone rondom, piraten varen van buiten naar binnen</div>
+            <div style="position: absolute; left: 596px; top: 306px; font-size: 10px; color: #ffcf3f;">gouden rand = koopbare uitbreiding</div>
+          </div>
+          <div style="font-size: 10px; color: #6f8296; line-height: 2;">Het eiland groeit naar buiten vanuit de dorpstegel. Vrije randtegels tonen als ondiep water met gouden hex-omtrek, zodat groei-richting altijd leesbaar is.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ 1e HUD ============ -->
+    <div id="1e" style="display: flex; flex-direction: column; gap: 12px;">
+      <div style="display: flex; align-items: center; gap: 10px;">
+        <div style="background: #ffcf3f; color: #1a1420; font-size: 11px; font-weight: 700; padding: 3px 7px;">1e</div>
+        <div style="font-size: 13px; color: #9db0c0;">HUD in-game &mdash; 640&times;360, 2&times; getoond</div>
+      </div>
+
+      <div style="width: 1280px; height: 720px; border: 4px solid #5c3a1e; box-shadow: inset 0 0 0 4px #8b5a2b; overflow: hidden; position: relative;">
+        <div style="position: absolute; left: 0; top: 0; width: 640px; height: 360px; transform: scale(2); transform-origin: top left; background: #14496b; font-family: Silkscreen, monospace;">
+
+          <div style="position: absolute; left: 0; top: 0; width: 640px; height: 360px; background: repeating-linear-gradient(90deg, #14496b 0 12px, #175074 12px 24px);"></div>
+          <div style="position: absolute; left: 150px; top: 60px; width: 340px; height: 240px; background: #4fc9d9; opacity: 0.3; border-radius: 50%;"></div>
+
+          <div style="position: absolute; left: 224px; top: 132px; width: 64px; height: 64px; background: #4f9e42; clip-path: polygon(25% 0, 75% 0, 100% 50%, 75% 100%, 25% 100%, 0 50%);"></div>
+          <div style="position: absolute; left: 272px; top: 100px; width: 64px; height: 64px; background: #2f6b38; clip-path: polygon(25% 0, 75% 0, 100% 50%, 75% 100%, 25% 100%, 0 50%);"></div>
+          <div style="position: absolute; left: 272px; top: 164px; width: 64px; height: 64px; background: #4f9e42; clip-path: polygon(25% 0, 75% 0, 100% 50%, 75% 100%, 25% 100%, 0 50%);"></div>
+          <div style="position: absolute; left: 320px; top: 132px; width: 64px; height: 64px; background: #4f9e42; clip-path: polygon(25% 0, 75% 0, 100% 50%, 75% 100%, 25% 100%, 0 50%);"></div>
+          <div style="position: absolute; left: 368px; top: 100px; width: 64px; height: 64px; background: #e8c88a; clip-path: polygon(25% 0, 75% 0, 100% 50%, 75% 100%, 25% 100%, 0 50%);"></div>
+          <div style="position: absolute; left: 368px; top: 164px; width: 64px; height: 64px; background: #4fc9d9; box-shadow: inset 0 0 0 3px #ffcf3f; clip-path: polygon(25% 0, 75% 0, 100% 50%, 75% 100%, 25% 100%, 0 50%);"></div>
+          <div style="position: absolute; left: 176px; top: 100px; width: 64px; height: 64px; background: #e8c88a; clip-path: polygon(25% 0, 75% 0, 100% 50%, 75% 100%, 25% 100%, 0 50%);"></div>
+
+          <div style="position: absolute; left: 60px; top: 60px; width: 24px; height: 2px; background: #4fc9d9;"></div>
+          <div style="position: absolute; left: 100px; top: 90px; width: 18px; height: 2px; background: #4fc9d9;"></div>
+          <div style="position: absolute; left: 56px; top: 140px; width: 22px; height: 2px; background: #4fc9d9;"></div>
+          <div style="position: absolute; left: 90px; top: 260px; width: 26px; height: 2px; background: #4fc9d9;"></div>
+          <div style="position: absolute; left: 520px; top: 200px; width: 24px; height: 2px; background: #4fc9d9;"></div>
+          <div style="position: absolute; left: 560px; top: 260px; width: 20px; height: 2px; background: #4fc9d9;"></div>
+          <div style="position: absolute; left: 480px; top: 60px; width: 22px; height: 2px; background: #4fc9d9;"></div>
+          <div style="position: absolute; left: 588px; top: 130px; width: 26px; height: 2px; background: #4fc9d9;"></div>
+          <div style="position: absolute; left: 200px; top: 88px; width: 20px; height: 2px; background: #a9eef2;"></div>
+          <div style="position: absolute; left: 200px; top: 236px; width: 20px; height: 2px; background: #a9eef2;"></div>
+          <div style="position: absolute; left: 396px; top: 92px; width: 18px; height: 2px; background: #a9eef2;"></div>
+          <div style="position: absolute; left: 234px; top: 190px; width: 24px; height: 2px; background: #a9eef2;"></div>
+          <div style="position: absolute; left: 224px; top: 176px; width: 64px; height: 20px; background: #2f6b38; clip-path: polygon(19% 0, 81% 0, 75% 100%, 25% 100%);"></div>
+          <div style="position: absolute; left: 176px; top: 144px; width: 64px; height: 20px; background: #c9a063; clip-path: polygon(19% 0, 81% 0, 75% 100%, 25% 100%);"></div>
+          <div style="position: absolute; left: 368px; top: 144px; width: 64px; height: 20px; background: #c9a063; clip-path: polygon(19% 0, 81% 0, 75% 100%, 25% 100%);"></div>
+          <div style="position: absolute; left: 296px; top: 108px; width: 3px; height: 10px; background: #8b5a2b;"></div>
+          <div style="position: absolute; left: 292px; top: 104px; width: 6px; height: 3px; background: #2f6b38;"></div>
+          <div style="position: absolute; left: 298px; top: 104px; width: 6px; height: 3px; background: #4f9e42;"></div>
+          <div style="position: absolute; left: 240px; top: 148px; width: 3px; height: 9px; background: #8b5a2b;"></div>
+          <div style="position: absolute; left: 236px; top: 145px; width: 6px; height: 3px; background: #2f6b38;"></div>
+          <div style="position: absolute; left: 242px; top: 145px; width: 6px; height: 3px; background: #4f9e42;"></div>
+          <div style="position: absolute; left: 344px; top: 182px; width: 4px; height: 4px; background: #ffcf3f;"></div>
+          <div style="position: absolute; left: 208px; top: 128px; width: 5px; height: 3px; background: #93a1ad;"></div>
+          <div style="position: absolute; left: 326px; top: 152px; width: 24px; height: 12px; background: #b98246;"></div>
+          <div style="position: absolute; left: 326px; top: 158px; width: 24px; height: 6px; background: #8b5a2b;"></div>
+          <div style="position: absolute; left: 334px; top: 154px; width: 6px; height: 6px; background: #4fc9d9;"></div>
+          <div style="position: absolute; left: 326px; top: 140px; width: 24px; height: 12px; background: #e0503a; clip-path: polygon(12% 100%, 50% 0, 88% 100%);"></div>
+          <div style="position: absolute; left: 326px; top: 148px; width: 24px; height: 3px; background: #b83a28; clip-path: polygon(14% 0, 86% 0, 88% 100%, 12% 100%);"></div>
+          <div style="position: absolute; left: 348px; top: 134px; width: 2px; height: 10px; background: #5c3a1e;"></div>
+          <div style="position: absolute; left: 350px; top: 134px; width: 8px; height: 4px; background: #ffcf3f;"></div>
+          <div style="position: absolute; left: 288px; top: 122px; width: 18px; height: 11px; background: #93a1ad;"></div>
+          <div style="position: absolute; left: 288px; top: 122px; width: 18px; height: 2px; background: #b6c1cb;"></div>
+          <div style="position: absolute; left: 288px; top: 130px; width: 18px; height: 3px; background: #5c6672;"></div>
+          <div style="position: absolute; left: 291px; top: 115px; width: 12px; height: 7px; background: #8b5a2b;"></div>
+          <div style="position: absolute; left: 291px; top: 115px; width: 12px; height: 2px; background: #b98246;"></div>
+          <div style="position: absolute; left: 302px; top: 117px; width: 11px; height: 3px; background: #5c6672;"></div>
+          <div style="position: absolute; left: 285px; top: 128px; width: 5px; height: 5px; background: #b98246;"></div>
+
+          <div style="position: absolute; left: 292px; top: 168px; width: 10px; height: 22px; background: #93a1ad;"></div>
+          <div style="position: absolute; left: 292px; top: 168px; width: 3px; height: 22px; background: #b6c1cb;"></div>
+          <div style="position: absolute; left: 299px; top: 168px; width: 3px; height: 22px; background: #5c6672;"></div>
+          <div style="position: absolute; left: 292px; top: 178px; width: 10px; height: 1px; background: #5c6672;"></div>
+          <div style="position: absolute; left: 295px; top: 181px; width: 4px; height: 5px; background: #1a1420;"></div>
+          <div style="position: absolute; left: 288px; top: 162px; width: 18px; height: 7px; background: #8b5a2b;"></div>
+          <div style="position: absolute; left: 288px; top: 162px; width: 18px; height: 2px; background: #b98246;"></div>
+          <div style="position: absolute; left: 291px; top: 155px; width: 12px; height: 7px; background: #f4e4c1; clip-path: polygon(50% 0, 100% 100%, 0 100%);"></div>
+          <div style="position: absolute; left: 297px; top: 155px; width: 6px; height: 7px; background: #dbc9a0; clip-path: polygon(0 0, 100% 100%, 0 100%);"></div>
+          <div style="position: absolute; left: 306px; top: 165px; width: 8px; height: 2px; background: #5c6672;"></div>
+          <div style="position: absolute; left: 288px; top: 186px; width: 18px; height: 4px; background: #5c6672;"></div>
+
+          <div style="position: absolute; left: 380px; top: 122px; width: 26px; height: 10px; background: #5c6672;"></div>
+          <div style="position: absolute; left: 380px; top: 122px; width: 26px; height: 2px; background: #93a1ad;"></div>
+          <div style="position: absolute; left: 380px; top: 129px; width: 26px; height: 3px; background: #3f474f;"></div>
+          <div style="position: absolute; left: 385px; top: 114px; width: 16px; height: 9px; background: #93a1ad; clip-path: polygon(0 100%, 18% 0, 82% 0, 100% 100%);"></div>
+          <div style="position: absolute; left: 385px; top: 114px; width: 6px; height: 9px; background: #b6c1cb; clip-path: polygon(0 100%, 54% 0, 100% 0, 100% 100%);"></div>
+          <div style="position: absolute; left: 389px; top: 110px; width: 8px; height: 5px; background: #23282e;"></div>
+          <div style="position: absolute; left: 377px; top: 128px; width: 5px; height: 5px; background: #8b5a2b;"></div>
+          <div style="position: absolute; left: 404px; top: 128px; width: 5px; height: 5px; background: #8b5a2b;"></div>
+
+          <div style="position: absolute; left: 92px; top: 210px; width: 24px; height: 7px; background: #8b5a2b; clip-path: polygon(0 0, 100% 0, 88% 100%, 12% 100%);"></div>
+          <div style="position: absolute; left: 102px; top: 196px; width: 3px; height: 14px; background: #5c3a1e;"></div>
+          <div style="position: absolute; left: 105px; top: 197px; width: 11px; height: 11px; background: #f4e4c1;"></div>
+          <div style="position: absolute; left: 520px; top: 96px; width: 34px; height: 4px; background: #b98246;"></div>
+          <div style="position: absolute; left: 536px; top: 76px; width: 2px; height: 20px; background: #5c3a1e;"></div>
+          <div style="position: absolute; left: 538px; top: 78px; width: 13px; height: 17px; background: #f4e4c1; clip-path: polygon(0 0, 100% 100%, 0 100%);"></div>
+          <div style="position: absolute; left: 480px; top: 250px; width: 30px; height: 8px; background: #5c3a1e; clip-path: polygon(0 0, 100% 0, 92% 100%, 8% 100%);"></div>
+          <div style="position: absolute; left: 492px; top: 236px; width: 4px; height: 14px; background: #5c3a1e;"></div>
+          <div style="position: absolute; left: 478px; top: 238px; width: 18px; height: 11px; background: #dbc9a0;"></div>
+
+          <!-- top bar -->
+          <div style="position: absolute; left: 0; top: 0; width: 640px; height: 28px; background: #1a1420; border-bottom: 2px solid #8b5a2b; display: flex; align-items: center; justify-content: space-between; padding: 0 8px; box-sizing: border-box;">
+            <div style="display: flex; align-items: center; gap: 6px;">
+              <div style="width: 10px; height: 10px; background: #e0503a; clip-path: polygon(50% 100%, 0 40%, 20% 10%, 50% 30%, 80% 10%, 100% 40%);"></div>
+              <div style="width: 92px; height: 10px; background: #3d2028; border: 1px solid #8b5a2b; box-sizing: border-box; padding: 1px;">
+                <div style="width: 72%; height: 100%; background: #e0503a;"></div>
+              </div>
+              <div style="font-size: 8px; color: #f4e4c1;">72/100</div>
+            </div>
+            <div style="display: flex; align-items: center; gap: 6px;">
+              <div style="width: 10px; height: 10px; background: #ffcf3f; border-radius: 50%; box-shadow: inset 0 0 0 2px #c99b1e;"></div>
+              <div style="font-size: 10px; color: #ffcf3f;">340</div>
+            </div>
+            <div style="display: flex; align-items: center; gap: 6px;">
+              <div style="font-size: 8px; color: #9db0c0;">WAVE</div>
+              <div style="font-size: 12px; color: #f4e4c1;">12</div>
+              <div style="font-size: 8px; color: #6f8296;">&middot; 0:24</div>
+            </div>
+          </div>
+
+          <!-- hotbar -->
+          <div style="position: absolute; left: 0; bottom: 0; width: 640px; height: 52px; background: #1a1420; border-top: 2px solid #8b5a2b; display: flex; align-items: center; justify-content: center; gap: 6px;">
+            <div style="width: 40px; height: 40px; background: #2a2028; border: 2px solid #ffcf3f; box-sizing: border-box; position: relative;">
+              <div style="position: absolute; left: 10px; top: 20px; width: 20px; height: 10px; background: #93a1ad;"></div>
+              <div style="position: absolute; left: 10px; top: 20px; width: 20px; height: 2px; background: #b6c1cb;"></div>
+              <div style="position: absolute; left: 10px; top: 27px; width: 20px; height: 3px; background: #5c6672;"></div>
+              <div style="position: absolute; left: 13px; top: 13px; width: 13px; height: 7px; background: #8b5a2b;"></div>
+              <div style="position: absolute; left: 13px; top: 13px; width: 13px; height: 2px; background: #b98246;"></div>
+              <div style="position: absolute; left: 25px; top: 15px; width: 12px; height: 4px; background: #5c6672;"></div>
+              <div style="position: absolute; right: 1px; bottom: 1px; font-size: 7px; color: #ffcf3f;">50</div>
+              <div style="position: absolute; left: 1px; top: 1px; font-size: 7px; color: #6f8296;">1</div>
+            </div>
+            <div style="width: 40px; height: 40px; background: #2a2028; border: 2px solid #5c3a1e; box-sizing: border-box; position: relative;">
+              <div style="position: absolute; left: 17px; top: 14px; width: 8px; height: 18px; background: #93a1ad;"></div>
+              <div style="position: absolute; left: 17px; top: 14px; width: 3px; height: 18px; background: #b6c1cb;"></div>
+              <div style="position: absolute; left: 22px; top: 14px; width: 3px; height: 18px; background: #5c6672;"></div>
+              <div style="position: absolute; left: 19px; top: 22px; width: 4px; height: 5px; background: #1a1420;"></div>
+              <div style="position: absolute; left: 14px; top: 9px; width: 14px; height: 6px; background: #8b5a2b;"></div>
+              <div style="position: absolute; left: 14px; top: 9px; width: 14px; height: 2px; background: #b98246;"></div>
+              <div style="position: absolute; left: 16px; top: 4px; width: 10px; height: 6px; background: #f4e4c1; clip-path: polygon(50% 0, 100% 100%, 0 100%);"></div>
+              <div style="position: absolute; right: 1px; bottom: 1px; font-size: 7px; color: #ffcf3f;">90</div>
+              <div style="position: absolute; left: 1px; top: 1px; font-size: 7px; color: #6f8296;">2</div>
+            </div>
+            <div style="width: 40px; height: 40px; background: #2a2028; border: 2px solid #5c3a1e; box-sizing: border-box; position: relative;">
+              <div style="position: absolute; left: 8px; top: 22px; width: 24px; height: 9px; background: #5c6672;"></div>
+              <div style="position: absolute; left: 8px; top: 22px; width: 24px; height: 2px; background: #93a1ad;"></div>
+              <div style="position: absolute; left: 8px; top: 28px; width: 24px; height: 3px; background: #3f474f;"></div>
+              <div style="position: absolute; left: 13px; top: 12px; width: 14px; height: 10px; background: #93a1ad; clip-path: polygon(0 100%, 20% 0, 80% 0, 100% 100%);"></div>
+              <div style="position: absolute; left: 13px; top: 12px; width: 6px; height: 10px; background: #b6c1cb; clip-path: polygon(0 100%, 54% 0, 100% 0, 100% 100%);"></div>
+              <div style="position: absolute; left: 17px; top: 8px; width: 7px; height: 5px; background: #23282e;"></div>
+              <div style="position: absolute; left: 5px; top: 27px; width: 4px; height: 5px; background: #8b5a2b;"></div>
+              <div style="position: absolute; right: 1px; bottom: 1px; font-size: 7px; color: #ffcf3f;">120</div>
+              <div style="position: absolute; left: 1px; top: 1px; font-size: 7px; color: #6f8296;">3</div>
+            </div>
+            <div style="width: 40px; height: 40px; background: #2a2028; border: 2px solid #5c3a1e; box-sizing: border-box; position: relative;">
+              <div style="position: absolute; left: 7px; top: 11px; width: 26px; height: 18px; background: #4f9e42; clip-path: polygon(25% 0, 75% 0, 100% 50%, 75% 100%, 25% 100%, 0 50%);"></div>
+              <div style="position: absolute; left: 13px; top: 11px; width: 14px; height: 2px; background: #a3d97f;"></div>
+              <div style="position: absolute; left: 7px; top: 24px; width: 26px; height: 5px; background: #c9a063; clip-path: polygon(19% 0, 81% 0, 75% 100%, 25% 100%);"></div>
+              <div style="position: absolute; left: 17px; top: 17px; width: 3px; height: 3px; background: #7cc35a;"></div>
+              <div style="position: absolute; right: 1px; bottom: 1px; font-size: 7px; color: #ffcf3f;">200</div>
+              <div style="position: absolute; left: 1px; top: 1px; font-size: 7px; color: #6f8296;">4</div>
+            </div>
+            <div style="width: 40px; height: 40px; background: #221a20; border: 2px solid #3a2a30; box-sizing: border-box; position: relative; opacity: 0.7;">
+              <div style="position: absolute; left: 10px; top: 20px; width: 20px; height: 9px; background: #3f474f;"></div>
+              <div style="position: absolute; left: 10px; top: 20px; width: 20px; height: 2px; background: #5c6672;"></div>
+              <div style="position: absolute; left: 15px; top: 10px; width: 10px; height: 10px; background: #3f474f;"></div>
+              <div style="position: absolute; left: 15px; top: 10px; width: 10px; height: 2px; background: #5c6672;"></div>
+              <div style="position: absolute; left: 13px; top: 6px; width: 14px; height: 3px; background: #23282e;"></div>
+              <div style="position: absolute; left: 5px; top: 5px; width: 30px; height: 3px; background: #e0503a; opacity: 0.5; transform: rotate(45deg); transform-origin: left top;"></div>
+              <div style="position: absolute; right: 1px; bottom: 1px; font-size: 7px; color: #6f8296;">300</div>
+              <div style="position: absolute; left: 1px; top: 1px; font-size: 7px; color: #6f8296;">5</div>
+            </div>
+            <div style="width: 2px; height: 32px; background: #3a2a30;"></div>
+            <div style="width: 40px; height: 40px; background: #2a2028; border: 2px solid #5c3a1e; box-sizing: border-box; display: flex; align-items: center; justify-content: center; font-size: 8px; color: #9db0c0;">&#9881;</div>
+          </div>
+
+          <div style="position: absolute; right: 8px; bottom: 60px; background: #1a1420; border: 2px solid #8b5a2b; padding: 5px 7px; display: flex; flex-direction: column; gap: 3px;">
+            <div style="font-size: 8px; color: #ffcf3f;">TURRET</div>
+            <div style="font-size: 7px; color: #9db0c0;">dmg 12 &middot; rng 3</div>
+            <div style="font-size: 7px; color: #6f8296;">klik tegel om te plaatsen</div>
+          </div>
+        </div>
+      </div>
+      <div style="font-size: 10px; color: #6f8296; line-height: 2; width: 1280px;">Balken zijn 28px (boven) en 52px (onder) op native 360px hoogte &mdash; samen 22% van het scherm, de rest blijft speelveld. Hotbar-slots 40&times;40 met 1px cijfer-hotkey linksboven en kosten rechtsonder.</div>
+    </div>
+
+    <!-- ============ 1f HOOFDMENU ============ -->
+    <div id="1f" style="display: flex; flex-direction: column; gap: 12px;">
+      <div style="display: flex; align-items: center; gap: 10px;">
+        <div style="background: #ffcf3f; color: #1a1420; font-size: 11px; font-weight: 700; padding: 3px 7px;">1f</div>
+        <div style="font-size: 13px; color: #9db0c0;">Hoofdmenu + upgrade-winkel</div>
+      </div>
+
+      <div style="width: 1280px; height: 720px; border: 4px solid #5c3a1e; box-shadow: inset 0 0 0 4px #8b5a2b; overflow: hidden; position: relative;">
+        <div style="position: absolute; left: 0; top: 0; width: 640px; height: 360px; transform: scale(2); transform-origin: top left; background: #14496b; font-family: Silkscreen, monospace;">
+          <div style="position: absolute; left: 0; top: 0; width: 640px; height: 360px; background: repeating-linear-gradient(90deg, #14496b 0 12px, #175074 12px 24px);"></div>
+          <div style="position: absolute; left: 0; top: 0; width: 640px; height: 120px; background: #2286ad; opacity: 0.25;"></div>
+          <div style="position: absolute; left: 40px; top: 250px; width: 200px; height: 110px; background: #4f9e42; opacity: 0.35; border-radius: 50%;"></div>
+          <div style="position: absolute; left: 60px; top: 128px; width: 26px; height: 2px; background: #4fc9d9;"></div>
+          <div style="position: absolute; left: 132px; top: 168px; width: 20px; height: 2px; background: #4fc9d9;"></div>
+          <div style="position: absolute; left: 44px; top: 208px; width: 24px; height: 2px; background: #4fc9d9;"></div>
+          <div style="position: absolute; left: 176px; top: 236px; width: 22px; height: 2px; background: #a9eef2;"></div>
+          <div style="position: absolute; left: 96px; top: 296px; width: 28px; height: 2px; background: #4fc9d9;"></div>
+          <div style="position: absolute; left: 244px; top: 320px; width: 34px; height: 2px; background: #a9eef2;"></div>
+          <div style="position: absolute; left: 400px; top: 330px; width: 26px; height: 2px; background: #4fc9d9;"></div>
+          <div style="position: absolute; left: 520px; top: 306px; width: 30px; height: 2px; background: #4fc9d9;"></div>
+          <div style="position: absolute; left: 300px; top: 108px; width: 24px; height: 2px; background: #4fc9d9;"></div>
+          <div style="position: absolute; left: 476px; top: 96px; width: 20px; height: 2px; background: #a9eef2;"></div>
+
+          <div style="position: absolute; left: 0; top: 26px; width: 640px; text-align: center; font-family: 'Pirata One', serif; font-size: 46px; line-height: 1; color: #ffcf3f; text-shadow: 3px 3px 0 #5c3a1e;">Island Survival TD</div>
+          <div style="position: absolute; left: 0; top: 76px; width: 640px; text-align: center; font-size: 8px; color: #a9eef2; letter-spacing: 3px;">VERDEDIG HET DORP TEGEN DE PIRATEN</div>
+
+          <div style="position: absolute; left: 32px; top: 116px; width: 200px; display: flex; flex-direction: column; gap: 10px;">
+            <div style="height: 34px; background: #ffcf3f; border: 2px solid #5c3a1e; box-shadow: 0 3px 0 #c99b1e; display: flex; align-items: center; justify-content: center; font-size: 16px; color: #3d2a12;">SPEEL</div>
+            <div style="height: 22px; background: #2a2028; border: 2px solid #8b5a2b; display: flex; align-items: center; justify-content: center; font-size: 9px; color: #f4e4c1;">INSTELLINGEN</div>
+            <div style="height: 22px; background: #2a2028; border: 2px solid #8b5a2b; display: flex; align-items: center; justify-content: center; font-size: 9px; color: #f4e4c1;">STOPPEN</div>
+            <div style="margin-top: 8px; background: #1a1420; border: 2px solid #8b5a2b; padding: 7px; display: flex; flex-direction: column; gap: 4px;">
+              <div style="font-size: 8px; color: #6f8296;">BESTE RUN</div>
+              <div style="font-size: 12px; color: #f4e4c1;">WAVE 18</div>
+            </div>
+          </div>
+
+          <div style="position: absolute; right: 24px; top: 108px; width: 348px; background: #1a1420; border: 2px solid #8b5a2b; padding: 10px; box-sizing: border-box; display: flex; flex-direction: column; gap: 8px;">
+            <div style="display: flex; align-items: baseline; justify-content: space-between; border-bottom: 2px solid #3a2a30; padding-bottom: 6px;">
+              <div style="font-family: 'Pirata One', serif; font-size: 20px; color: #ffcf3f;">Upgrade-winkel</div>
+              <div style="display: flex; align-items: center; gap: 5px;">
+                <div style="font-size: 8px; color: #9db0c0;">XP</div>
+                <div style="font-size: 13px; color: #4fc9d9;">2.450</div>
+              </div>
+            </div>
+
+            <div style="display: flex; align-items: center; gap: 8px; background: #221a20; border: 1px solid #3a2a30; padding: 6px;">
+              <div style="width: 28px; height: 28px; background: #2a2028; border: 1px solid #5c3a1e; position: relative; flex: none;">
+                <div style="position: absolute; left: 6px; top: 14px; width: 15px; height: 8px; background: #93a1ad;"></div>
+                <div style="position: absolute; left: 18px; top: 16px; width: 9px; height: 3px; background: #5c6672;"></div>
+              </div>
+              <div style="flex: 1; display: flex; flex-direction: column; gap: 3px;">
+                <div style="font-size: 9px; color: #f4e4c1;">TURRET</div>
+                <div style="display: flex; align-items: center; gap: 4px;">
+                  <div style="font-size: 7px; color: #6f8296;">LVL 3</div>
+                  <div style="display: flex; gap: 2px;">
+                    <div style="width: 8px; height: 4px; background: #ffcf3f;"></div>
+                    <div style="width: 8px; height: 4px; background: #ffcf3f;"></div>
+                    <div style="width: 8px; height: 4px; background: #ffcf3f;"></div>
+                    <div style="width: 8px; height: 4px; background: #3a2a30;"></div>
+                    <div style="width: 8px; height: 4px; background: #3a2a30;"></div>
+                  </div>
+                </div>
+              </div>
+              <div style="height: 20px; padding: 0 8px; background: #ffcf3f; border: 1px solid #5c3a1e; display: flex; align-items: center; gap: 4px; font-size: 8px; color: #3d2a12;">UPGRADE <span style="color: #5c3a1e;">600 XP</span></div>
+            </div>
+
+            <div style="display: flex; align-items: center; gap: 8px; background: #221a20; border: 1px solid #3a2a30; padding: 6px;">
+              <div style="width: 28px; height: 28px; background: #2a2028; border: 1px solid #5c3a1e; position: relative; flex: none;">
+                <div style="position: absolute; left: 12px; top: 9px; width: 6px; height: 14px; background: #93a1ad;"></div>
+                <div style="position: absolute; left: 9px; top: 5px; width: 12px; height: 5px; background: #8b5a2b;"></div>
+              </div>
+              <div style="flex: 1; display: flex; flex-direction: column; gap: 3px;">
+                <div style="font-size: 9px; color: #f4e4c1;">LONG RANGE TURRET</div>
+                <div style="display: flex; align-items: center; gap: 4px;">
+                  <div style="font-size: 7px; color: #6f8296;">LVL 1</div>
+                  <div style="display: flex; gap: 2px;">
+                    <div style="width: 8px; height: 4px; background: #ffcf3f;"></div>
+                    <div style="width: 8px; height: 4px; background: #3a2a30;"></div>
+                    <div style="width: 8px; height: 4px; background: #3a2a30;"></div>
+                    <div style="width: 8px; height: 4px; background: #3a2a30;"></div>
+                    <div style="width: 8px; height: 4px; background: #3a2a30;"></div>
+                  </div>
+                </div>
+              </div>
+              <div style="height: 20px; padding: 0 8px; background: #ffcf3f; border: 1px solid #5c3a1e; display: flex; align-items: center; gap: 4px; font-size: 8px; color: #3d2a12;">UPGRADE <span style="color: #5c3a1e;">250 XP</span></div>
+            </div>
+
+            <div style="display: flex; align-items: center; gap: 8px; background: #221a20; border: 1px solid #3a2a30; padding: 6px;">
+              <div style="width: 28px; height: 28px; background: #2a2028; border: 1px solid #5c3a1e; position: relative; flex: none;">
+                <div style="position: absolute; left: 5px; top: 16px; width: 18px; height: 6px; background: #5c6672;"></div>
+                <div style="position: absolute; left: 9px; top: 9px; width: 10px; height: 7px; background: #93a1ad; clip-path: polygon(0 100%, 20% 0, 80% 0, 100% 100%);"></div>
+              </div>
+              <div style="flex: 1; display: flex; flex-direction: column; gap: 3px;">
+                <div style="font-size: 9px; color: #f4e4c1;">MORTAR</div>
+                <div style="display: flex; align-items: center; gap: 4px;">
+                  <div style="font-size: 7px; color: #6f8296;">LVL 5</div>
+                  <div style="display: flex; gap: 2px;">
+                    <div style="width: 8px; height: 4px; background: #ffcf3f;"></div>
+                    <div style="width: 8px; height: 4px; background: #ffcf3f;"></div>
+                    <div style="width: 8px; height: 4px; background: #ffcf3f;"></div>
+                    <div style="width: 8px; height: 4px; background: #ffcf3f;"></div>
+                    <div style="width: 8px; height: 4px; background: #ffcf3f;"></div>
+                  </div>
+                </div>
+              </div>
+              <div style="height: 20px; padding: 0 8px; background: #2a2028; border: 1px solid #3a2a30; display: flex; align-items: center; font-size: 8px; color: #6f8296;">MAX</div>
+            </div>
+
+            <div style="font-size: 7px; color: #6f8296; line-height: 1.9;">XP verdien je per wave &mdash; upgrades blijven tussen runs behouden.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ 1g WAVE-KEUZE ============ -->
+    <div id="1g" style="display: flex; flex-direction: column; gap: 12px;">
+      <div style="display: flex; align-items: center; gap: 10px;">
+        <div style="background: #ffcf3f; color: #1a1420; font-size: 11px; font-weight: 700; padding: 3px 7px;">1g</div>
+        <div style="font-size: 13px; color: #9db0c0;">Wave-keuzescherm</div>
+      </div>
+
+      <div style="width: 1280px; height: 720px; border: 4px solid #5c3a1e; box-shadow: inset 0 0 0 4px #8b5a2b; overflow: hidden; position: relative;">
+        <div style="position: absolute; left: 0; top: 0; width: 640px; height: 360px; transform: scale(2); transform-origin: top left; background: #14496b; font-family: Silkscreen, monospace;">
+          <div style="position: absolute; left: 0; top: 0; width: 640px; height: 360px; background: repeating-linear-gradient(90deg, #14496b 0 12px, #175074 12px 24px);"></div>
+          <div style="position: absolute; left: 256px; top: 132px; width: 64px; height: 64px; background: #4f9e42; opacity: 0.5; clip-path: polygon(25% 0, 75% 0, 100% 50%, 75% 100%, 25% 100%, 0 50%);"></div>
+          <div style="position: absolute; left: 320px; top: 132px; width: 64px; height: 64px; background: #4f9e42; opacity: 0.5; clip-path: polygon(25% 0, 75% 0, 100% 50%, 75% 100%, 25% 100%, 0 50%);"></div>
+          <div style="position: absolute; left: 72px; top: 96px; width: 26px; height: 2px; background: #4fc9d9;"></div>
+          <div style="position: absolute; left: 148px; top: 60px; width: 20px; height: 2px; background: #a9eef2;"></div>
+          <div style="position: absolute; left: 48px; top: 232px; width: 28px; height: 2px; background: #4fc9d9;"></div>
+          <div style="position: absolute; left: 196px; top: 316px; width: 24px; height: 2px; background: #4fc9d9;"></div>
+          <div style="position: absolute; left: 456px; top: 76px; width: 22px; height: 2px; background: #4fc9d9;"></div>
+          <div style="position: absolute; left: 540px; top: 200px; width: 30px; height: 2px; background: #a9eef2;"></div>
+          <div style="position: absolute; left: 584px; top: 300px; width: 26px; height: 2px; background: #4fc9d9;"></div>
+          <div style="position: absolute; left: 0; top: 0; width: 640px; height: 360px; background: #0d1520; opacity: 0.72;"></div>
+
+          <div style="position: absolute; left: 0; top: 36px; width: 640px; text-align: center; font-size: 9px; color: #a9eef2; letter-spacing: 3px;">WAVE 12 OVERLEEFD</div>
+          <div style="position: absolute; left: 0; top: 54px; width: 640px; text-align: center; font-family: 'Pirata One', serif; font-size: 30px; color: #ffcf3f;">Kies je buit</div>
+
+          <div style="position: absolute; left: 96px; top: 118px; width: 200px; height: 150px; background: #1a1420; border: 2px solid #8b5a2b; box-sizing: border-box; padding: 12px; display: flex; flex-direction: column; align-items: center; gap: 8px;">
+            <div style="width: 34px; height: 34px; background: #ffcf3f; border-radius: 50%; box-shadow: inset 0 0 0 5px #c99b1e; margin-top: 6px;"></div>
+            <div style="font-size: 12px; color: #ffcf3f;">+150 MUNT</div>
+            <div style="font-size: 8px; color: #9db0c0; text-align: center; line-height: 1.9;">Direct te besteden aan<br>torens deze run</div>
+            <div style="margin-top: auto; width: 100%; height: 22px; background: #ffcf3f; border: 2px solid #5c3a1e; display: flex; align-items: center; justify-content: center; font-size: 10px; color: #3d2a12;">KIES</div>
+          </div>
+
+          <div style="position: absolute; left: 344px; top: 118px; width: 200px; height: 150px; background: #1a1420; border: 2px solid #8b5a2b; box-sizing: border-box; padding: 12px; display: flex; flex-direction: column; align-items: center; gap: 8px;">
+            <div style="width: 44px; height: 34px; background: #4f9e42; margin-top: 6px; clip-path: polygon(25% 0, 75% 0, 100% 50%, 75% 100%, 25% 100%, 0 50%);"></div>
+            <div style="font-size: 12px; color: #7cc35a;">GRATIS HEX-TEGEL</div>
+            <div style="font-size: 8px; color: #9db0c0; text-align: center; line-height: 1.9;">Eiland groeit met 1 tegel &mdash;<br>permanent bouwveld</div>
+            <div style="margin-top: auto; width: 100%; height: 22px; background: #2a2028; border: 2px solid #8b5a2b; display: flex; align-items: center; justify-content: center; font-size: 10px; color: #f4e4c1;">KIES</div>
+          </div>
+
+          <div style="position: absolute; left: 0; top: 290px; width: 640px; text-align: center; font-size: 8px; color: #6f8296;">WAVE 13 START OVER 0:08 &mdash; kiezen is verplicht</div>
+          <div style="position: absolute; left: 216px; top: 310px; width: 208px; height: 6px; background: #2a2028; border: 1px solid #5c3a1e; box-sizing: border-box;">
+            <div style="width: 34%; height: 100%; background: #e0503a;"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ 1h GAME OVER ============ -->
+    <div id="1h" style="display: flex; flex-direction: column; gap: 12px;">
+      <div style="display: flex; align-items: center; gap: 10px;">
+        <div style="background: #ffcf3f; color: #1a1420; font-size: 11px; font-weight: 700; padding: 3px 7px;">1h</div>
+        <div style="font-size: 13px; color: #9db0c0;">Game over</div>
+      </div>
+
+      <div style="width: 1280px; height: 720px; border: 4px solid #5c3a1e; box-shadow: inset 0 0 0 4px #8b5a2b; overflow: hidden; position: relative;">
+        <div style="position: absolute; left: 0; top: 0; width: 640px; height: 360px; transform: scale(2); transform-origin: top left; background: #14496b; font-family: Silkscreen, monospace;">
+          <div style="position: absolute; left: 0; top: 0; width: 640px; height: 360px; background: repeating-linear-gradient(90deg, #14496b 0 12px, #175074 12px 24px);"></div>
+          <div style="position: absolute; left: 288px; top: 132px; width: 64px; height: 64px; background: #2f6b38; opacity: 0.55; clip-path: polygon(25% 0, 75% 0, 100% 50%, 75% 100%, 25% 100%, 0 50%);"></div>
+          <div style="position: absolute; left: 64px; top: 88px; width: 26px; height: 2px; background: #4fc9d9;"></div>
+          <div style="position: absolute; left: 160px; top: 52px; width: 20px; height: 2px; background: #a9eef2;"></div>
+          <div style="position: absolute; left: 40px; top: 244px; width: 28px; height: 2px; background: #4fc9d9;"></div>
+          <div style="position: absolute; left: 232px; top: 324px; width: 24px; height: 2px; background: #4fc9d9;"></div>
+          <div style="position: absolute; left: 480px; top: 68px; width: 22px; height: 2px; background: #4fc9d9;"></div>
+          <div style="position: absolute; left: 556px; top: 212px; width: 30px; height: 2px; background: #a9eef2;"></div>
+          <div style="position: absolute; left: 592px; top: 312px; width: 26px; height: 2px; background: #4fc9d9;"></div>
+          <div style="position: absolute; left: 0; top: 0; width: 640px; height: 360px; background: #2a1018; opacity: 0.78;"></div>
+
+          <div style="position: absolute; left: 0; top: 44px; width: 640px; text-align: center; font-family: 'Pirata One', serif; font-size: 40px; color: #e0503a; text-shadow: 3px 3px 0 #3d1418;">Het dorp is gevallen</div>
+
+          <div style="position: absolute; left: 168px; top: 116px; width: 304px; background: #1a1420; border: 2px solid #8b5a2b; box-sizing: border-box; padding: 14px; display: flex; flex-direction: column; gap: 10px;">
+            <div style="display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #3a2a30; padding-bottom: 8px;">
+              <div style="font-size: 9px; color: #9db0c0;">WAVE BEREIKT</div>
+              <div style="font-size: 18px; color: #f4e4c1;">12</div>
+            </div>
+            <div style="display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #3a2a30; padding-bottom: 8px;">
+              <div style="font-size: 9px; color: #9db0c0;">PIRATEN GEZONKEN</div>
+              <div style="font-size: 13px; color: #f4e4c1;">184</div>
+            </div>
+            <div style="display: flex; align-items: center; justify-content: space-between;">
+              <div style="font-size: 9px; color: #9db0c0;">XP VERDIEND</div>
+              <div style="font-size: 18px; color: #4fc9d9;">+620</div>
+            </div>
+            <div style="font-size: 7px; color: #6f8296;">Beste run: wave 18</div>
+          </div>
+
+          <div style="position: absolute; left: 168px; top: 276px; width: 304px; display: flex; gap: 8px;">
+            <div style="flex: 1; height: 28px; background: #ffcf3f; border: 2px solid #5c3a1e; box-shadow: 0 3px 0 #c99b1e; display: flex; align-items: center; justify-content: center; font-size: 11px; color: #3d2a12;">HOOFDMENU</div>
+            <div style="flex: 1; height: 28px; background: #2a2028; border: 2px solid #8b5a2b; display: flex; align-items: center; justify-content: center; font-size: 11px; color: #f4e4c1;">NOG EEN RONDE</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+</x-dc>
+</body>
+</html>
