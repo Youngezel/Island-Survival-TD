@@ -9,7 +9,10 @@ namespace Game.Waves
     /// Spawns enemies in escalating waves. Enemy count grows per wave, and
     /// progressively tougher prefabs unlock from _enemyPrefabPool (ordered
     /// weakest to strongest) as waves go on. Both formulas are simple,
-    /// tunable placeholders, not hand-authored per-wave data.
+    /// tunable placeholders, not hand-authored per-wave data. A boss-type
+    /// enemy doesn't follow that progressive unlock at all - it's absent
+    /// entirely until _bossUnlockWave, then becomes just another pick
+    /// alongside whatever's already unlocked from the regular pool.
     /// </summary>
     public class WaveManager : MonoBehaviour
     {
@@ -22,6 +25,8 @@ namespace Game.Waves
         [SerializeField] private Transform[] _spawnPoints;
         [SerializeField] private float _timeBetweenSpawns = 0.5f;
         [SerializeField] private float _firstWaveDelay = 2f;
+        [SerializeField] private GameObject _bossPrefab;
+        [SerializeField] private int _bossUnlockWave = 20;
 
         public int CurrentWave { get; private set; }
 
@@ -84,7 +89,11 @@ namespace Game.Waves
                 return;
             }
 
-            GameObject prefab = _enemyPrefabPool[UnityEngine.Random.Range(0, unlockedTypes)];
+            bool bossAvailable = _bossPrefab != null && CurrentWave >= _bossUnlockWave;
+            int pickCount = unlockedTypes + (bossAvailable ? 1 : 0);
+            int pickIndex = UnityEngine.Random.Range(0, pickCount);
+            GameObject prefab = pickIndex < unlockedTypes ? _enemyPrefabPool[pickIndex] : _bossPrefab;
+
             Transform spawnPoint = _spawnPoints[UnityEngine.Random.Range(0, _spawnPoints.Length)];
             Instantiate(prefab, spawnPoint.position, Quaternion.identity);
         }

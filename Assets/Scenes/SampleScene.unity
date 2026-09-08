@@ -23970,7 +23970,8 @@ MonoBehaviour:
   - {fileID: 6395433214604493499, guid: 4c8a1002677523a44afb922263c4f0cf, type: 3}
   - {fileID: 2839016129433799414, guid: 9d1d46d00551dc540aa63cef0187e12f, type: 3}
   - {fileID: 2549776721183218807, guid: 7bf2fb393c3e1ec4f8d38a2a870ea7fd, type: 3}
-  - {fileID: 2549776721183218807, guid: 3af8867f887db1c42b707601f8c18469, type: 3}
+  _bossPrefab: {fileID: 2549776721183218807, guid: 3af8867f887db1c42b707601f8c18469, type: 3}
+  _bossUnlockWave: 20
   _spawnPoints:
   - {fileID: 373137876}
   - {fileID: 1270629142}
