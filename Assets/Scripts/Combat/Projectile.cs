@@ -27,6 +27,17 @@ namespace Game.Combat
         [SerializeField] private FireVfx _fireVfxPrefab;
         [SerializeField] private SpriteRenderer _spriteRenderer;
 
+        /// <summary>
+        /// Set only on the Tesla Coil's projectile. When present, the "shot"
+        /// is drawn as an instant lightning bolt from where it fired to
+        /// where it hit (and one more per chain-lightning hop) instead of a
+        /// small sprite flying there - the travel sprite still exists for
+        /// consistency with the other turrets' Projectile, but resolves so
+        /// fast (see Shooter's very high ProjectileSpeed for this building)
+        /// that the lightning segments are what actually reads as the shot.
+        /// </summary>
+        [SerializeField] private LightningBolt _lightningBoltPrefab;
+
         // How far a chain-lightning bolt can jump to reach the next enemy -
         // deliberately generous (bigger than the pierce sweep's hit radius)
         // since a chain jump isn't constrained to the shot's travel direction.
@@ -44,9 +55,11 @@ namespace Game.Combat
         private int _chainCount;
         private Action<int> _onHit;
         private Vector3 _lastMoveDirection = Vector3.right;
+        private Vector3 _originPosition;
 
         public void Initialize(Enemy target, float speed, int damage, bool splash, float splashRadiusWorldUnits, int pierceCount = 0, float fireDamagePerSecond = 0f, int chainCount = 0)
         {
+            _originPosition = transform.position;
             _target = target;
             _lastKnownTargetPosition = target.transform.position;
             _speed = speed;
@@ -56,6 +69,13 @@ namespace Game.Combat
             _pierceCount = pierceCount;
             _fireDamagePerSecond = fireDamagePerSecond;
             _chainCount = chainCount;
+
+            // The lightning bolt segments are the shot's whole visual - no
+            // separate travel sprite flying alongside them.
+            if (_lightningBoltPrefab != null && _spriteRenderer != null)
+            {
+                _spriteRenderer.enabled = false;
+            }
         }
 
         /// <summary>Fired at a fixed world point (the target doesn't move); onHit applies the damage however that target type needs.</summary>
@@ -132,6 +152,7 @@ namespace Game.Combat
             }
             else if (_target != null && !_target.IsDead)
             {
+                SpawnLightningBolt(_originPosition, transform.position);
                 DamageEnemy(_target);
                 if (_pierceCount > 0)
                 {
@@ -206,10 +227,23 @@ namespace Game.Combat
                     break;
                 }
 
+                SpawnLightningBolt(point, next.transform.position);
                 DamageEnemy(next);
                 hitSet.Add(next);
                 point = next.transform.position;
             }
+        }
+
+        /// <summary>No-op unless this projectile has a lightning bolt prefab wired (only the Tesla Coil's does).</summary>
+        private void SpawnLightningBolt(Vector3 from, Vector3 to)
+        {
+            if (_lightningBoltPrefab == null)
+            {
+                return;
+            }
+
+            LightningBolt bolt = Instantiate(_lightningBoltPrefab, Vector3.zero, Quaternion.identity);
+            bolt.Play(from, to);
         }
 
         private Enemy FindNearestWithin(Vector3 point, float radius, HashSet<Enemy> exclude)

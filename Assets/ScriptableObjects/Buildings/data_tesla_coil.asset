@@ -20,7 +20,7 @@ MonoBehaviour:
   _fireRate: 1
   _splash: 0
   _splashRadius: 0
-  _projectileSpeed: 20
+  _projectileSpeed: 200
   _multiTargetCount: 2
   _chainCount: 3
   _upgradeSaveKey: tesla_coil

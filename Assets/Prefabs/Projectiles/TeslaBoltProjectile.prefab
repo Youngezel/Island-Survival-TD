@@ -107,3 +107,4 @@ MonoBehaviour:
   _impactEffectPrefab: {fileID: 2394551911360230754, guid: 3d7d2a8fdd19be3418b85dbf9bf33f1e, type: 3}
   _fireVfxPrefab: {fileID: 2804431426918448779, guid: e0bda381e10247a49b382ac9380799ea, type: 3}
   _spriteRenderer: {fileID: 5281384055398756378}
+  _lightningBoltPrefab: {fileID: 6196764191338856621, guid: 7759961eb44724148ad363679ad422d8, type: 3}
