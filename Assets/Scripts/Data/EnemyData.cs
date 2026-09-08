@@ -16,6 +16,8 @@ namespace Game.Data
         [SerializeField] private float _range;
         [SerializeField] private float _attackRate;
         [SerializeField] private float _projectileSpeed = 10f;
+        [SerializeField] private GameObject _minionPrefab;
+        [SerializeField] private float _minionSpawnInterval;
 
         public string DisplayName => _displayName;
         public int MaxHealth => _maxHealth;
@@ -27,5 +29,11 @@ namespace Game.Data
 
         /// <summary>World units per second the fired projectile travels at.</summary>
         public float ProjectileSpeed => _projectileSpeed;
+
+        /// <summary>Enemy prefab this one periodically spawns near itself while alive; null means it doesn't.</summary>
+        public GameObject MinionPrefab => _minionPrefab;
+
+        /// <summary>Seconds between minion spawns; only meaningful when MinionPrefab is set.</summary>
+        public float MinionSpawnInterval => _minionSpawnInterval;
     }
 }

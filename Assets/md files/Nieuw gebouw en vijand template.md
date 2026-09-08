@@ -76,21 +76,24 @@ die sluiten elkaar uit als je ze allebei in hetzelfde pad zet, alleen de laatste
 ## 🏴‍☠️ Nieuwe vijand (enemy)
 
 ```
-NAAM:
-Health:
-Damage (per hit op gebouw/dorp):
-Munten-beloning bij doden:
-Beweegsnelheid (world units/sec):
-Aanval-range (in world units - 1 = alleen van dichtbij, meer = schiet op afstand):
-Aanval-snelheid (aanvallen/sec):
-Projectiel snelheid (alleen relevant als range > 1):
+NAAM: boss pirate
+Health: 70
+Damage (per hit op gebouw/dorp):3
+Munten-beloning bij doden: 40
+Beweegsnelheid (world units/sec): 0.5
+Aanval-range (in world units - 1 = alleen van dichtbij, meer = schiet op afstand):1
+Aanval-snelheid (aanvallen/sec):1
+Projectiel snelheid (alleen relevant als range > 1):1 
+werking van deze boot: deze boos boot kan hele kleine pirate boten spawn die damage kan doen van dicht bij deze doen weinig damage:
+kleine boot spawnrate: 1 per 3 secondes
 
 GEDRAG (optioneel, beschrijf in woorden - bv. "duikt onder water als hij geraakt wordt",
 "spawnt 2 kleintjes als hij sterft"):
 
 UITERLIJK:
   Thema/type boot:
-  Wat maakt hem visueel anders dan de bestaande 4 vijanden:
+  Wat maakt hem visueel anders dan de bestaande 4 vijanden: hij is groter dan andere boot als een echte boss
+  de kleine boten die die spawned zijn een soort rooi boten
 ```
 
 ### Referentie (bestaande vijanden)

@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f5d503047b1e75148bdb5c730ec8a026, type: 3}
+  m_Name: data_boss_pirate
+  m_EditorClassIdentifier: Assembly-CSharp::Game.Data.EnemyData
+  _displayName: Boss Piraat
+  _maxHealth: 70
+  _damage: 3
+  _coinReward: 40
+  _moveSpeed: 0.5
+  _range: 1
+  _attackRate: 1
+  _projectileSpeed: 10
+  _minionPrefab: {fileID: 1230700478517957733, guid: 4dc6bdc052d61ca4e81f8abd4d8f3fa1, type: 3}
+  _minionSpawnInterval: 3

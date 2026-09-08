@@ -15,7 +15,10 @@ namespace Game.Enemies
     /// its target every frame, so once a tile/building it was attacking is
     /// destroyed it naturally moves on to the next-nearest obstacle. Ranged
     /// enemies fall out of the same logic: a larger range just lets them
-    /// hit an obstacle from farther away without needing to reach it.
+    /// hit an obstacle from farther away without needing to reach it. An
+    /// enemy type carrying EnemyData.MinionPrefab (e.g. a boss) also spawns
+    /// one nearby every MinionSpawnInterval seconds, regardless of what
+    /// it's doing otherwise.
     /// </summary>
     [RequireComponent(typeof(Health))]
     public class Enemy : MonoBehaviour
@@ -35,6 +38,7 @@ namespace Game.Enemies
 
         private Health _health;
         private float _attackCooldown;
+        private float _minionSpawnCooldown;
 
         private TargetKind _targetKind;
         private Health _targetHealth;
@@ -71,6 +75,8 @@ namespace Game.Enemies
                 return;
             }
 
+            TickMinionSpawn();
+
             AcquireNearestTarget();
             if (_targetKind == TargetKind.None)
             {
@@ -92,6 +98,25 @@ namespace Game.Enemies
                 Attack();
                 _attackCooldown = 1f / _data.AttackRate;
             }
+        }
+
+        /// <summary>Spawns a minion near this enemy every MinionSpawnInterval seconds, for enemy types that carry one (e.g. a boss) - independent of movement/attacking, so it keeps spawning even while chasing or fighting.</summary>
+        private void TickMinionSpawn()
+        {
+            if (_data.MinionPrefab == null || _data.MinionSpawnInterval <= 0f)
+            {
+                return;
+            }
+
+            _minionSpawnCooldown -= Time.deltaTime;
+            if (_minionSpawnCooldown > 0f)
+            {
+                return;
+            }
+
+            _minionSpawnCooldown = _data.MinionSpawnInterval;
+            Vector2 offset = Random.insideUnitCircle * 0.75f;
+            Instantiate(_data.MinionPrefab, transform.position + new Vector3(offset.x, offset.y, 0f), Quaternion.identity);
         }
 
         /// <summary>Finds the nearest damageable thing: any building, any standing hex tile, or the village itself.</summary>
