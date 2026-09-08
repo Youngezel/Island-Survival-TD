@@ -4,9 +4,13 @@ using UnityEngine;
 namespace Game.Data
 {
     /// <summary>
-    /// What a single upgrade node does. Flat stat boosts (Damage/Range/FireRate)
-    /// stack additively across every reached tier; the rest are on/off
-    /// combat behaviors that turn on once their tier is reached.
+    /// What a single upgrade node does. Flat stat boosts (Damage/Range/
+    /// FireRate/PiercingShot/FireDamage/SplashDamage/ChainLightning) stack
+    /// additively across every reached tier. SpreadShot/SequentialDoubleShot
+    /// are mutually-exclusive firing patterns - only the highest reached
+    /// tier's pattern is active. MultiTargetShot instead sets the building's
+    /// simultaneous-target count directly to its Value (not additive) - the
+    /// highest reached tier with this effect wins.
     /// </summary>
     public enum UpgradeEffect
     {
@@ -19,6 +23,9 @@ namespace Game.Data
         PiercingShot,
         MultiTargetShot,
         SplashDamage,
+
+        /// <summary>Adds to how many enemies a bolt jumps to after its initial hit (ricochet/chain lightning) - stacks across tiers like PiercingShot.</summary>
+        ChainLightning,
     }
 
     /// <summary>

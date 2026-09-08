@@ -18,6 +18,8 @@ namespace Game.Data
         [SerializeField] private bool _splash;
         [SerializeField] private float _splashRadius;
         [SerializeField] private float _projectileSpeed = 10f;
+        [SerializeField] private int _multiTargetCount = 1;
+        [SerializeField] private int _chainCount = 0;
         [SerializeField] private string _upgradeSaveKey;
         [SerializeField] private UpgradePath _pathA;
         [SerializeField] private UpgradePath _pathB;
@@ -36,6 +38,12 @@ namespace Game.Data
 
         /// <summary>World units per second the fired projectile travels at.</summary>
         public float ProjectileSpeed => _projectileSpeed;
+
+        /// <summary>How many enemies this building fires simultaneous shots at per volley; 1 = normal single-target. An active MultiTargetShot upgrade tier overrides this rather than adding to it.</summary>
+        public int MultiTargetCount => _multiTargetCount;
+
+        /// <summary>How many additional enemies a shot chains/ricochets to after its initial hit; 0 = no chaining.</summary>
+        public int ChainCount => _chainCount;
 
         /// <summary>Key into SaveManager's unlocked-tier data; empty means not upgradeable.</summary>
         public string UpgradeSaveKey => _upgradeSaveKey;

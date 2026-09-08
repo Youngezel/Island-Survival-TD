@@ -8,12 +8,13 @@ namespace Game.Combat
     /// <summary>
     /// Travels toward the point it was fired at and deals damage on arrival.
     /// Fired by turrets at an enemy (homing on it while it's alive, with
-    /// optional splash, piercing follow-through, and a fire-damage burn) or
-    /// by enemies at a fixed point - the village, a building, or a hex tile -
-    /// via a generic onHit callback so this one class doesn't need to know
-    /// about every target type. A spread-shot pellet instead flies to a
-    /// fixed point off to one side and hits whichever enemy is nearest that
-    /// point on arrival, since it isn't homing on anything in particular.
+    /// optional splash, piercing follow-through, chain-lightning ricochet,
+    /// and a fire-damage burn) or by enemies at a fixed point - the village,
+    /// a building, or a hex tile - via a generic onHit callback so this one
+    /// class doesn't need to know about every target type. A spread-shot
+    /// pellet instead flies to a fixed point off to one side and hits
+    /// whichever enemy is nearest that point on arrival, since it isn't
+    /// homing on anything in particular.
     /// </summary>
     public class Projectile : MonoBehaviour
     {
@@ -26,6 +27,11 @@ namespace Game.Combat
         [SerializeField] private FireVfx _fireVfxPrefab;
         [SerializeField] private SpriteRenderer _spriteRenderer;
 
+        // How far a chain-lightning bolt can jump to reach the next enemy -
+        // deliberately generous (bigger than the pierce sweep's hit radius)
+        // since a chain jump isn't constrained to the shot's travel direction.
+        private const float ChainJumpRadius = 3f;
+
         private Enemy _target;
         private Vector3 _lastKnownTargetPosition;
         private float _speed;
@@ -35,10 +41,11 @@ namespace Game.Combat
         private int _pierceCount;
         private float _fireDamagePerSecond;
         private float _arrivalHitRadius;
+        private int _chainCount;
         private Action<int> _onHit;
         private Vector3 _lastMoveDirection = Vector3.right;
 
-        public void Initialize(Enemy target, float speed, int damage, bool splash, float splashRadiusWorldUnits, int pierceCount = 0, float fireDamagePerSecond = 0f)
+        public void Initialize(Enemy target, float speed, int damage, bool splash, float splashRadiusWorldUnits, int pierceCount = 0, float fireDamagePerSecond = 0f, int chainCount = 0)
         {
             _target = target;
             _lastKnownTargetPosition = target.transform.position;
@@ -48,6 +55,7 @@ namespace Game.Combat
             _splashRadiusWorldUnits = splashRadiusWorldUnits;
             _pierceCount = pierceCount;
             _fireDamagePerSecond = fireDamagePerSecond;
+            _chainCount = chainCount;
         }
 
         /// <summary>Fired at a fixed world point (the target doesn't move); onHit applies the damage however that target type needs.</summary>
@@ -130,6 +138,11 @@ namespace Game.Combat
                     ApplyPierce(_target);
                 }
 
+                if (_chainCount > 0)
+                {
+                    ApplyChain(_target);
+                }
+
                 SpawnImpactEffect(SmallImpactRadius);
             }
             else if (_arrivalHitRadius > 0f)
@@ -176,6 +189,26 @@ namespace Game.Combat
 
                 DamageEnemy(next);
                 hitSet.Add(next);
+            }
+        }
+
+        /// <summary>Ricochet/chain lightning: jumps to the nearest not-yet-hit enemy within ChainJumpRadius, up to _chainCount times, damaging each one it reaches - unlike ApplyPierce this isn't constrained to the shot's travel direction, so it can double back toward a cluster of enemies.</summary>
+        private void ApplyChain(Enemy alreadyHit)
+        {
+            var hitSet = new HashSet<Enemy> { alreadyHit };
+            Vector3 point = alreadyHit.transform.position;
+
+            for (int i = 0; i < _chainCount; i++)
+            {
+                Enemy next = FindNearestWithin(point, ChainJumpRadius, hitSet);
+                if (next == null)
+                {
+                    break;
+                }
+
+                DamageEnemy(next);
+                hitSet.Add(next);
+                point = next.transform.position;
             }
         }
 

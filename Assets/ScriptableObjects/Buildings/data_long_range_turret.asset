@@ -48,7 +48,7 @@ MonoBehaviour:
       _applyCost: 130
     - _name: Dubbel Doel
       _effect: 7
-      _value: 0
+      _value: 2
       _unlockCost: 110
       _applyCost: 320
     - _name: Meer Damage

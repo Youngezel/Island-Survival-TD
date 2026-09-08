@@ -54,6 +54,10 @@ namespace Game.EditorTools
             SaveUnitSprite("spr_turret", DrawTurret());
             SaveUnitSprite("spr_turret_long_range", DrawLongRangeTurret());
             SaveUnitSprite("spr_turret_mortar", DrawMortar());
+            SaveSprite("spr_turret_tesla_coil_base", DrawTeslaCoilBase(), pivotBottomCenter: true, ppu: 32);
+            SaveSprite("spr_turret_tesla_coil_head", DrawTeslaCoilHead(), pivotBottomCenter: true, ppu: 32);
+            SaveSprite("spr_tesla_bolt", DrawTeslaBolt(), pivotBottomCenter: false, ppu: 32);
+            SaveUnitSprite("spr_turret_tesla_coil", DrawTeslaCoilIcon());
             SaveTileSprite("spr_tile_grass_1", DrawHexTileGrass(1));
             SaveTileSprite("spr_tile_grass_2", DrawHexTileGrass(2));
             SaveTileSprite("spr_tile_grass_3", DrawHexTileGrass(3));
@@ -341,6 +345,120 @@ namespace Game.EditorTools
             c.Rect(27, 24, 3, 8, WoodBase); // steunblok rechts
 
             c.HealthBarAnchor(16, 1);
+            return c;
+        }
+
+        /// <summary>
+        /// Static generator housing. Unlike the other three turrets (whose
+        /// base+head are a single hand-drawn sprite pair), this one is a
+        /// fresh procedural placeholder split the same way Shooter expects:
+        /// a non-rotating base plus a separate rotating head.
+        /// </summary>
+        private static PixelCanvas DrawTeslaCoilBase()
+        {
+            var c = new PixelCanvas(32);
+
+            c.Rect(4, 20, 24, 8, StoneMid); // voetstuk
+            c.Rect(4, 20, 24, 2, StoneBase);
+            c.Rect(4, 24, 24, 1, StoneShadow);
+            c.Rect(4, 28, 24, 4, StoneShadow); // sokkel
+
+            c.Rect(2, 24, 4, 8, WoodBase); // steunblok links
+            c.Rect(26, 24, 4, 8, WoodBase); // steunblok rechts
+
+            c.Rect(10, 14, 12, 8, StoneDark); // generatorkast
+            c.Rect(10, 14, 12, 1, StoneMid);
+            c.Rect(12, 17, 3, 3, ShallowWater); // kijkvenster gloed
+            c.Rect(13, 18, 1, 1, Foam);
+
+            c.Circle(9, 18, 2, Gold); // koperen klinknagels
+            c.Circle(24, 18, 2, Gold);
+
+            c.HealthBarAnchor(16, 15);
+            return c;
+        }
+
+        /// <summary>
+        /// Rotating coil mast, drawn pointing up with its mount point at the
+        /// bottom row (y=0) so a bottom-center pivot swivels it correctly -
+        /// matches the "0 degrees = up" convention Shooter rotates every head to.
+        /// </summary>
+        private static PixelCanvas DrawTeslaCoilHead()
+        {
+            var c = new PixelCanvas(32);
+
+            c.Rect(14, 0, 4, 22, StoneMid); // mast
+            c.Rect(14, 0, 1, 22, StoneShadow);
+            c.Rect(17, 0, 1, 22, StoneLight);
+
+            for (int y = 2; y < 20; y += 3)
+            {
+                c.Rect(13, y, 6, 1, StoneDark); // gewikkelde spoelbanden
+            }
+
+            c.Rect(11, 20, 10, 3, StoneBase); // kraag onder de bol
+            c.Rect(11, 20, 10, 1, StoneLight);
+
+            c.Circle(16, 26, 5, ShallowWater); // gloeiende bol
+            c.Circle(16, 26, 3, Foam);
+            c.Circle(16, 26, 1, Parchment);
+
+            c.Rect(15, 31, 2, 1, Foam); // vonken rond de bol
+            c.Rect(9, 27, 1, 1, Foam);
+            c.Rect(22, 25, 1, 1, Foam);
+
+            return c;
+        }
+
+        /// <summary>Small electric-bolt projectile for the Tesla Coil, in place of the shared iron-ball default.</summary>
+        private static PixelCanvas DrawTeslaBolt()
+        {
+            var c = new PixelCanvas(16);
+
+            c.Rect(7, 13, 2, 3, Foam);
+            c.Rect(5, 10, 3, 3, ShallowWater);
+            c.Rect(8, 8, 3, 3, Foam);
+            c.Rect(5, 5, 3, 3, ShallowWater);
+            c.Rect(7, 2, 2, 3, Foam);
+
+            return c;
+        }
+
+        /// <summary>
+        /// Standalone all-in-one depiction (base + idle head combined) used
+        /// only as the hotbar icon - same convention as the long-range
+        /// turret and mortar, whose hotbar icons are their original
+        /// combined sprite rather than either split in-world piece.
+        /// </summary>
+        private static PixelCanvas DrawTeslaCoilIcon()
+        {
+            var c = new PixelCanvas(32);
+
+            c.Rect(4, 0, 24, 8, StoneMid); // voetstuk
+            c.Rect(4, 0, 24, 2, StoneBase);
+            c.Rect(2, 2, 4, 6, WoodBase); // steunblokken
+            c.Rect(26, 2, 4, 6, WoodBase);
+            c.Rect(10, 6, 12, 6, StoneDark); // generatorkast
+            c.Rect(12, 8, 3, 2, ShallowWater); // kijkvenster gloed
+            c.Circle(9, 9, 2, Gold);
+            c.Circle(24, 9, 2, Gold);
+
+            c.Rect(14, 12, 4, 12, StoneMid); // mast
+            c.Rect(14, 12, 1, 12, StoneShadow);
+            c.Rect(17, 12, 1, 12, StoneLight);
+            for (int y = 14; y < 22; y += 3)
+            {
+                c.Rect(13, y, 6, 1, StoneDark); // spoelbanden
+            }
+
+            c.Rect(11, 22, 10, 3, StoneBase); // kraag
+            c.Circle(16, 27, 5, ShallowWater); // gloeiende bol
+            c.Circle(16, 27, 3, Foam);
+            c.Circle(16, 27, 1, Parchment);
+            c.Rect(9, 28, 1, 1, Foam);
+            c.Rect(22, 26, 1, 1, Foam);
+
+            c.HealthBarAnchor(16, 31);
             return c;
         }
 

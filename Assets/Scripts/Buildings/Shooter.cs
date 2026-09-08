@@ -28,11 +28,16 @@ namespace Game.Buildings
             public float FireRateBonus;
             public bool SpreadShot;
             public bool SequentialDoubleShot;
-            public bool MultiTargetShot;
+
+            /// <summary>0 = no MultiTargetShot tier reached, keep the building's own MultiTargetCount. Otherwise the highest reached tier's Value, overriding rather than adding.</summary>
+            public int MultiTargetCountOverride;
             public int PierceCount;
             public float FireDamagePerSecond;
             public float SplashRadiusBonus;
             public Sprite ProjectileSprite;
+
+            /// <summary>Extra enemies a shot chains/ricochets to on top of the building's own ChainCount.</summary>
+            public int ChainCountBonus;
         }
 
         /// <summary>
@@ -190,27 +195,27 @@ namespace Game.Buildings
                     case UpgradeEffect.Damage: effects.DamageBonus += Mathf.RoundToInt(node.Value); break;
                     case UpgradeEffect.Range: effects.RangeBonus += node.Value; break;
                     case UpgradeEffect.FireRate: effects.FireRateBonus += node.Value; break;
-                    // Shot patterns are mutually exclusive - a later tier's
-                    // pattern replaces an earlier one instead of stacking,
-                    // unlike the flat bonuses above.
+                    // Spread/Sequential are mutually exclusive firing
+                    // patterns - a later tier's pattern replaces an earlier
+                    // one instead of stacking, unlike the flat bonuses above.
                     case UpgradeEffect.SpreadShot:
                         effects.SpreadShot = true;
                         effects.SequentialDoubleShot = false;
-                        effects.MultiTargetShot = false;
                         break;
                     case UpgradeEffect.SequentialDoubleShot:
                         effects.SequentialDoubleShot = true;
                         effects.SpreadShot = false;
-                        effects.MultiTargetShot = false;
                         break;
-                    case UpgradeEffect.MultiTargetShot:
-                        effects.MultiTargetShot = true;
-                        effects.SpreadShot = false;
-                        effects.SequentialDoubleShot = false;
-                        break;
+                    // MultiTargetShot sets the simultaneous-target count
+                    // directly (overrides, doesn't add) - the highest
+                    // reached tier with this effect wins, same "last one
+                    // wins" idea as the patterns above but on a number
+                    // instead of a flag.
+                    case UpgradeEffect.MultiTargetShot: effects.MultiTargetCountOverride = Mathf.RoundToInt(node.Value); break;
                     case UpgradeEffect.PiercingShot: effects.PierceCount += Mathf.RoundToInt(node.Value); break;
                     case UpgradeEffect.FireDamage: effects.FireDamagePerSecond += node.Value; break;
                     case UpgradeEffect.SplashDamage: effects.SplashRadiusBonus += node.Value; break;
+                    case UpgradeEffect.ChainLightning: effects.ChainCountBonus += Mathf.RoundToInt(node.Value); break;
                 }
             }
 
@@ -240,9 +245,10 @@ namespace Game.Buildings
                 return;
             }
 
-            if (effects.MultiTargetShot)
+            int multiTargetCount = effects.MultiTargetCountOverride > 0 ? effects.MultiTargetCountOverride : _data.MultiTargetCount;
+            if (multiTargetCount > 1)
             {
-                List<Enemy> targets = _targeting.FindNearestEnemiesInRange(rangeWorldUnits, 2);
+                List<Enemy> targets = _targeting.FindNearestEnemiesInRange(rangeWorldUnits, multiTargetCount);
                 if (targets.Count == 0)
                 {
                     return;
@@ -353,7 +359,8 @@ namespace Game.Buildings
             Projectile projectile = Instantiate(_projectilePrefab, transform.position, Quaternion.identity);
             float splashRadiusWorldUnits = (_data.SplashRadius + effects.SplashRadiusBonus) * HexGridManager.Instance.HexStepWorldDistance;
             bool splash = _data.Splash || effects.SplashRadiusBonus > 0f;
-            projectile.Initialize(target, _data.ProjectileSpeed, _data.Damage + effects.DamageBonus, splash, splashRadiusWorldUnits, effects.PierceCount, effects.FireDamagePerSecond);
+            int chainCount = _data.ChainCount + effects.ChainCountBonus;
+            projectile.Initialize(target, _data.ProjectileSpeed, _data.Damage + effects.DamageBonus, splash, splashRadiusWorldUnits, effects.PierceCount, effects.FireDamagePerSecond, chainCount);
             projectile.SetSprite(effects.ProjectileSprite);
             PlayFireAnimation();
         }
