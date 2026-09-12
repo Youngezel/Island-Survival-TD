@@ -10,7 +10,10 @@ namespace Game.Data
     /// are mutually-exclusive firing patterns - only the highest reached
     /// tier's pattern is active. MultiTargetShot instead sets the building's
     /// simultaneous-target count directly to its Value (not additive) - the
-    /// highest reached tier with this effect wins.
+    /// highest reached tier with this effect wins. Health is a one-shot
+    /// effect applied the instant a tier is bought (adding to both max and
+    /// current HP right then) rather than something recomputed every frame
+    /// like the others.
     /// </summary>
     public enum UpgradeEffect
     {
@@ -26,6 +29,9 @@ namespace Game.Data
 
         /// <summary>Adds to how many enemies a bolt jumps to after its initial hit (ricochet/chain lightning) - stacks across tiers like PiercingShot.</summary>
         ChainLightning,
+
+        /// <summary>Permanently raises max HP by Value the instant this tier is purchased - see the Health effect note above.</summary>
+        Health,
     }
 
     /// <summary>

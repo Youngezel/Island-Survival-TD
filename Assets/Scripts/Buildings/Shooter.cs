@@ -16,7 +16,11 @@ namespace Game.Buildings
     /// tracks its own path/tier independently - upgrading one turret never
     /// affects any other turret of the same type. Shared by the village and
     /// every turret - the village never has an UpgradeSaveKey, so it just
-    /// falls back to its plain base stats.
+    /// falls back to its plain base stats. Also folds in whatever Damage/
+    /// Range bonus the hex tile it's standing on has committed to (see
+    /// HexGridManager) - that one's independent of this building's own
+    /// UpgradeSaveKey, so it applies even to a building with no path of its
+    /// own.
     /// </summary>
     [RequireComponent(typeof(Targeting))]
     public class Shooter : MonoBehaviour
@@ -177,6 +181,20 @@ namespace Game.Buildings
         private ActiveEffects ComputeActiveEffects()
         {
             var effects = new ActiveEffects();
+
+            // The tile this building stands on can independently carry its
+            // own committed foundation-upgrade path - applies to any
+            // building regardless of whether IT has its own upgrade path
+            // (e.g. it works for the village too), so this runs before the
+            // early-out below.
+            if (HexGridManager.Instance != null)
+            {
+                Vector3Int cell = HexGridManager.Instance.WorldToCell(transform.position);
+                HexGridManager.Instance.GetTileUpgradeBonuses(cell, out int tileDamageBonus, out float tileRangeBonus);
+                effects.DamageBonus += tileDamageBonus;
+                effects.RangeBonus += tileRangeBonus;
+            }
+
             if (_data == null || string.IsNullOrEmpty(_data.UpgradeSaveKey) || !_hasCommittedPath)
             {
                 return effects;

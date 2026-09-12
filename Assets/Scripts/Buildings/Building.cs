@@ -31,6 +31,9 @@ namespace Game.Buildings
         public Shooter Shooter => _shooter;
         public Health Health => _health;
 
+        /// <summary>The hex cell this building stands on - used to look up the tile's own foundation-upgrade bonuses.</summary>
+        public Vector3Int Cell => _cell;
+
         private void Awake()
         {
             _health = GetComponent<Health>();

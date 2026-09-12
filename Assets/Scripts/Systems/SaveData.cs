@@ -28,5 +28,7 @@ namespace Game.Systems
         public int mortarPathBTier;
         public int teslaCoilPathATier;
         public int teslaCoilPathBTier;
+        public int hexTilePathATier;
+        public int hexTilePathBTier;
     }
 }

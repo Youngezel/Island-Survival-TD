@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Game.Data;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
@@ -32,9 +33,33 @@ namespace Game.Grid
         [SerializeField] private TileBase _coastSkirtTile;
         [SerializeField] private int _tileMaxHealth = 5;
 
+        // Shared definition (PathA/PathB tiers, unlock save key) for the
+        // "foundation" upgrade tree every hex tile can commit to - reuses
+        // BuildingData purely as a container (Damage/Cost/Range etc. are
+        // meaningless here and never read) so the existing UpgradeRow/
+        // UpgradePath machinery works unmodified for this too.
+        [SerializeField] private BuildingData _tileUpgradeData;
+
         private readonly HashSet<Vector3Int> _occupiedCells = new HashSet<Vector3Int>();
         private readonly HashSet<Vector3Int> _tileCells = new HashSet<Vector3Int>();
         private readonly Dictionary<Vector3Int, int> _tileHealth = new Dictionary<Vector3Int, int>();
+
+        // Each cell's own run-only committed upgrade progress, independent of
+        // every other cell - mirrors how each placed Shooter tracks its own
+        // path/tier. Only Damage/Range tiers are read from here continuously
+        // (see GetTileUpgradeBonuses); a Health tier instead applies once,
+        // directly, the moment it's bought (see BuildingInspectorUI).
+        private class TileUpgradeState
+        {
+            public bool HasCommittedPath;
+            public bool PathA;
+            public int Tier;
+        }
+
+        private readonly Dictionary<Vector3Int, TileUpgradeState> _tileUpgrades = new Dictionary<Vector3Int, TileUpgradeState>();
+
+        /// <summary>Shared PathA/PathB/UpgradeSaveKey definition for the hex-tile foundation upgrade tree; null means the feature isn't wired up in this scene.</summary>
+        public BuildingData TileUpgradeData => _tileUpgradeData;
 
         private Vector3? _gridToTilemapOffset;
 
@@ -185,6 +210,88 @@ namespace Game.Grid
             else
             {
                 _tileHealth[cell] = health;
+            }
+        }
+
+        /// <summary>Whether this cell has committed to a foundation upgrade path (A or B) - once true, the other path is locked out for this cell for the rest of the run, same rule as a placed turret's own path.</summary>
+        public bool TileHasCommittedPath(Vector3Int cell)
+        {
+            return _tileUpgrades.TryGetValue(cell, out TileUpgradeState state) && state.HasCommittedPath;
+        }
+
+        /// <summary>True if this cell's committed path is A, false if it's B or nothing's committed yet.</summary>
+        public bool TileIsPathACommitted(Vector3Int cell)
+        {
+            return _tileUpgrades.TryGetValue(cell, out TileUpgradeState state) && state.HasCommittedPath && state.PathA;
+        }
+
+        /// <summary>How many tiers (0-3) of this cell's committed foundation path are active.</summary>
+        public int GetTileUpgradeTier(Vector3Int cell)
+        {
+            return _tileUpgrades.TryGetValue(cell, out TileUpgradeState state) ? state.Tier : 0;
+        }
+
+        /// <summary>
+        /// Activates the next tier of the given path on this cell, committing
+        /// it to that path if nothing's committed yet - mirrors Shooter.
+        /// TryActivateNextTier exactly, just keyed by cell instead of by
+        /// building instance. The caller is responsible for checking the
+        /// tier is permanently unlocked and spending the coins first.
+        /// </summary>
+        public bool TryActivateTileNextTier(Vector3Int cell, bool pathA)
+        {
+            if (!_tileUpgrades.TryGetValue(cell, out TileUpgradeState state))
+            {
+                state = new TileUpgradeState();
+                _tileUpgrades[cell] = state;
+            }
+
+            if (state.HasCommittedPath && state.PathA != pathA)
+            {
+                return false;
+            }
+
+            if (state.HasCommittedPath && state.Tier >= 3)
+            {
+                return false;
+            }
+
+            state.HasCommittedPath = true;
+            state.PathA = pathA;
+            state.Tier++;
+            return true;
+        }
+
+        /// <summary>
+        /// Sums this cell's committed foundation-path Damage/Range bonuses
+        /// (for whatever building happens to be standing on it) - a Health
+        /// tier isn't included here since it applies once, directly, at
+        /// purchase time instead of being recomputed continuously.
+        /// </summary>
+        public void GetTileUpgradeBonuses(Vector3Int cell, out int damageBonus, out float rangeBonus)
+        {
+            damageBonus = 0;
+            rangeBonus = 0f;
+
+            if (_tileUpgradeData == null || !_tileUpgrades.TryGetValue(cell, out TileUpgradeState state) || !state.HasCommittedPath)
+            {
+                return;
+            }
+
+            UpgradePath path = state.PathA ? _tileUpgradeData.PathA : _tileUpgradeData.PathB;
+            if (path == null)
+            {
+                return;
+            }
+
+            for (int i = 0; i < state.Tier && i < path.Nodes.Length; i++)
+            {
+                UpgradeNode node = path.Nodes[i];
+                switch (node.Effect)
+                {
+                    case UpgradeEffect.Damage: damageBonus += Mathf.RoundToInt(node.Value); break;
+                    case UpgradeEffect.Range: rangeBonus += node.Value; break;
+                }
             }
         }
 

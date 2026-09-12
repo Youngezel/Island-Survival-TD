@@ -30,6 +30,18 @@ namespace Game.Combat
             CurrentHealth = maxHealth;
         }
 
+        /// <summary>Permanently raises max HP by the given amount and heals by the same amount - used for a one-shot Health upgrade purchase (a building's own path, or the tile it stands on), as opposed to SetMaxHealth's initial-spawn assignment.</summary>
+        public void AddMaxHealth(int amount)
+        {
+            if (amount <= 0)
+            {
+                return;
+            }
+
+            _maxHealth += amount;
+            CurrentHealth += amount;
+        }
+
         public void TakeDamage(int amount)
         {
             if (IsDead || amount <= 0)

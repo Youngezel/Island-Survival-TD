@@ -51,6 +51,7 @@ namespace Game.Systems
                 case "long_range_turret": return pathA ? Current.longRangeTurretPathATier : Current.longRangeTurretPathBTier;
                 case "mortar": return pathA ? Current.mortarPathATier : Current.mortarPathBTier;
                 case "tesla_coil": return pathA ? Current.teslaCoilPathATier : Current.teslaCoilPathBTier;
+                case "hex_tile": return pathA ? Current.hexTilePathATier : Current.hexTilePathBTier;
                 default: return 0;
             }
         }
@@ -70,6 +71,9 @@ namespace Game.Systems
                     break;
                 case "tesla_coil":
                     if (pathA) Current.teslaCoilPathATier = tier; else Current.teslaCoilPathBTier = tier;
+                    break;
+                case "hex_tile":
+                    if (pathA) Current.hexTilePathATier = tier; else Current.hexTilePathBTier = tier;
                     break;
             }
         }
