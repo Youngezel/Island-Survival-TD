@@ -40,6 +40,7 @@ namespace Game.UI
 
         [SerializeField] private GameObject _panel;
         [SerializeField] private TMP_Text _nameText;
+        [SerializeField] private TMP_Text _healthText;
         [SerializeField] private TMP_Text _damageText;
         [SerializeField] private TMP_Text _rangeText;
         [SerializeField] private TMP_Text _fireRateText;
@@ -267,6 +268,11 @@ namespace Game.UI
             if (_nameText != null)
             {
                 _nameText.text = _currentData.DisplayName.ToUpperInvariant();
+            }
+
+            if (_healthText != null)
+            {
+                _healthText.text = $"HEALTH: {(_currentBuilding != null ? _currentBuilding.Health.MaxHealth : _currentData.MaxHealth)}";
             }
 
             if (_damageText != null)

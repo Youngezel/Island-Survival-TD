@@ -36,6 +36,7 @@ namespace Game.UI
         public static TileInspectorUI Instance { get; private set; }
 
         [SerializeField] private GameObject _panel;
+        [SerializeField] private TMP_Text _healthBonusText;
         [SerializeField] private NodeRow[] _pathARows = new NodeRow[3];
         [SerializeField] private NodeRow[] _pathBRows = new NodeRow[3];
         [SerializeField] private Button _closeButton;
@@ -188,6 +189,12 @@ namespace Game.UI
             if (tileData == null)
             {
                 return;
+            }
+
+            if (_healthBonusText != null)
+            {
+                int healthBonus = HexGridManager.Instance.GetTileHealthBonus(_currentCell);
+                _healthBonusText.text = $"HEALTH: +{healthBonus}";
             }
 
             RefreshPath(tileData.PathA, true, _pathARows, tileData);
