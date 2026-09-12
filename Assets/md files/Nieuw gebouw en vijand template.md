@@ -1,11 +1,11 @@
-# Nieuw gebouw / vijand — invulformulier
+# Nieuw gebouw / vijand / tegel-upgrade — invulformulier
 
 Vul in wat je weet, laat leeg wat je niet weet. Het "gedrag"-veld is voor dingen die niet in
 een simpel getal passen (bv. een boot die zich splitst bij het sterven) — dat vraagt sowieso
 losse code, dat kan altijd, beschrijf het gewoon in woorden.
 
-Stuur dit bestand (of een kopie ervan) terug en dan bouw ik het gebouw/de vijand: data-asset,
-prefab, sprite en (voor gebouwen) de upgrade-koppeling in `Shooter.cs`.
+Stuur dit bestand (of een kopie ervan) terug en dan bouw ik het gebouw/de vijand/de tegel-upgrade:
+data-asset, prefab, sprite en (voor gebouwen en tegel-upgrades) de upgrade-koppeling in code.
 
 ---
 
@@ -105,3 +105,60 @@ UITERLIJK:
 | Beloning | 5 | 5 | 10 | 7 |
 | Snelheid | 1 | 2 | 0.5 | 1 |
 | Range | 1 (melee) | 1 | 1 | 3 (afstand) |
+
+---
+
+## 🔷 Nieuwe hex-tegel upgrade (pad A / pad B)
+
+Dit is een compleet nieuw systeem — er bestaat nu nog geen upgrade-boom voor tegels (alleen
+voor gebouwen). Het idee: net als bij een turret een permanente, XP-unlockbare + met munten
+te kopen upgrade-boom met pad A en pad B, maar dan van toepassing op alle land-tegels tegelijk
+(niet op één specifiek gebouw). Vul in, en ik bouw de data/opslag/UI eromheen.
+
+```
+NAAM VAN DE UPGRADE-BOOM (bv. "Verdediging" of "Fundering"):
+
+BASISSTATS (huidige tegel, ter referentie - zie ook onderaan):
+  Health per tegel: 5 (nu vast voor elke tegel, geldt voor de hele map)
+  Kosten om een nieuwe tegel neer te zetten (munten): [zie je eigen hotbar-item]
+
+PAD A (naam van het thema, bv. "bedenk iets wat hier bij past"):
+  Tier 1: [naam] - effect: - waarde: - unlock kosten (XP): - koop kosten (munten):
+  Tier 2: [naam] - effect: - waarde: - unlock kosten (XP): - koop kosten (munten):
+  Tier 3: [naam] - effect: - waarde: - unlock kosten (XP): - koop kosten (munten):
+
+PAD B (naam van het thema, bv. "bedenk iets wat hier bij past"):
+  Tier 1: [naam] - effect: - waarde: - unlock kosten (XP): - koop kosten (munten):
+  Tier 2: [naam] - effect: - waarde: - unlock kosten (XP): - koop kosten (munten):
+  Tier 3: [naam] - effect: - waarde: - unlock kosten (XP): - koop kosten (munten):
+
+GEDRAG (optioneel, voor iets dat niet in een simpel getal past - bv. "een vernietigde tegel
+komt na een tijdje vanzelf terug", "tegels naast een gebouw krijgen ook het effect"):
+
+UITERLIJK (optioneel, mag ook "verzin zelf iets passends"):
+  Verandert een geüpgradede tegel ook van uiterlijk (kleur/rand/icoontje)?:
+```
+
+### Beschikbare upgrade-effecten (voorstel — dit bestaat nog niet in code, dus dit is een
+### startpunt; iets anders bedenken dat niet in een getal past kan ook, zie GEDRAG hierboven)
+
+| Effect | Wat het doet | `waarde:` betekent |
+|---|---|---|
+| `TileHealth` | +HP per tegel | extra HP (bv. 3) |
+| `TileRegen` | een beschadigde tegel geneest vanzelf terug over tijd | HP/sec regen |
+| `DamageReduction` | een tegel neemt minder schade per hit | % of vast bedrag reductie |
+| `Thorns` | een tegel doet schade terug aan de vijand die hem aanvalt | damage per hit |
+| `CheaperTiles` | nieuwe tegels neerzetten kost minder munten | % korting of vast bedrag |
+| `FreeRebuild` | een vernietigde tegel komt na X seconden vanzelf terug | seconden tot terugkomst |
+
+⚠️ Let op: omdat er maar één tegel-"type" is (niet zoals bij gebouwen met meerdere turrets),
+geldt deze hele boom straks voor alle tegels op de map tegelijk - dat is de aanname tenzij je
+iets anders aangeeft.
+
+### Referentie (huidige tegel-instellingen)
+
+| | Waarde |
+|---|---|
+| Health per tegel | 5 |
+| Geldt voor | alle tegels op de map, gelijk |
+| Upgrade-boom | bestaat nog niet |
