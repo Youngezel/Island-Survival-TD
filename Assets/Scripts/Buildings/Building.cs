@@ -52,6 +52,16 @@ namespace Game.Buildings
             {
                 _cell = HexGridManager.Instance.WorldToCell(transform.position);
                 HexGridManager.Instance.SetOccupied(_cell, true);
+
+                // Picks up whatever this tile's own foundation upgrade already
+                // banked before this building existed - a tier bought while a
+                // building is already standing here instead applies live via
+                // TileInspectorUI.TryActivate.
+                int tileHealthBonus = HexGridManager.Instance.GetTileHealthBonus(_cell);
+                if (tileHealthBonus > 0)
+                {
+                    _health.AddMaxHealth(tileHealthBonus);
+                }
             }
         }
 

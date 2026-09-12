@@ -1,3 +1,4 @@
+using Game.Grid;
 using Game.UI;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -6,9 +7,14 @@ using UnityEngine.InputSystem;
 namespace Game.Buildings
 {
     /// <summary>
-    /// Detects clicks on placed buildings and opens the inspector for them.
-    /// Uses a manual Physics2D query driven by the new Input System rather
-    /// than Unity's legacy OnMouseDown message - this project's Active Input
+    /// Detects clicks on placed buildings and opens the inspector for them;
+    /// a click that misses every building's (small) collider but still lands
+    /// on a valid ground tile instead opens that tile's own foundation-
+    /// upgrade inspector - so clicking directly on a turret's sprite shows
+    /// its own upgrades, while clicking elsewhere on the same hex tile (or
+    /// any other tile, empty or not) shows the tile's upgrades instead. Uses
+    /// a manual Physics2D query driven by the new Input System rather than
+    /// Unity's legacy OnMouseDown message - this project's Active Input
     /// Handling is set to "Input System Package (New)" only, and OnMouseDown
     /// is implemented on top of the old Input Manager under the hood, so it
     /// silently never fires with that setting.
@@ -67,12 +73,27 @@ namespace Game.Buildings
                 }
             }
 
-            if (building == null || building.Data == null || string.IsNullOrEmpty(building.Data.UpgradeSaveKey))
+            if (building != null)
             {
+                if (building.Data != null && !string.IsNullOrEmpty(building.Data.UpgradeSaveKey))
+                {
+                    BuildingInspectorUI.Instance?.Open(building.Data, building);
+                }
+
                 return;
             }
 
-            BuildingInspectorUI.Instance?.Open(building.Data, building);
+            // No building under the click at all - see if it landed on a
+            // valid ground tile instead and open that tile's own
+            // foundation-upgrade inspector.
+            if (HexGridManager.Instance != null)
+            {
+                Vector3Int cell = HexGridManager.Instance.WorldToCell(worldPosition);
+                if (HexGridManager.Instance.HasGroundTile(cell))
+                {
+                    TileInspectorUI.Instance?.Open(cell);
+                }
+            }
         }
     }
 }

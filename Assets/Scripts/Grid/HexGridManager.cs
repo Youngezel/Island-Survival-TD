@@ -295,6 +295,37 @@ namespace Game.Grid
             }
         }
 
+        /// <summary>
+        /// This cell's total committed foundation-path Health bonus (sum of
+        /// every Health-effect tier reached so far) - unlike Damage/Range,
+        /// which Shooter reads live every frame, a building applies this
+        /// once, itself, when it spawns onto this cell (see Building.Start).
+        /// </summary>
+        public int GetTileHealthBonus(Vector3Int cell)
+        {
+            if (_tileUpgradeData == null || !_tileUpgrades.TryGetValue(cell, out TileUpgradeState state) || !state.HasCommittedPath)
+            {
+                return 0;
+            }
+
+            UpgradePath path = state.PathA ? _tileUpgradeData.PathA : _tileUpgradeData.PathB;
+            if (path == null)
+            {
+                return 0;
+            }
+
+            int total = 0;
+            for (int i = 0; i < state.Tier && i < path.Nodes.Length; i++)
+            {
+                if (path.Nodes[i].Effect == UpgradeEffect.Health)
+                {
+                    total += Mathf.RoundToInt(path.Nodes[i].Value);
+                }
+            }
+
+            return total;
+        }
+
         /// <summary>Converts a screen-space point (e.g. a pointer/drag position) to the hex cell under it.</summary>
         public Vector3Int ScreenToCell(Vector2 screenPosition, Camera camera)
         {

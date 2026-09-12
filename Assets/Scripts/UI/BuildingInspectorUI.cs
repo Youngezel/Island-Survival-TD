@@ -18,7 +18,11 @@ namespace Game.UI
     /// path commits this specific placed building (its Shooter) to that
     /// path for the rest of the run - the other path locks out entirely,
     /// but every other turret of the same type keeps upgrading (or not)
-    /// completely independently.
+    /// completely independently. The hex tile this building stands on has
+    /// its own separate "Fundering" upgrade tree - that one lives in
+    /// TileInspectorUI, opened by clicking the tile itself rather than the
+    /// turret, but its Damage/Range bonus still shows up in the stats below
+    /// since Shooter.CurrentDamage/CurrentRange already fold it in.
     /// </summary>
     public class BuildingInspectorUI : MonoBehaviour
     {
@@ -41,13 +45,6 @@ namespace Game.UI
         [SerializeField] private TMP_Text _fireRateText;
         [SerializeField] private NodeRow[] _pathARows = new NodeRow[3];
         [SerializeField] private NodeRow[] _pathBRows = new NodeRow[3];
-
-        // The hex tile's own "Fundering" upgrade tree - independent of this
-        // building type's path above, keyed by cell rather than by this
-        // Shooter instance (see HexGridManager).
-        [SerializeField] private NodeRow[] _tilePathARows = new NodeRow[3];
-        [SerializeField] private NodeRow[] _tilePathBRows = new NodeRow[3];
-
         [SerializeField] private Button _closeButton;
         [SerializeField] private Button _sellButton;
         [SerializeField] private TMP_Text _sellButtonText;
@@ -100,18 +97,6 @@ namespace Game.UI
                 int tierIndex = i;
                 _pathBRows[i].Button.onClick.AddListener(() => TryActivate(false, tierIndex));
             }
-
-            for (int i = 0; i < _tilePathARows.Length; i++)
-            {
-                int tierIndex = i;
-                _tilePathARows[i].Button.onClick.AddListener(() => TryActivateTile(true, tierIndex));
-            }
-
-            for (int i = 0; i < _tilePathBRows.Length; i++)
-            {
-                int tierIndex = i;
-                _tilePathBRows[i].Button.onClick.AddListener(() => TryActivateTile(false, tierIndex));
-            }
         }
 
         private void Start()
@@ -133,6 +118,8 @@ namespace Game.UI
         /// </summary>
         public void Open(BuildingData data, Building building)
         {
+            TileInspectorUI.Instance?.Close();
+
             _currentData = data;
             _currentBuilding = building;
             if (_currentBuilding != null)
@@ -145,7 +132,7 @@ namespace Game.UI
             Refresh();
         }
 
-        private void Close()
+        public void Close()
         {
             if (_currentBuilding != null)
             {
@@ -237,62 +224,6 @@ namespace Game.UI
             Refresh();
         }
 
-        /// <summary>
-        /// Activates the next tier of the given path on the hex TILE this
-        /// building stands on (not on the building's own path) - a Health
-        /// effect applies immediately to this building's Health component,
-        /// since it's a one-shot bonus rather than something Shooter
-        /// recomputes continuously like Damage/Range.
-        /// </summary>
-        private void TryActivateTile(bool pathA, int tierIndex)
-        {
-            if (_currentBuilding == null || CoinWallet.Instance == null || SaveManager.Instance == null || HexGridManager.Instance == null)
-            {
-                return;
-            }
-
-            BuildingData tileData = HexGridManager.Instance.TileUpgradeData;
-            if (tileData == null)
-            {
-                return;
-            }
-
-            Vector3Int cell = _currentBuilding.Cell;
-            int unlockedTier = SaveManager.Instance.GetUnlockedTier(tileData.UpgradeSaveKey, pathA);
-            if (unlockedTier <= tierIndex)
-            {
-                return;
-            }
-
-            bool committed = HexGridManager.Instance.TileHasCommittedPath(cell);
-            if (committed && HexGridManager.Instance.TileIsPathACommitted(cell) != pathA)
-            {
-                return;
-            }
-
-            int currentTier = committed ? HexGridManager.Instance.GetTileUpgradeTier(cell) : 0;
-            if (currentTier != tierIndex)
-            {
-                return;
-            }
-
-            UpgradePath path = pathA ? tileData.PathA : tileData.PathB;
-            UpgradeNode node = path.Nodes[tierIndex];
-
-            if (!CoinWallet.Instance.TrySpend(node.ApplyCost))
-            {
-                return;
-            }
-
-            HexGridManager.Instance.TryActivateTileNextTier(cell, pathA);
-            if (node.Effect == UpgradeEffect.Health)
-            {
-                _currentBuilding.Health.AddMaxHealth(Mathf.RoundToInt(node.Value));
-            }
-
-            Refresh();
-        }
-
         /// <summary>Sells the specific placed building this panel was opened for, refunding a fraction of its cost - not available when opened from a hotbar slot with no placed instance.</summary>
         private void Sell()
         {
@@ -355,71 +286,7 @@ namespace Game.UI
 
             RefreshPath(_currentData.PathA, true, _pathARows);
             RefreshPath(_currentData.PathB, false, _pathBRows);
-
-            BuildingData tileData = HexGridManager.Instance != null ? HexGridManager.Instance.TileUpgradeData : null;
-            if (tileData != null)
-            {
-                RefreshTilePath(tileData.PathA, true, _tilePathARows, tileData);
-                RefreshTilePath(tileData.PathB, false, _tilePathBRows, tileData);
-            }
-
             RefreshRangeIndicator();
-        }
-
-        /// <summary>
-        /// Same rendering as RefreshPath, but sourced from the hex tile's own
-        /// per-cell committed state (HexGridManager) instead of this
-        /// building's Shooter instance - see TryActivateTile.
-        /// </summary>
-        private void RefreshTilePath(UpgradePath path, bool isPathA, NodeRow[] rows, BuildingData tileData)
-        {
-            if (path == null || _currentBuilding == null || HexGridManager.Instance == null)
-            {
-                return;
-            }
-
-            Vector3Int cell = _currentBuilding.Cell;
-            int unlockedTier = SaveManager.Instance != null ? SaveManager.Instance.GetUnlockedTier(tileData.UpgradeSaveKey, isPathA) : 0;
-            bool committed = HexGridManager.Instance.TileHasCommittedPath(cell);
-            bool thisPathCommitted = committed && HexGridManager.Instance.TileIsPathACommitted(cell) == isPathA;
-            bool otherPathCommitted = committed && !thisPathCommitted;
-            int activeTier = thisPathCommitted ? HexGridManager.Instance.GetTileUpgradeTier(cell) : 0;
-
-            for (int i = 0; i < rows.Length && i < path.Nodes.Length; i++)
-            {
-                UpgradeNode node = path.Nodes[i];
-                NodeRow row = rows[i];
-                bool permanentlyUnlocked = unlockedTier > i;
-                bool isActive = thisPathCommitted && activeTier > i;
-                bool isNextActivatable = permanentlyUnlocked && !otherPathCommitted && !isActive && activeTier == i;
-
-                if (row.TypeGlyph != null)
-                {
-                    row.TypeGlyph.sprite = GlyphFor(node.Effect);
-                }
-
-                if (otherPathCommitted)
-                {
-                    ApplyPathLockedVisual(row, node);
-                }
-                else if (isActive)
-                {
-                    ApplyActiveVisual(row, node);
-                }
-                else if (!permanentlyUnlocked)
-                {
-                    ApplyLockedVisual(row, node, "(hoofdmenu)");
-                }
-                else if (isNextActivatable)
-                {
-                    bool affordable = CoinWallet.Instance != null && CoinWallet.Instance.Coins >= node.ApplyCost;
-                    ApplyBuyVisual(row, node, affordable);
-                }
-                else
-                {
-                    ApplyLockedVisual(row, node, null);
-                }
-            }
         }
 
         private void RefreshPath(UpgradePath path, bool isPathA, NodeRow[] rows)
