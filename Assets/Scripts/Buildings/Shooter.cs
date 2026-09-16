@@ -72,7 +72,9 @@ namespace Game.Buildings
         [SerializeField] private SpriteRenderer _flashRenderer;
         [SerializeField] private TierVisual[] _pathAVisuals = new TierVisual[3];
         [SerializeField] private TierVisual[] _pathBVisuals = new TierVisual[3];
-        private const float FlashFrameDuration = 0.11f;
+
+        /// <summary>Seconds each committed-tier flash frame stays on screen (default matches the original 3 turrets; the Tesla Coil's design spec calls for a snappier 0.06s instead).</summary>
+        [SerializeField] private float _flashFrameDuration = 0.11f;
 
         private Targeting _targeting;
         private BuildingData _data;
@@ -346,10 +348,10 @@ namespace Game.Buildings
         {
             _flashRenderer.sprite = visual.FlashFrame1;
             _flashRenderer.enabled = true;
-            yield return new WaitForSeconds(FlashFrameDuration);
+            yield return new WaitForSeconds(_flashFrameDuration);
 
             _flashRenderer.sprite = visual.FlashFrame2;
-            yield return new WaitForSeconds(FlashFrameDuration);
+            yield return new WaitForSeconds(_flashFrameDuration);
 
             _flashRenderer.enabled = false;
             _fireAnimationCoroutine = null;

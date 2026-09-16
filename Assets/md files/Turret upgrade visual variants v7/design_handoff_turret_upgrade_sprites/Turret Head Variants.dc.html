@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="design_doc_mode" content="canvas">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  body { margin:0; background:#1b1f24; }
+  img { image-rendering: pixelated; image-rendering: -moz-crisp-edges; }
+  a { color:#FFCF3F; } a:hover { color:#F4E4C1; }
+</style>
+</helmet>
+<div style="min-height:100vh;padding:48px 56px 72px;background:#1b1f24;font-family:'IBM Plex Sans',sans-serif;color:#B6C1CB;display:flex;flex-direction:column;gap:44px">
+
+  <div style="display:flex;flex-direction:column;gap:8px;max-width:720px">
+    <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:#93A1AD">Island Survival TD / head variants</div>
+    <div style="font-size:30px;font-weight:600;color:#F4E4C1;letter-spacing:-.01em">Turret upgrade heads</div>
+    <div style="font-size:14px;line-height:1.6;color:#93A1AD;text-wrap:pretty">18 heads, 36 muzzle-flash frames and 6 projectiles. 32×32, transparent, built on top of the supplied reference heads so the mount block, pivot and shading ramp are unchanged. Each is shown composited over its real base.</div>
+  </div>
+
+  <div style="display:flex;flex-direction:column;gap:16px;background:#20252b;border:1px solid #3F474F;padding:24px">
+    <div style="display:flex;align-items:baseline;gap:14px">
+      <div style="font-size:17px;font-weight:600;color:#F4E4C1">Rotation test</div>
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:#93A1AD">{{ rig.pivotText }} · head + flash rotate together, base stays put</div>
+    </div>
+    <div style="display:flex;gap:32px;flex-wrap:wrap;align-items:flex-start">
+      <div style="position:relative;width:384px;height:384px;background:repeating-conic-gradient(#22272d 0% 25%, #282e35 0% 50%) 50%/16px 16px;border:1px solid #3F474F">
+        <div style="position:absolute;left:64px;top:64px;width:256px;height:256px;outline:1px dashed #3F474F">
+          <img src="{{ rig.base }}" width="256" height="256" style="position:absolute;left:0;top:0" alt="base">
+          <img src="{{ rig.head }}" width="256" height="256" style="position:absolute;left:0;top:0;transform-origin:{{ rig.origin }};transform:{{ rig.transform }}" alt="head">
+          <img src="{{ rig.flash }}" width="256" height="256" style="position:absolute;left:0;top:0;transform-origin:{{ rig.origin }};transform:{{ rig.transform }};opacity:{{ flashVisible }}" alt="flash">
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:16px;width:300px">
+        <label style="display:flex;flex-direction:column;gap:6px">
+          <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:#93A1AD">Variant</span>
+          <select value="{{ selValue }}" onChange="{{ onVariant }}" style="background:#2a3038;color:#F4E4C1;border:1px solid #5C6672;padding:7px 9px;font-family:'IBM Plex Mono',monospace;font-size:12px">
+            <sc-for list="{{ variants }}" as="v" hint-placeholder-count="18">
+              <option value="{{ v.i }}">{{ v.label }}</option>
+            </sc-for>
+          </select>
+        </label>
+        <label style="display:flex;flex-direction:column;gap:6px">
+          <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:#93A1AD">Aim angle — {{ angleText }}</span>
+          <input type="range" min="0" max="359" value="{{ angle }}" onInput="{{ onAngle }}" style="width:100%;accent-color:#FFCF3F">
+        </label>
+        <div style="display:flex;gap:10px">
+          <button onClick="{{ toggleSpin }}" style="background:#2a3038;color:#F4E4C1;border:1px solid #5C6672;padding:8px 12px;font-family:'IBM Plex Mono',monospace;font-size:11px;cursor:pointer" style-hover="border-color:#FFCF3F">{{ spinLabel }}</button>
+          <button onClick="{{ toggleFire }}" style="background:#2a3038;color:#F4E4C1;border:1px solid #5C6672;padding:8px 12px;font-family:'IBM Plex Mono',monospace;font-size:11px;cursor:pointer" style-hover="border-color:#FFCF3F">{{ fireLabel }}</button>
+        </div>
+        <div style="font-size:12px;line-height:1.5;color:#93A1AD;text-wrap:pretty">Every head is drawn pointing up as its 0° reference. Pivots, in sprite pixels: Turret 16,20 · Long Range 16,11 · Mortar 16,19. Set the head's origin there and the joint stays welded to the mount at any angle.</div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:#93A1AD">Eight fixed bearings</div>
+        <div style="display:grid;grid-template-columns:repeat(4,140px);gap:8px">
+          <sc-for list="{{ dial }}" as="d" hint-placeholder-count="8">
+            <div style="display:flex;flex-direction:column;gap:4px;align-items:center">
+              <div style="position:relative;width:140px;height:140px;background:#22272d;border:1px solid #3F474F">
+                <div style="position:absolute;left:22px;top:22px;width:96px;height:96px">
+                  <img src="{{ d.base }}" width="96" height="96" style="position:absolute;left:0;top:0" alt="base">
+                  <img src="{{ d.head }}" width="96" height="96" style="position:absolute;left:0;top:0;transform-origin:{{ d.origin }};transform:{{ d.transform }}" alt="head">
+                  <img src="{{ d.flash }}" width="96" height="96" style="position:absolute;left:0;top:0;transform-origin:{{ d.origin }};transform:{{ d.transform }};opacity:{{ flashVisible }}" alt="flash">
+                </div>
+              </div>
+              <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:#5C6672">{{ d.a }}</div>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <sc-for list="{{ groups }}" as="g" hint-placeholder-count="6">
+    <div style="display:flex;flex-direction:column;gap:16px">
+      <div style="display:flex;align-items:center;gap:16px;border-bottom:1px solid #3F474F;padding-bottom:10px">
+        <div style="font-size:17px;font-weight:600;color:#F4E4C1">{{ g.title }}</div>
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:#93A1AD">{{ g.tag }}</div>
+        <div style="display:flex;align-items:center;gap:8px;margin-left:auto">
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:#5C6672">reference</div>
+          <div style="position:relative;width:64px;height:64px;background:#22272d;border:1px solid #3F474F">
+            <img src="{{ g.base }}" width="64" height="64" style="position:absolute;left:0;top:0" alt="base">
+            <img src="{{ g.refHead }}" width="64" height="64" style="position:absolute;left:0;top:0" alt="reference head">
+          </div>
+        </div>
+      </div>
+      <div style="display:flex;gap:24px;flex-wrap:wrap">
+        <sc-for list="{{ g.tiers }}" as="t" hint-placeholder-count="3">
+          <div style="display:flex;flex-direction:column;gap:12px;width:244px">
+            <div style="display:flex;gap:14px;align-items:flex-start">
+              <div style="position:relative;width:160px;height:160px;background:repeating-conic-gradient(#22272d 0% 25%, #282e35 0% 50%) 50%/16px 16px;border:1px solid #3F474F">
+                <img src="{{ t.base }}" width="160" height="160" style="position:absolute;left:0;top:0;opacity:.55" alt="base">
+                <img src="{{ t.src }}" width="160" height="160" style="position:absolute;left:0;top:0" alt="{{ t.file }}">
+              </div>
+              <div style="display:flex;flex-direction:column;gap:6px;align-items:center">
+                <div style="position:relative;width:64px;height:64px">
+                  <img src="{{ t.base }}" width="64" height="64" style="position:absolute;left:0;top:0" alt="base">
+                  <img src="{{ t.src }}" width="64" height="64" style="position:absolute;left:0;top:0" alt="2x">
+                </div>
+                <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:#5C6672">2×</div>
+                <div style="position:relative;width:32px;height:32px">
+                  <img src="{{ t.base }}" width="32" height="32" style="position:absolute;left:0;top:0" alt="base">
+                  <img src="{{ t.src }}" width="32" height="32" style="position:absolute;left:0;top:0" alt="1x">
+                </div>
+                <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:#5C6672">1×</div>
+              </div>
+            </div>
+            <div style="display:flex;gap:6px;align-items:center">
+              <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:#5C6672;width:34px;line-height:1.2">fire<br>f1 f2</div>
+              <div style="position:relative;width:64px;height:64px;background:#22272d;border:1px solid #3F474F">
+                <img src="{{ t.src }}" width="64" height="64" style="position:absolute;left:0;top:0" alt="head">
+                <img src="{{ t.flash1 }}" width="64" height="64" style="position:absolute;left:0;top:0" alt="flash frame 1">
+              </div>
+              <div style="position:relative;width:64px;height:64px;background:#22272d;border:1px solid #3F474F">
+                <img src="{{ t.src }}" width="64" height="64" style="position:absolute;left:0;top:0" alt="head">
+                <img src="{{ t.flash2 }}" width="64" height="64" style="position:absolute;left:0;top:0" alt="flash frame 2">
+              </div>
+              <div style="position:relative;width:32px;height:32px">
+                <img src="{{ t.src }}" width="32" height="32" style="position:absolute;left:0;top:0" alt="head">
+                <img src="{{ t.flash1 }}" width="32" height="32" style="position:absolute;left:0;top:0" alt="flash 1x">
+              </div>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:3px">
+              <div style="display:flex;gap:8px;align-items:baseline">
+                <span style="font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:600;color:#FFCF3F">T{{ t.tier }}</span>
+                <span style="font-size:13px;font-weight:600;color:#F4E4C1">{{ t.upgrade }}</span>
+              </div>
+              <div style="font-size:12px;line-height:1.45;color:#93A1AD;text-wrap:pretty">{{ t.note }}</div>
+              <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:#93A1AD;word-break:break-all">{{ t.file }}</div>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+  </sc-for>
+
+  <div style="display:flex;flex-direction:column;gap:16px;border-top:1px solid #3F474F;padding-top:26px">
+    <div style="display:flex;align-items:baseline;gap:14px">
+      <div style="font-size:17px;font-weight:600;color:#F4E4C1">Projectiles</div>
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:#93A1AD">8×8, transparent, drawn pointing up</div>
+    </div>
+    <div style="display:flex;gap:20px;flex-wrap:wrap">
+      <sc-for list="{{ bullets }}" as="b" hint-placeholder-count="6">
+        <div style="display:flex;flex-direction:column;gap:8px;width:212px">
+          <div style="display:flex;gap:12px;align-items:flex-end;background:#22272d;border:1px solid #3F474F;padding:12px">
+            <img src="{{ b.src }}" width="96" height="96" alt="{{ b.name }}">
+            <div style="display:flex;flex-direction:column;gap:6px;align-items:center">
+              <img src="{{ b.src }}" width="24" height="24" alt="3x">
+              <img src="{{ b.src }}" width="8" height="8" alt="1x">
+              <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:#5C6672">1×</div>
+            </div>
+          </div>
+          <div style="font-size:13px;font-weight:600;color:#F4E4C1">{{ b.name }}</div>
+          <div style="font-size:12px;line-height:1.45;color:#93A1AD;text-wrap:pretty">{{ b.note }}</div>
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:#93A1AD;word-break:break-all">{{ b.file }}</div>
+        </div>
+      </sc-for>
+    </div>
+  </div>
+
+  <div style="display:flex;flex-direction:column;gap:12px;border-top:1px solid #3F474F;padding-top:26px">
+    <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:#93A1AD">Silhouette check — heads only, 1× and 2×</div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;background:#2a3038;border:1px solid #3F474F;padding:14px">
+      <sc-for list="{{ all }}" as="a">
+        <img src="{{ a }}" width="64" height="64" alt="head">
+      </sc-for>
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;background:#2a3038;border:1px solid #3F474F;padding:14px">
+      <sc-for list="{{ all }}" as="a">
+        <img src="{{ a }}" width="32" height="32" alt="head">
+      </sc-for>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{}">
+class Component extends DCLogic {
+  state = { sel: 0, angle: 35, spin: true, fire: true, frame: 1 };
+
+  componentDidMount() {
+    this._spin = setInterval(() => {
+      if (this.state.spin) this.setState(s => ({ angle: (s.angle + 3) % 360 }));
+    }, 50);
+    this._fire = setInterval(() => {
+      if (this.state.fire) this.setState(s => ({ frame: s.frame === 1 ? 2 : 1 }));
+    }, 110);
+  }
+  componentWillUnmount() { clearInterval(this._spin); clearInterval(this._fire); }
+
+  renderVals() {
+    const dir = 'sprites/';
+    const defs = [
+      ['Turret — Path A (damage)', 'spr_turret_head_{p}_t{n}.png', 'a', 'turret', [
+        ['Meer Damage', 'Barrel thickened from 4px to 6px with two iron rings.'],
+        ['Spreidschot', 'Two barrels splayed outward from the mount, flanking the main one.'],
+        ['Meer Range', 'Full-length reinforced barrel, two rings, side scope with gold lens.']]],
+      ['Turret — Path B (rate of fire)', 'spr_turret_head_{p}_t{n}.png', 'b', 'turret', [
+        ['Vuursnelheid+', 'Flywheel cogs on both mount cheeks, gold hubs.'],
+        ['Dubbelschot', 'Two barrels side by side on a shared iron collar.'],
+        ['Vuurschade', 'Both muzzles ember-hot, faint smoke wisps rising.']]],
+      ['Long Range — Path A (precision)', 'spr_turret_long_range_head_{p}_t{n}.png', 'a', 'turret_long_range', [
+        ['Meer Range', 'Ringed barrel plus a compact gold-lens sight.'],
+        ['Doorborende Kogels', 'Wide notched muzzle brake — a three-pronged piercing head that changes the outline, not just the texture.'],
+        ['Meer Range', 'Two-stage barrel, larger scope, twin stabilizer fins.']]],
+      ['Long Range — Path B (multi-target)', 'spr_turret_long_range_head_{p}_t{n}.png', 'b', 'turret_long_range', [
+        ['Meer Damage', 'Barrel widened to 5px with two reinforcing rings.'],
+        ['Dubbel Doel', 'Y-split: trunk forking into two angled barrels.'],
+        ['Meer Damage', 'Heavier fork, gold muzzle bands and gold collar.']]],
+      ['Mortar — Path A (splash)', 'spr_turret_mortar_head_{p}_t{n}.png', 'a', 'turret_mortar', [
+        ['Meer Range', 'Funnel mouth widened two pixels each side.'],
+        ['Grotere Splash Radius', 'Clearly flared mouth on a reinforcing band.'],
+        ['Meer Range', 'Widest mouth, banded, glowing core in the bore.']]],
+      ['Mortar — Path B (burst fan)', 'spr_turret_mortar_head_{p}_t{n}.png', 'b', 'turret_mortar', [
+        ['Dubbelschot', 'Side rack holding two loaded shells.'],
+        ['Spreidschot', 'Three funnel mouths clustered in a fan.'],
+        ['Meer Damage', 'Triple cluster with gold reinforcing and glowing shell tips.']]],
+    ];
+    const groups = defs.map(([title, pat, path, turret, tiers]) => ({
+      title,
+      tag: pat.replace('{p}', path).replace('{n}', '1–3'),
+      base: 'uploads/' + turret + '_base.png',
+      refHead: 'uploads/' + turret + '_head.png',
+      tiers: tiers.map(([upgrade, note], i) => {
+        const file = pat.replace('{p}', path).replace('{n}', i + 1);
+        const fl = 'spr_' + turret + '_flash_' + path + '_t' + (i + 1);
+        return {
+          tier: i + 1, upgrade, note, file, src: dir + file,
+          base: 'uploads/' + turret + '_base.png',
+          flash1: dir + fl + '_f1.png', flash2: dir + fl + '_f2.png',
+          label: title.split(' — ')[0] + ' ' + path.toUpperCase() + ' T' + (i + 1),
+          turret
+        };
+      })
+    }));
+    const all = groups.flatMap(g => g.tiers.map(t => t.src));
+
+    const PIVOT = { turret: [16, 20], turret_long_range: [16, 11], turret_mortar: [16, 19] };
+    const flat = groups.flatMap(g => g.tiers);
+    const sel = flat[Math.min(this.state.sel, flat.length - 1)];
+    const piv = PIVOT[sel.turret];
+    const Z = 8, ZS = 3;
+    const rig = {
+      base: sel.base, head: sel.src,
+      flash: this.state.frame === 1 ? sel.flash1 : sel.flash2,
+      size: 32 * Z, origin: (piv[0] * Z) + 'px ' + (piv[1] * Z) + 'px',
+      transform: 'rotate(' + this.state.angle + 'deg)',
+      pivotText: 'pivot ' + piv[0] + ', ' + piv[1],
+      label: sel.label
+    };
+    const dial = [0, 45, 90, 135, 180, 225, 270, 315].map(a => ({
+      a: a + '°', base: sel.base, head: sel.src,
+      flash: rig.flash,
+      size: 32 * ZS, origin: (piv[0] * ZS) + 'px ' + (piv[1] * ZS) + 'px',
+      transform: 'rotate(' + a + 'deg)'
+    }));
+
+    const bullets = [
+      ['spr_turret_bullet.png', 'Turret — musket ball', 'Default shot for both paths.'],
+      ['spr_turret_bullet_fire.png', 'Turret — burning shot', 'Path B T3 "Vuurschade": ember core with a trailing flame.'],
+      ['spr_turret_long_range_bullet.png', 'Long Range — slug', 'Pointed rifled round, default for both paths.'],
+      ['spr_turret_long_range_bullet_pierce.png', 'Long Range — piercing dart', 'Path A T2 "Doorborende Kogels": hardened dark tip, gold driving band.'],
+      ['spr_turret_mortar_shell.png', 'Mortar — shell', 'Fat lit shell, Path A.'],
+      ['spr_turret_mortar_shell_cluster.png', 'Mortar — cluster shell', 'Smaller fan shell for Path B bursts.']
+    ].map(([f, name, note]) => ({ src: dir + f, file: f, name, note }));
+
+    return {
+      groups, all, rig, dial, bullets,
+      variants: flat.map((t, i) => ({ label: t.label, i })),
+      angle: this.state.angle,
+      angleText: this.state.angle + '°',
+      spin: this.state.spin, fire: this.state.fire,
+      selValue: String(this.state.sel),
+      onVariant: e => this.setState({ sel: Number(e.target.value) }),
+      onAngle: e => this.setState({ angle: Number(e.target.value), spin: false }),
+      toggleSpin: () => this.setState(s => ({ spin: !s.spin })),
+      toggleFire: () => this.setState(s => ({ fire: !s.fire })),
+      spinLabel: this.state.spin ? 'Stop rotating' : 'Rotate',
+      fireLabel: this.state.fire ? 'Flash on' : 'Flash off',
+      flashVisible: this.state.fire ? 1 : 0
+    };
+  }
+}
+</script>
+</body>
+</html>

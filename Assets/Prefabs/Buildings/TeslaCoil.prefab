@@ -269,31 +269,32 @@ MonoBehaviour:
   _fireFrameDuration: 0.05
   _flashRenderer: {fileID: 507807911043502618}
   _pathAVisuals:
-  - Head: {fileID: 0}
-    FlashFrame1: {fileID: 0}
-    FlashFrame2: {fileID: 0}
+  - Head: {fileID: 21300000, guid: 3e7fde77b1a06f0499743aac5d2baa17, type: 3}
+    FlashFrame1: {fileID: 21300000, guid: f830369a9ffe05e459aec2216bbf93a1, type: 3}
+    FlashFrame2: {fileID: 21300000, guid: 6c83a98bc73e0d54d87670a6c8da2061, type: 3}
     Projectile: {fileID: 0}
-  - Head: {fileID: 0}
-    FlashFrame1: {fileID: 0}
-    FlashFrame2: {fileID: 0}
+  - Head: {fileID: 21300000, guid: df5766b01200af247a985782bff19d73, type: 3}
+    FlashFrame1: {fileID: 21300000, guid: e18f7b0103853d34881eecc8be4dab0f, type: 3}
+    FlashFrame2: {fileID: 21300000, guid: db8dbe031c382eb4aa6e993941c9dd35, type: 3}
     Projectile: {fileID: 0}
-  - Head: {fileID: 0}
-    FlashFrame1: {fileID: 0}
-    FlashFrame2: {fileID: 0}
+  - Head: {fileID: 21300000, guid: 1de8c7d8fa3a2964a9e187b5c5ed3fd9, type: 3}
+    FlashFrame1: {fileID: 21300000, guid: 44fd1433559bd5c42b8f25af36db0525, type: 3}
+    FlashFrame2: {fileID: 21300000, guid: 565d99af95a552e4ca40b471c18096fe, type: 3}
     Projectile: {fileID: 0}
   _pathBVisuals:
-  - Head: {fileID: 0}
-    FlashFrame1: {fileID: 0}
-    FlashFrame2: {fileID: 0}
+  - Head: {fileID: 21300000, guid: cb05c46f2a0bb0c4980a2a1702f13dd9, type: 3}
+    FlashFrame1: {fileID: 21300000, guid: 932aae557cddc7a42963b61fb3e51c73, type: 3}
+    FlashFrame2: {fileID: 21300000, guid: 820dc29774c4279488c27c846ac8f8d2, type: 3}
     Projectile: {fileID: 0}
-  - Head: {fileID: 0}
-    FlashFrame1: {fileID: 0}
-    FlashFrame2: {fileID: 0}
+  - Head: {fileID: 21300000, guid: 7928c8758e56bd34cb92ae03ecc36ddf, type: 3}
+    FlashFrame1: {fileID: 21300000, guid: 375c42b583ef60a4cb6f26471c9d2bb2, type: 3}
+    FlashFrame2: {fileID: 21300000, guid: c0e491ae24c2d8b499c725b8eee4f1ac, type: 3}
     Projectile: {fileID: 0}
-  - Head: {fileID: 0}
-    FlashFrame1: {fileID: 0}
-    FlashFrame2: {fileID: 0}
+  - Head: {fileID: 21300000, guid: d0619aad83ba489438fe87a50a72aad3, type: 3}
+    FlashFrame1: {fileID: 21300000, guid: 091004556fad2ed449c9991e352315da, type: 3}
+    FlashFrame2: {fileID: 21300000, guid: 15825ea9e99f70e4991656586f85e4ba, type: 3}
     Projectile: {fileID: 0}
+  _flashFrameDuration: 0.06
 --- !u!114 &8835382899345401297
 MonoBehaviour:
   m_ObjectHideFlags: 0
