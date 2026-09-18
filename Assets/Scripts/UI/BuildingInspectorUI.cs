@@ -38,6 +38,10 @@ namespace Game.UI
 
         public static BuildingInspectorUI Instance { get; private set; }
 
+        /// <summary>Fired whenever this panel opens/closes - TutorialController uses this to detect the guided "click a turret" step completing.</summary>
+        public static event Action OnOpened;
+        public static event Action OnClosed;
+
         [SerializeField] private GameObject _panel;
         [SerializeField] private TMP_Text _nameText;
         [SerializeField] private TMP_Text _healthText;
@@ -131,6 +135,7 @@ namespace Game.UI
 
             _panel.SetActive(true);
             Refresh();
+            OnOpened?.Invoke();
         }
 
         public void Close()
@@ -145,6 +150,7 @@ namespace Game.UI
             _currentBuilding = null;
             _panel.SetActive(false);
             _rangeIndicator?.Hide();
+            OnClosed?.Invoke();
         }
 
         /// <summary>Draws (or updates) the range ring around the inspected turret - called on open and again on Refresh so a range upgrade resizes it live.</summary>

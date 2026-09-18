@@ -75,7 +75,7 @@ namespace Game.UI
 
         public void OnBeginDrag(PointerEventData eventData)
         {
-            if (_item != null && PlacementCursor.Instance != null)
+            if (_item != null && PlacementCursor.Instance != null && (TutorialGate.RestrictedHotbarItem == null || TutorialGate.RestrictedHotbarItem == _item))
             {
                 PlacementCursor.Instance.SelectItem(_item);
             }

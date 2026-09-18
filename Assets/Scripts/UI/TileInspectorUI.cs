@@ -35,6 +35,10 @@ namespace Game.UI
 
         public static TileInspectorUI Instance { get; private set; }
 
+        /// <summary>Fired whenever this panel opens/closes - TutorialController uses this to detect the guided "click a tile" step completing.</summary>
+        public static event Action OnOpened;
+        public static event Action OnClosed;
+
         [SerializeField] private GameObject _panel;
         [SerializeField] private TMP_Text _healthBonusText;
         [SerializeField] private NodeRow[] _pathARows = new NodeRow[3];
@@ -99,12 +103,14 @@ namespace Game.UI
             _currentCell = cell;
             _panel.SetActive(true);
             Refresh();
+            OnOpened?.Invoke();
         }
 
         public void Close()
         {
             _isOpen = false;
             _panel.SetActive(false);
+            OnClosed?.Invoke();
         }
 
         private void HandleChanged(int _)

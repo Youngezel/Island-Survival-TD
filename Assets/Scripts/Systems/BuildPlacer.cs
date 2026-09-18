@@ -1,3 +1,4 @@
+using System;
 using Game.Data;
 using Game.Economy;
 using Game.Grid;
@@ -13,6 +14,9 @@ namespace Game.Systems
     {
         public static BuildPlacer Instance { get; private set; }
 
+        /// <summary>Fired after a successful placement, with the cell and the spawned building instance (null for a placed ground tile) - TutorialController uses this to detect the guided placement step completing.</summary>
+        public static event Action<Vector3Int, GameObject> OnPlaced;
+
         private void Awake()
         {
             Instance = this;
@@ -21,6 +25,11 @@ namespace Game.Systems
         public bool TryPlace(HotbarItemData item, Vector3Int cell, bool free = false)
         {
             if (item == null || HexGridManager.Instance == null || CoinWallet.Instance == null)
+            {
+                return false;
+            }
+
+            if (TutorialGate.RestrictedPlacementCell.HasValue && TutorialGate.RestrictedPlacementCell.Value != cell)
             {
                 return false;
             }
@@ -44,6 +53,7 @@ namespace Game.Systems
                 return false;
             }
 
+            GameObject spawnedBuilding = null;
             if (item.IsGroundTile)
             {
                 HexGridManager.Instance.PlaceGroundTile(cell);
@@ -51,7 +61,7 @@ namespace Game.Systems
             else
             {
                 Vector3 worldPosition = HexGridManager.Instance.CellToWorld(cell);
-                Instantiate(item.BuildingPrefab, worldPosition, Quaternion.identity);
+                spawnedBuilding = Instantiate(item.BuildingPrefab, worldPosition, Quaternion.identity);
 
                 // Mark occupied immediately rather than relying on the
                 // building's own Start() (deferred to next frame), so two
@@ -60,6 +70,7 @@ namespace Game.Systems
                 HexGridManager.Instance.SetOccupied(cell, true);
             }
 
+            OnPlaced?.Invoke(cell, spawnedBuilding);
             return true;
         }
 
