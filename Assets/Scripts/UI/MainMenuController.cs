@@ -9,17 +9,20 @@ namespace Game.UI
 {
     /// <summary>
     /// Main menu: shows the player's meta XP and best wave, and starts a
-    /// run (normal or tutorial). The upgrade shop is its own toggleable
-    /// panel (opened/closed via a button rather than always covering the
-    /// title) - purchases within it are handled by the individual
-    /// UpgradeRow entries. Settings has no screen yet, so that button is a
-    /// placeholder.
+    /// run (normal or tutorial). The upgrade shop is a genuine separate
+    /// full-screen view within this same scene - opening it hides every
+    /// other main-menu element (grouped under _mainMenuContent) and shows
+    /// the upgrade shop filling the whole frame instead, closing it swaps
+    /// back - rather than a smaller panel floating over the title. Purchases
+    /// within it are handled by the individual UpgradeRow entries. Settings
+    /// has no screen yet, so that button is a placeholder.
     /// </summary>
     public class MainMenuController : MonoBehaviour
     {
         [SerializeField] private Button _playButton;
         [SerializeField] private Button _tutorialButton;
         [SerializeField] private Button _upgradesButton;
+        [SerializeField] private GameObject _mainMenuContent;
         [SerializeField] private GameObject _upgradesPanel;
         [SerializeField] private Button _upgradesCloseButton;
         [SerializeField] private Button _settingsButton;
@@ -91,12 +94,14 @@ namespace Game.UI
 
         private void OpenUpgrades()
         {
+            _mainMenuContent.SetActive(false);
             _upgradesPanel.SetActive(true);
         }
 
         private void CloseUpgrades()
         {
             _upgradesPanel.SetActive(false);
+            _mainMenuContent.SetActive(true);
         }
 
         private void Quit()
