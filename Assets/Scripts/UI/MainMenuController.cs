@@ -9,13 +9,19 @@ namespace Game.UI
 {
     /// <summary>
     /// Main menu: shows the player's meta XP and best wave, and starts a
-    /// run. Upgrade purchases are handled by the individual UpgradeRow
-    /// entries. Settings has no screen yet, so that button is a placeholder.
+    /// run (normal or tutorial). The upgrade shop is its own toggleable
+    /// panel (opened/closed via a button rather than always covering the
+    /// title) - purchases within it are handled by the individual
+    /// UpgradeRow entries. Settings has no screen yet, so that button is a
+    /// placeholder.
     /// </summary>
     public class MainMenuController : MonoBehaviour
     {
         [SerializeField] private Button _playButton;
         [SerializeField] private Button _tutorialButton;
+        [SerializeField] private Button _upgradesButton;
+        [SerializeField] private GameObject _upgradesPanel;
+        [SerializeField] private Button _upgradesCloseButton;
         [SerializeField] private Button _settingsButton;
         [SerializeField] private Button _quitButton;
         [SerializeField] private TMP_Text _xpAmountText;
@@ -26,6 +32,8 @@ namespace Game.UI
         {
             _playButton.onClick.AddListener(Play);
             _tutorialButton.onClick.AddListener(PlayTutorial);
+            _upgradesButton.onClick.AddListener(OpenUpgrades);
+            _upgradesCloseButton.onClick.AddListener(CloseUpgrades);
             _quitButton.onClick.AddListener(Quit);
         }
 
@@ -33,6 +41,8 @@ namespace Game.UI
         {
             _playButton.onClick.RemoveListener(Play);
             _tutorialButton.onClick.RemoveListener(PlayTutorial);
+            _upgradesButton.onClick.RemoveListener(OpenUpgrades);
+            _upgradesCloseButton.onClick.RemoveListener(CloseUpgrades);
             _quitButton.onClick.RemoveListener(Quit);
 
             if (XPWallet.Instance != null)
@@ -77,6 +87,16 @@ namespace Game.UI
         {
             GameSettings.IsTutorial = true;
             SceneManager.LoadScene(_gameSceneName);
+        }
+
+        private void OpenUpgrades()
+        {
+            _upgradesPanel.SetActive(true);
+        }
+
+        private void CloseUpgrades()
+        {
+            _upgradesPanel.SetActive(false);
         }
 
         private void Quit()
