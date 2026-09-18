@@ -30,6 +30,14 @@ namespace Game.Waves
 
         public int CurrentWave { get; private set; }
 
+        /// <summary>
+        /// While true, holds wave 1 back after its usual delay instead of
+        /// starting it - set by TutorialController so the intro hint cards
+        /// can be dismissed at the player's own pace before anything spawns.
+        /// Has no effect once wave 1 has already started.
+        /// </summary>
+        public bool HoldFirstWave { get; set; }
+
         private void Awake()
         {
             Instance = this;
@@ -43,6 +51,7 @@ namespace Game.Waves
         private IEnumerator BeginFirstWaveAfterDelay()
         {
             yield return new WaitForSeconds(_firstWaveDelay);
+            yield return new WaitUntil(() => !HoldFirstWave);
             StartNextWave();
         }
 

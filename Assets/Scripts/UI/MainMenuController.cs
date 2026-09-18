@@ -15,6 +15,7 @@ namespace Game.UI
     public class MainMenuController : MonoBehaviour
     {
         [SerializeField] private Button _playButton;
+        [SerializeField] private Button _tutorialButton;
         [SerializeField] private Button _settingsButton;
         [SerializeField] private Button _quitButton;
         [SerializeField] private TMP_Text _xpAmountText;
@@ -24,12 +25,14 @@ namespace Game.UI
         private void OnEnable()
         {
             _playButton.onClick.AddListener(Play);
+            _tutorialButton.onClick.AddListener(PlayTutorial);
             _quitButton.onClick.AddListener(Quit);
         }
 
         private void OnDisable()
         {
             _playButton.onClick.RemoveListener(Play);
+            _tutorialButton.onClick.RemoveListener(PlayTutorial);
             _quitButton.onClick.RemoveListener(Quit);
 
             if (XPWallet.Instance != null)
@@ -65,6 +68,14 @@ namespace Game.UI
 
         private void Play()
         {
+            GameSettings.IsTutorial = false;
+            SceneManager.LoadScene(_gameSceneName);
+        }
+
+        /// <summary>Starts a normal run flagged as a tutorial - TutorialController (in the game scene) picks this up on arrival and takes it from there.</summary>
+        private void PlayTutorial()
+        {
+            GameSettings.IsTutorial = true;
             SceneManager.LoadScene(_gameSceneName);
         }
 

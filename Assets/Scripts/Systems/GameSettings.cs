@@ -22,5 +22,14 @@ namespace Game.Systems
                 PlayerPrefs.Save();
             }
         }
+
+        /// <summary>
+        /// Set by the main menu's Tutorial button right before loading the
+        /// game scene, read by TutorialController on arrival. Deliberately
+        /// NOT persisted via PlayerPrefs - it's a one-shot signal for the
+        /// very next scene load, not a standing preference, and gets reset
+        /// to false the moment either a tutorial or a normal run begins.
+        /// </summary>
+        public static bool IsTutorial { get; set; }
     }
 }

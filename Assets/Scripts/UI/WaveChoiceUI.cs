@@ -49,6 +49,15 @@ namespace Game.UI
 
         private void HandleWaveCleared(int waveNumber)
         {
+            // During the tutorial, TutorialController takes over once its
+            // wave cap is reached and shows its own completion screen
+            // instead - this panel must stay out of the way so its resume
+            // button can't be used to sneak past the cap into wave 6+.
+            if (GameSettings.IsTutorial && waveNumber >= TutorialController.TutorialWaveCount)
+            {
+                return;
+            }
+
             if (_waveSurvivedText != null)
             {
                 _waveSurvivedText.text = $"WAVE {waveNumber} OVERLEEFD";
