@@ -1,3 +1,5 @@
+using System.Collections;
+using System.Collections.Generic;
 using Game.Buildings;
 using Game.Data;
 using Game.Grid;
@@ -48,6 +50,7 @@ namespace Game.UI
         [Header("Hint card (welcome/wrap-up: modal; guided steps: compact banner)")]
         [SerializeField] private GameObject _hintPanel;
         [SerializeField] private Image _hintPanelBackground;
+        [SerializeField] private GameObject _hintHeading;
         [SerializeField] private RectTransform _hintCardRect;
         [SerializeField] private TMP_Text _hintProgressText;
         [SerializeField] private TMP_Text _hintBodyText;
@@ -133,18 +136,26 @@ namespace Game.UI
             EnterStep(Step.Welcome);
         }
 
-        /// <summary>Picks two distinct, currently-free tiles near the village: one for the guided turret placement, one for the guided "click an empty tile" step.</summary>
+        /// <summary>
+        /// Picks two distinct, currently-free tiles near the village: one
+        /// for the guided turret placement, one for the guided "click an
+        /// empty tile" step. The second one deliberately excludes every
+        /// neighbor of the turret's cell too, not just the cell itself -
+        /// otherwise it can end up sharing an edge with the placed turret,
+        /// where a click meant for the tile lands on the turret's own
+        /// collider instead and opens the wrong inspector.
+        /// </summary>
         private void PickTargetCells()
         {
             _turretCell = default;
             _tileHighlightCell = default;
-            bool haveTurretCell = false;
 
             if (HexGridManager.Instance == null)
             {
                 return;
             }
 
+            bool haveTurretCell = false;
             foreach (Vector3Int cell in HexGridManager.Instance.GetAllTileCells())
             {
                 if (HexGridManager.Instance.IsOccupied(cell))
@@ -152,16 +163,31 @@ namespace Game.UI
                     continue;
                 }
 
-                if (!haveTurretCell)
+                _turretCell = cell;
+                haveTurretCell = true;
+                break;
+            }
+
+            if (!haveTurretCell)
+            {
+                return;
+            }
+
+            var excluded = new HashSet<Vector3Int> { _turretCell };
+            foreach (Vector3Int neighbor in HexGridManager.Instance.GetNeighbors(_turretCell))
+            {
+                excluded.Add(neighbor);
+            }
+
+            foreach (Vector3Int cell in HexGridManager.Instance.GetAllTileCells())
+            {
+                if (HexGridManager.Instance.IsOccupied(cell) || excluded.Contains(cell))
                 {
-                    _turretCell = cell;
-                    haveTurretCell = true;
+                    continue;
                 }
-                else
-                {
-                    _tileHighlightCell = cell;
-                    break;
-                }
+
+                _tileHighlightCell = cell;
+                break;
             }
         }
 
@@ -208,6 +234,11 @@ namespace Game.UI
                         WaveManager.Instance.HoldFirstWave = false;
                     }
 
+                    // This step isn't gated on a click - the wave just plays
+                    // out over however long it takes - so the banner would
+                    // otherwise sit on screen the whole time. Read it, then
+                    // get out of the way of the actual fight.
+                    StartCoroutine(HideWatchWaveBannerAfterDelay());
                     break;
 
                 case Step.RewardChoice:
@@ -263,6 +294,7 @@ namespace Game.UI
         {
             _hintPanel.SetActive(true);
             _hintPanelBackground.raycastTarget = true;
+            _hintHeading.SetActive(true);
             _hintCardRect.anchoredPosition = ModalCardPos;
             _hintCardRect.sizeDelta = ModalCardSize;
             _hintNextButton.gameObject.SetActive(true);
@@ -276,6 +308,7 @@ namespace Game.UI
         {
             _hintPanel.SetActive(true);
             _hintPanelBackground.raycastTarget = false;
+            _hintHeading.SetActive(false);
             _hintCardRect.anchoredPosition = BannerCardPos;
             _hintCardRect.sizeDelta = BannerCardSize;
             _hintNextButton.gameObject.SetActive(false);
@@ -287,6 +320,15 @@ namespace Game.UI
         private void HideModal()
         {
             _hintPanel.SetActive(false);
+        }
+
+        private IEnumerator HideWatchWaveBannerAfterDelay()
+        {
+            yield return new WaitForSeconds(2.5f);
+            if (_step == Step.WatchWave)
+            {
+                HideModal();
+            }
         }
 
         private void HandleNextClicked()
