@@ -16,13 +16,16 @@ namespace Game.UI
     /// than a slideshow: the player must actually pick up the basic Turret
     /// (every other hotbar item is locked out - see TutorialGate), place it
     /// on one specific highlighted tile, watch wave 1 land real hits on it,
+    /// see the coins-vs-free-tile reward choice explained once it appears,
     /// then click a highlighted empty tile and their own turret in turn to
     /// see both upgrade panels for real. Only the welcome and wrap-up steps
     /// are simple dismiss-to-continue cards; every step in between only
-    /// advances once the player performs the actual action, each time with
-    /// TutorialHighlight pointing at exactly what to click or drag.
-    /// Entirely inert if GameSettings.IsTutorial wasn't set before this
-    /// scene loaded, i.e. every normal run.
+    /// advances once the player performs the actual action. World targets
+    /// (the tile, the turret) are outlined with TutorialWorldHighlight in
+    /// their own real shape (hexagon / turret box); the hotbar slot is
+    /// outlined with the UI-space TutorialHighlight. Entirely inert if
+    /// GameSettings.IsTutorial wasn't set before this scene loaded, i.e.
+    /// every normal run.
     /// </summary>
     public class TutorialController : MonoBehaviour
     {
@@ -33,6 +36,7 @@ namespace Game.UI
             Welcome,
             PlaceTurret,
             WatchWave,
+            RewardChoice,
             ClickTile,
             TileUpgradeShown,
             ClickTurret,
@@ -56,6 +60,7 @@ namespace Game.UI
 
         [Header("Guided-step targets")]
         [SerializeField] private TutorialHighlight _highlight;
+        [SerializeField] private TutorialWorldHighlight _worldHighlight;
         [SerializeField] private HotbarItemData _turretItem;
         [SerializeField] private RectTransform _turretHotbarSlotRect;
 
@@ -68,6 +73,11 @@ namespace Game.UI
         private static readonly Vector2 ModalCardSize = new Vector2(360f, 180f);
         private static readonly Vector2 BannerCardPos = new Vector2(40f, -8f);
         private static readonly Vector2 BannerCardSize = new Vector2(560f, 40f);
+
+        // Padding added on top of a turret's own 1x1 world-unit footprint
+        // so its highlight box reads as "around it" rather than hugging
+        // the sprite exactly.
+        private const float TurretHighlightSize = 1.3f;
 
         private Step _step;
         private Vector3Int _turretCell;
@@ -87,6 +97,7 @@ namespace Game.UI
             _hintNextButton.onClick.AddListener(HandleNextClicked);
             _completeMainMenuButton.onClick.AddListener(BackToMainMenu);
             WaveManager.OnWaveCleared += HandleWaveCleared;
+            WaveChoiceUI.OnResolved += HandleRewardResolved;
             BuildPlacer.OnPlaced += HandlePlaced;
             TileInspectorUI.OnOpened += HandleTileInspectorOpened;
             TileInspectorUI.OnClosed += HandleTileInspectorClosed;
@@ -99,6 +110,7 @@ namespace Game.UI
             _hintNextButton.onClick.RemoveListener(HandleNextClicked);
             _completeMainMenuButton.onClick.RemoveListener(BackToMainMenu);
             WaveManager.OnWaveCleared -= HandleWaveCleared;
+            WaveChoiceUI.OnResolved -= HandleRewardResolved;
             BuildPlacer.OnPlaced -= HandlePlaced;
             TileInspectorUI.OnOpened -= HandleTileInspectorOpened;
             TileInspectorUI.OnClosed -= HandleTileInspectorClosed;
@@ -153,6 +165,9 @@ namespace Game.UI
             }
         }
 
+        /// <summary>A tile's center-to-vertex radius, derived from the grid's actual configured spacing rather than a hardcoded constant (see HexGridManager.HexStepWorldDistance's doc comment: adjacent-cell center distance = sqrt(3) * this radius for a flat-top hex).</summary>
+        private float HexVertexRadius => HexGridManager.Instance != null ? HexGridManager.Instance.HexStepWorldDistance / 1.7320508f : 1f;
+
         private void EnterStep(Step step)
         {
             _step = step;
@@ -175,12 +190,18 @@ namespace Game.UI
                         _highlight.TrackUI(_turretHotbarSlotRect);
                     }
 
+                    if (HexGridManager.Instance != null)
+                    {
+                        _worldHighlight.ShowHex(HexGridManager.Instance.CellToWorld(_turretCell), HexVertexRadius);
+                    }
+
                     break;
 
                 case Step.WatchWave:
                     TutorialGate.RestrictedHotbarItem = null;
                     TutorialGate.RestrictedPlacementCell = null;
                     _highlight.Hide();
+                    _worldHighlight.Hide();
                     ShowBanner("Kijk hoe wave 1 verloopt - let op de schade-cijfers die verschijnen als je turret raak schiet.");
                     if (WaveManager.Instance != null)
                     {
@@ -189,19 +210,21 @@ namespace Game.UI
 
                     break;
 
+                case Step.RewardChoice:
+                    ShowBanner("Elke wave kies je hierboven: munten (direct te besteden) of een gratis hex-tegel (permanent erbij). Maak je keuze om verder te gaan.");
+                    break;
+
                 case Step.ClickTile:
                     ShowBanner("Klik op de gemarkeerde lege hex-tegel om 'm te upgraden.");
                     if (HexGridManager.Instance != null)
                     {
-                        Vector3 worldPos = HexGridManager.Instance.CellToWorld(_tileHighlightCell);
-                        Transform proxy = GetOrCreateWorldProxy(worldPos);
-                        _highlight.TrackWorld(proxy, new Vector2(64f, 56f));
+                        _worldHighlight.ShowHex(HexGridManager.Instance.CellToWorld(_tileHighlightCell), HexVertexRadius);
                     }
 
                     break;
 
                 case Step.TileUpgradeShown:
-                    _highlight.Hide();
+                    _worldHighlight.Hide();
                     ShowBanner("Hier koop je met munten upgrades voor de tegel - ze gelden voor de turret die erop staat (of ooit komt te staan). Sluit 'm maar weer.");
                     break;
 
@@ -209,19 +232,20 @@ namespace Game.UI
                     ShowBanner("Klik nu op je eigen turret om 'm te bekijken en te upgraden.");
                     if (_placedTurret != null)
                     {
-                        _highlight.TrackWorld(_placedTurret.transform, new Vector2(40f, 40f));
+                        _worldHighlight.ShowBox(_placedTurret.transform.position, new Vector2(TurretHighlightSize, TurretHighlightSize));
                     }
 
                     break;
 
                 case Step.TurretUpgradeShown:
-                    _highlight.Hide();
+                    _worldHighlight.Hide();
                     ShowBanner("Hier koop je met munten upgrades voor de turret zelf - kies pad A of pad B. Sluit 'm maar weer.");
                     break;
 
                 case Step.Wrapup:
                     HideModal();
                     _highlight.Hide();
+                    _worldHighlight.Hide();
                     ShowModalCard(
                         "Dat is de basis! Deze tutorial duurt nog tot wave 5 - experimenteer gerust verder, munten en XP tellen gewoon mee. Veel succes!",
                         "START!");
@@ -230,24 +254,9 @@ namespace Game.UI
                 case Step.Done:
                     HideModal();
                     _highlight.Hide();
+                    _worldHighlight.Hide();
                     break;
             }
-        }
-
-        // A lightweight positional proxy so TutorialHighlight can track a
-        // fixed world point (a tile's center) with the same Transform-based
-        // API used for tracking a moving turret - created once and reused.
-        private Transform _worldProxy;
-
-        private Transform GetOrCreateWorldProxy(Vector3 worldPosition)
-        {
-            if (_worldProxy == null)
-            {
-                _worldProxy = new GameObject("TutorialHighlightWorldProxy").transform;
-            }
-
-            _worldProxy.position = worldPosition;
-            return _worldProxy;
         }
 
         private void ShowModalCard(string message, string buttonLabel)
@@ -308,12 +317,21 @@ namespace Game.UI
         {
             if (_step == Step.WatchWave && waveNumber == 1)
             {
-                EnterStep(Step.ClickTile);
+                EnterStep(Step.RewardChoice);
             }
 
             if (waveNumber >= TutorialWaveCount)
             {
                 _completePanel.SetActive(true);
+            }
+        }
+
+        /// <summary>Fires once the player has picked (or skipped) the coins-vs-tile reward for wave 1 - see WaveChoiceUI.OnResolved.</summary>
+        private void HandleRewardResolved()
+        {
+            if (_step == Step.RewardChoice)
+            {
+                EnterStep(Step.ClickTile);
             }
         }
 
