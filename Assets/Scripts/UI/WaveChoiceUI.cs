@@ -33,6 +33,7 @@ namespace Game.UI
 
         [SerializeField] private GameObject _panel;
         [SerializeField] private TMP_Text _waveSurvivedText;
+        [SerializeField] private TMP_Text _coinsAmountText;
         [SerializeField] private Button _coinsButton;
         [SerializeField] private Button _tileButton;
         [SerializeField] private Button _resumeButton;
@@ -74,6 +75,11 @@ namespace Game.UI
             if (_waveSurvivedText != null)
             {
                 _waveSurvivedText.text = $"WAVE {waveNumber} OVERLEEFD";
+            }
+
+            if (_coinsAmountText != null)
+            {
+                _coinsAmountText.text = $"+{CoinBonus} MUNT";
             }
 
             _hasChosenReward = false;
