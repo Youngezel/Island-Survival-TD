@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 2012522308101515155}
   - component: {fileID: 5895053978335553568}
   - component: {fileID: 5925602843304006031}
-  - component: {fileID: 5489934193675996441}
+  - component: {fileID: 237518558964213041}
   m_Layer: 0
   m_Name: Turret
   m_TagString: Untagged
@@ -170,6 +170,7 @@ MonoBehaviour:
     FlashFrame1: {fileID: 21300000, guid: 3cc90454fc90edf4ca7ecca741f7254a, type: 3}
     FlashFrame2: {fileID: 21300000, guid: 50726adf197b9884da395956ba1da42f, type: 3}
     Projectile: {fileID: 21300000, guid: 3f409ba2b334cf3449e9d4584272ff90, type: 3}
+  _flashFrameDuration: 0.11
 --- !u!114 &5925602843304006031
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -183,8 +184,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Game.Buildings.Building
   _data: {fileID: 11400000, guid: d6137b38e6347ec41aabb35cbda91eb6, type: 2}
---- !u!58 &5489934193675996441
-CircleCollider2D:
+--- !u!60 &237518558964213041
+PolygonCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -213,12 +214,29 @@ CircleCollider2D:
   m_CallbackLayers:
     serializedVersion: 2
     m_Bits: 4294967295
-  m_IsTrigger: 1
+  m_IsTrigger: 0
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
-  m_Radius: 0.4
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0.5, y: 0.375}
+    oldSize: {x: 1, y: 1}
+    newSize: {x: 1, y: 1}
+    adaptiveTilingThreshold: 0.5
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  m_Points:
+    m_Paths:
+    - - {x: -0.4375, y: 0.125}
+      - {x: -0.46875, y: 0.09375}
+      - {x: -0.46875, y: -0.28125}
+      - {x: -0.4375, y: -0.375}
+      - {x: 0.4375, y: -0.375}
+      - {x: 0.4375, y: 0.125}
+  m_UseDelaunayMesh: 1
 --- !u!1 &6367422605700286877
 GameObject:
   m_ObjectHideFlags: 0

@@ -103,9 +103,9 @@ GameObject:
   - component: {fileID: 2441209052288541973}
   - component: {fileID: 6562740491899994286}
   - component: {fileID: 8815326770685120108}
-  - component: {fileID: 5635402555485114716}
   - component: {fileID: 8556139753819782547}
   - component: {fileID: 8835382899345401297}
+  - component: {fileID: 7965083749718852378}
   m_Layer: 0
   m_Name: TeslaCoil
   m_TagString: Untagged
@@ -214,42 +214,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c93f046dce60fc746be16d6da95935fa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Game.Buildings.Targeting
---- !u!58 &5635402555485114716
-CircleCollider2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8246811715728151041}
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Density: 1
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_ForceSendLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ForceReceiveLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ContactCaptureLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_CallbackLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_IsTrigger: 1
-  m_UsedByEffector: 0
-  m_CompositeOperation: 0
-  m_CompositeOrder: 0
-  m_Offset: {x: 0, y: 0.5}
-  m_Radius: 0.4
 --- !u!114 &8556139753819782547
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -308,6 +272,60 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Game.Buildings.Building
   _data: {fileID: 11400000, guid: f9e63fcf63f23df4e9db37b5778d95ac, type: 2}
+--- !u!60 &7965083749718852378
+PolygonCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8246811715728151041}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_CompositeOperation: 0
+  m_CompositeOrder: 0
+  m_Offset: {x: 0, y: 0}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0.5, y: 0.5}
+    oldSize: {x: 1, y: 1}
+    newSize: {x: 1, y: 1}
+    adaptiveTilingThreshold: 0.5
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  m_Points:
+    m_Paths:
+    - - {x: -0.375, y: 0.25}
+      - {x: -0.4375, y: -0.03125}
+      - {x: -0.4375, y: -0.3125}
+      - {x: -0.25, y: -0.5}
+      - {x: 0.1875, y: -0.5}
+      - {x: 0.4375, y: -0.4375}
+      - {x: 0.4375, y: 0.25}
+  m_UseDelaunayMesh: 1
 --- !u!1 &8661048692838426965
 GameObject:
   m_ObjectHideFlags: 0
@@ -334,7 +352,7 @@ Transform:
   m_GameObject: {fileID: 8661048692838426965}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.359375, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:

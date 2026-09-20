@@ -11,7 +11,13 @@ namespace Game.UI
     /// every frame (world position converted through the camera, or a UI
     /// RectTransform's own corners) so it stays glued on target even while
     /// the camera pans or a UI layout shifts. Hidden (and untracking)
-    /// whenever nothing is set.
+    /// whenever nothing is set - starts inactive in the scene itself, so
+    /// Awake must NOT also call SetActive(false): Unity only invokes Awake
+    /// the first time an initially-inactive object is activated, and it
+    /// runs synchronously as part of that very activation - so a
+    /// SetActive(false) here would immediately undo the first-ever
+    /// TrackUI()/TrackWorld() call that turned it on, leaving the highlight
+    /// permanently stuck invisible from that point on.
     /// </summary>
     public class TutorialHighlight : MonoBehaviour
     {
@@ -29,8 +35,6 @@ namespace Game.UI
             {
                 _worldCamera = Camera.main;
             }
-
-            gameObject.SetActive(false);
         }
 
         /// <summary>Points the highlight at a UI element (e.g. a hotbar slot) - tracks its live rect every frame.</summary>

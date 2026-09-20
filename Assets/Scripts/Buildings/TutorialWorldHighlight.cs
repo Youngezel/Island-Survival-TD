@@ -7,9 +7,9 @@ namespace Game.Buildings
     /// world thing - a hex tile or a placed turret - so it lines up exactly
     /// with that thing's real shape instead of a generic square. Draws
     /// either the tile's actual flat-top hexagon (6 vertices, same geometry
-    /// HexGridManager uses to place tiles), a square, or a circle sized to
-    /// a building's actual CircleCollider2D - the shape you must click
-    /// inside of, not an approximation of it.
+    /// HexGridManager uses to place tiles), or a building's own
+    /// PolygonCollider2D - the exact shape you must click inside of, not an
+    /// approximation of it.
     /// World-space + LineRenderer, same proven setup as RangeIndicator, so
     /// it renders correctly regardless of any UI canvas/camera math - it
     /// only needs a world position, no screen-space conversion at all.
@@ -18,8 +18,6 @@ namespace Game.Buildings
     {
         [SerializeField] private LineRenderer _lineRenderer;
         private const int HexVertexCount = 6;
-        private const int BoxVertexCount = 4;
-        private const int CircleVertexCount = 32;
 
         /// <summary>Outlines the actual hexagon at this world center - radius is the tile's own center-to-vertex distance (see HexGridManager.HexStepWorldDistance).</summary>
         public void ShowHex(Vector3 worldCenter, float vertexRadius)
@@ -40,40 +38,22 @@ namespace Game.Buildings
             }
         }
 
-        /// <summary>Outlines a square around this world center, sized to the given world-unit width/height.</summary>
-        public void ShowBox(Vector3 worldCenter, Vector2 size)
+        /// <summary>Outlines a building's real clickable shape by tracing its own PolygonCollider2D points straight into world space - whatever you have to click inside of, exactly.</summary>
+        public void ShowPolygon(PolygonCollider2D collider)
         {
-            if (_lineRenderer == null)
+            if (_lineRenderer == null || collider == null || collider.pathCount == 0)
             {
                 return;
             }
 
             gameObject.SetActive(true);
-            _lineRenderer.positionCount = BoxVertexCount;
+            Vector2[] path = collider.GetPath(0);
+            _lineRenderer.positionCount = path.Length;
 
-            Vector2 half = size * 0.5f;
-            _lineRenderer.SetPosition(0, worldCenter + new Vector3(-half.x, -half.y, 0f));
-            _lineRenderer.SetPosition(1, worldCenter + new Vector3(half.x, -half.y, 0f));
-            _lineRenderer.SetPosition(2, worldCenter + new Vector3(half.x, half.y, 0f));
-            _lineRenderer.SetPosition(3, worldCenter + new Vector3(-half.x, half.y, 0f));
-        }
-
-        /// <summary>Outlines the exact circle at this world center - use a building's own CircleCollider2D.radius so the outline matches precisely what you have to click inside of.</summary>
-        public void ShowCircle(Vector3 worldCenter, float radius)
-        {
-            if (_lineRenderer == null)
+            for (int i = 0; i < path.Length; i++)
             {
-                return;
-            }
-
-            gameObject.SetActive(true);
-            _lineRenderer.positionCount = CircleVertexCount;
-
-            for (int i = 0; i < CircleVertexCount; i++)
-            {
-                float angle = i * (360f / CircleVertexCount) * Mathf.Deg2Rad;
-                Vector3 point = worldCenter + new Vector3(Mathf.Cos(angle), Mathf.Sin(angle), 0f) * radius;
-                _lineRenderer.SetPosition(i, point);
+                Vector3 localPoint = (Vector2)collider.offset + path[i];
+                _lineRenderer.SetPosition(i, collider.transform.TransformPoint(localPoint));
             }
         }
 

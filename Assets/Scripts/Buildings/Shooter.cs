@@ -304,6 +304,17 @@ namespace Game.Buildings
             _cooldown = 1f / fireRate;
         }
 
+        /// <summary>
+        /// Where projectiles/effects should spawn from - the head's own
+        /// position rather than the building root's. Identical to
+        /// transform.position for every turret whose head sits at local
+        /// (0,0,0) (every type except the Tesla Coil), but the Tesla Coil's
+        /// head is offset upward to line up with its base's ring, so firing
+        /// from the root would visibly spawn shots down at ground level
+        /// instead of from the coil itself.
+        /// </summary>
+        private Vector3 MuzzlePosition => _headTransform != null ? _headTransform.position : transform.position;
+
         /// <summary>Rotates the head sprite to face the target; the head art is drawn pointing "up" as its 0-degree reference.</summary>
         private void RotateHeadToward(Enemy target)
         {
@@ -376,7 +387,7 @@ namespace Game.Buildings
                 return;
             }
 
-            Projectile projectile = Instantiate(_projectilePrefab, transform.position, Quaternion.identity);
+            Projectile projectile = Instantiate(_projectilePrefab, MuzzlePosition, Quaternion.identity);
             float splashRadiusWorldUnits = (_data.SplashRadius + effects.SplashRadiusBonus) * HexGridManager.Instance.HexStepWorldDistance;
             bool splash = _data.Splash || effects.SplashRadiusBonus > 0f;
             int chainCount = _data.ChainCount + effects.ChainCountBonus;
@@ -424,7 +435,8 @@ namespace Game.Buildings
             List<Enemy> nearby = _targeting.FindNearestEnemiesInRange(rangeWorldUnits, 3);
             nearby.Remove(target);
 
-            Vector3 toTarget = target.transform.position - transform.position;
+            Vector3 muzzlePosition = MuzzlePosition;
+            Vector3 toTarget = target.transform.position - muzzlePosition;
             float distance = toTarget.magnitude;
             Vector3 direction = toTarget.normalized;
             float hitRadius = 0.5f * HexGridManager.Instance.HexStepWorldDistance;
@@ -432,7 +444,7 @@ namespace Game.Buildings
 
             for (int i = 0; i < spreadAngles.Length; i++)
             {
-                Projectile pellet = Instantiate(_projectilePrefab, transform.position, Quaternion.identity);
+                Projectile pellet = Instantiate(_projectilePrefab, muzzlePosition, Quaternion.identity);
                 if (i < nearby.Count)
                 {
                     pellet.Initialize(nearby[i], _data.ProjectileSpeed, _data.Damage + effects.DamageBonus, false, 0f);
@@ -440,7 +452,7 @@ namespace Game.Buildings
                 else
                 {
                     Vector3 spreadDirection = Quaternion.Euler(0f, 0f, spreadAngles[i]) * direction;
-                    Vector3 endPoint = transform.position + spreadDirection * distance;
+                    Vector3 endPoint = muzzlePosition + spreadDirection * distance;
                     pellet.InitializeAtPoint(endPoint, _data.ProjectileSpeed, _data.Damage + effects.DamageBonus, hitRadius);
                 }
 

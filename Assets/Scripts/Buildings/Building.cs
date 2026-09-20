@@ -13,10 +13,14 @@ namespace Game.Buildings
     /// Registers itself so enemies can find and attack it if it stands in
     /// their way to the village, and so BuildingClickController can find it
     /// under the cursor to open the building inspector (view stats,
-    /// pick/advance an upgrade path, or sell it back).
+    /// pick/advance an upgrade path, or sell it back). A PolygonCollider2D
+    /// (not a circle) so a click only registers within the building's own
+    /// visible silhouette - Unity auto-generates its points from the
+    /// sprite's alpha shape the moment one is added next to a matching
+    /// SpriteRenderer, so it stays pixel-accurate with no manual tracing.
     /// </summary>
     [RequireComponent(typeof(Health), typeof(Targeting), typeof(Shooter))]
-    [RequireComponent(typeof(CircleCollider2D))]
+    [RequireComponent(typeof(PolygonCollider2D))]
     public class Building : MonoBehaviour
     {
         public static readonly List<Building> ActiveBuildings = new List<Building>();

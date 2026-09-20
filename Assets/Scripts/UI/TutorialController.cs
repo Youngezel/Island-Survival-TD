@@ -256,7 +256,7 @@ namespace Game.UI
                     break;
 
                 case Step.RewardChoice:
-                    ShowBanner("Elke wave kies je hierboven: munten (direct te besteden) of een gratis hex-tegel (permanent erbij). Maak je keuze om verder te gaan.");
+                    ShowBanner("Elke wave kies je hierboven: munten (direct te besteden) of een gratis hex-tegel (permanent erbij). Klik daarna op HERVAT om verder te gaan - dit kun je automatiseren via het menu > Instellingen > 'Volgende wave automatisch starten'.");
                     break;
 
                 case Step.ClickTile:
@@ -277,13 +277,10 @@ namespace Game.UI
                     ShowBanner("Klik nu op je eigen turret om 'm te bekijken en te upgraden.");
                     if (_placedTurret != null)
                     {
-                        // Matches the turret's own CircleCollider2D exactly
-                        // rather than an approximate box - you have to click
-                        // inside that exact circle to actually hit it, so a
-                        // looser outline would invite a click that misses.
-                        CircleCollider2D turretCollider = _placedTurret.GetComponent<CircleCollider2D>();
-                        float radius = turretCollider != null ? turretCollider.radius : 0.4f;
-                        _worldHighlight.ShowCircle(_placedTurret.transform.position, radius);
+                        // Traces the turret's own PolygonCollider2D - the
+                        // exact pixel-perfect shape you have to click inside
+                        // of - rather than an approximate box or circle.
+                        _worldHighlight.ShowPolygon(_placedTurret.GetComponent<PolygonCollider2D>());
                     }
 
                     break;
