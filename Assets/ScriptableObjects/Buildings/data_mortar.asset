@@ -28,32 +28,32 @@ MonoBehaviour:
       _effect: 1
       _value: 2
       _unlockCost: 55
-      _applyCost: 130
+      _applyCost: 165
     - _name: Grotere Splash Radius
       _effect: 8
       _value: 0.75
       _unlockCost: 110
-      _applyCost: 320
+      _applyCost: 400
     - _name: Meer Range
       _effect: 1
       _value: 2
       _unlockCost: 200
-      _applyCost: 700
+      _applyCost: 875
   _pathB:
     _nodes:
     - _name: Dubbelschot
       _effect: 4
       _value: 0
       _unlockCost: 55
-      _applyCost: 130
+      _applyCost: 165
     - _name: Spreidschot
       _effect: 3
       _value: 0
       _unlockCost: 110
-      _applyCost: 320
+      _applyCost: 400
     - _name: Meer Damage
       _effect: 0
       _value: 3
       _unlockCost: 200
-      _applyCost: 700
+      _applyCost: 875
   _icon: {fileID: 21300000, guid: e7b12291e152b9e42ac8289070d65891, type: 3}

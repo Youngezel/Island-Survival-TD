@@ -30376,7 +30376,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9323d7c9e463fa34887552fb803582c0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Game.Economy.CoinWallet
-  _coins: 23000
+  _coins: 75
 --- !u!114 &1923146555
 MonoBehaviour:
   m_ObjectHideFlags: 0

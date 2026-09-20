@@ -28,32 +28,32 @@ MonoBehaviour:
       _effect: 1
       _value: 2
       _unlockCost: 55
-      _applyCost: 130
+      _applyCost: 165
     - _name: Doorborende Kogels
       _effect: 6
       _value: 2
       _unlockCost: 110
-      _applyCost: 320
+      _applyCost: 400
     - _name: Meer Range
       _effect: 1
       _value: 2
       _unlockCost: 200
-      _applyCost: 700
+      _applyCost: 875
   _pathB:
     _nodes:
     - _name: Meer Damage
       _effect: 0
       _value: 3
       _unlockCost: 55
-      _applyCost: 130
+      _applyCost: 165
     - _name: Dubbel Doel
       _effect: 7
       _value: 2
       _unlockCost: 110
-      _applyCost: 320
+      _applyCost: 400
     - _name: Meer Damage
       _effect: 0
       _value: 3
       _unlockCost: 200
-      _applyCost: 700
+      _applyCost: 875
   _icon: {fileID: 21300000, guid: eaf6bc8b4d513cd43bae87bceb34f187, type: 3}

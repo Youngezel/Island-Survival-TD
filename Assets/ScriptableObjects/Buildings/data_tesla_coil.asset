@@ -30,32 +30,32 @@ MonoBehaviour:
       _effect: 0
       _value: 5
       _unlockCost: 250
-      _applyCost: 300
+      _applyCost: 375
     - _name: Extra Ricochet
       _effect: 9
       _value: 6
       _unlockCost: 1000
-      _applyCost: 750
+      _applyCost: 950
     - _name: Meer Range
       _effect: 1
       _value: 5
       _unlockCost: 1300
-      _applyCost: 1200
+      _applyCost: 1500
   _pathB:
     _nodes:
     - _name: Meer Schoten
       _effect: 7
       _value: 5
       _unlockCost: 250
-      _applyCost: 300
+      _applyCost: 375
     - _name: Meer Damage
       _effect: 0
       _value: 5
       _unlockCost: 1000
-      _applyCost: 800
+      _applyCost: 1000
     - _name: Overload
       _effect: 7
       _value: 8
       _unlockCost: 1500
-      _applyCost: 1400
+      _applyCost: 1750
   _icon: {fileID: 21300000, guid: a260597b6cccd2949a22c0a3ad4d856d, type: 3}

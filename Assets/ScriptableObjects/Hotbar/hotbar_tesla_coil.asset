@@ -14,6 +14,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Game.Data.HotbarItemData
   _displayName: Tesla Coil
   _icon: {fileID: 21300000, guid: a260597b6cccd2949a22c0a3ad4d856d, type: 3}
-  _cost: 400
+  _cost: 500
   _isGroundTile: 0
   _buildingPrefab: {fileID: 8246811715728151041, guid: 4c124309fcffdcc4cb49b0d8dc4a8fa0, type: 3}
