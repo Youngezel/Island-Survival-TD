@@ -21,14 +21,10 @@ namespace Game.UI
     /// </summary>
     public class WaveChoiceUI : MonoBehaviour
     {
-        /// <summary>
-        /// Fired the moment the reward choice for a cleared wave is
-        /// resolved - as soon as the player picks coins or a tile (the
-        /// expected path), or otherwise once they resume without choosing.
-        /// May fire twice for one wave (once on the choice, once more when
-        /// the next wave actually starts) - TutorialController only reacts
-        /// to the first.
-        /// </summary>
+        /// <summary>Fired the moment the player picks a reward (coins or tile) for a cleared wave - before the wave actually resumes, which still needs a separate Resume click (or AutoStartNextWave) - see OnResolved.</summary>
+        public static event Action OnRewardChosen;
+
+        /// <summary>Fired once the wave actually resumes - a manual Resume click, an auto-start, or a resume without ever choosing a reward. Always fires after any OnRewardChosen for the same wave, never before.</summary>
         public static event Action OnResolved;
 
         [SerializeField] private GameObject _panel;
@@ -93,7 +89,7 @@ namespace Game.UI
             _hasChosenReward = true;
             CoinWallet.Instance.AddCoins(_coinBonus);
             _panel.SetActive(false);
-            OnResolved?.Invoke();
+            OnRewardChosen?.Invoke();
             MaybeAutoStart();
         }
 
@@ -107,7 +103,7 @@ namespace Game.UI
             _hasChosenReward = true;
             PlacementCursor.Instance.SelectItem(_freeTileItem, free: true);
             _panel.SetActive(false);
-            OnResolved?.Invoke();
+            OnRewardChosen?.Invoke();
             MaybeAutoStart();
         }
 

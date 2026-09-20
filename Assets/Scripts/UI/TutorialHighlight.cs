@@ -65,8 +65,15 @@ namespace Game.UI
         {
             if (_uiTarget != null)
             {
-                _box.position = _uiTarget.position;
-                _box.sizeDelta = _uiTarget.sizeDelta;
+                // _box has a center pivot, but _uiTarget's pivot can be
+                // anything (e.g. a hotbar slot's top-left) - copying
+                // .position directly would line up _box's CENTER with
+                // _uiTarget's PIVOT POINT instead of its visual center,
+                // shifting the highlight off to whichever side the pivot
+                // isn't. TransformPoint(rect.center) gives the target's true
+                // world-space visual center regardless of its own pivot.
+                _box.position = _uiTarget.TransformPoint(_uiTarget.rect.center);
+                _box.sizeDelta = _uiTarget.rect.size;
             }
             else if (_worldTarget != null && _worldCamera != null)
             {

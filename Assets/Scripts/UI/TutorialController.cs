@@ -19,8 +19,11 @@ namespace Game.UI
     /// (every other hotbar item is locked out - see TutorialGate), place it
     /// on one specific highlighted tile, watch wave 1 land real hits on it,
     /// see the coins-vs-free-tile reward choice explained once it appears,
-    /// then click a highlighted empty tile and their own turret in turn to
-    /// see both upgrade panels for real. Only the welcome and wrap-up steps
+    /// pick one and click the highlighted Resume button to actually
+    /// continue (told about this before wave 1 even starts, then practiced
+    /// for real once it clears), then click a highlighted empty tile and
+    /// their own turret in turn to see both upgrade panels for real. Only
+    /// the welcome and wrap-up steps
     /// are simple dismiss-to-continue cards; every step in between only
     /// advances once the player performs the actual action. World targets
     /// (the tile, the turret) are outlined with TutorialWorldHighlight in
@@ -39,6 +42,7 @@ namespace Game.UI
             PlaceTurret,
             WatchWave,
             RewardChoice,
+            ClickResume,
             ClickTile,
             TileUpgradeShown,
             ClickTurret,
@@ -66,6 +70,7 @@ namespace Game.UI
         [SerializeField] private TutorialWorldHighlight _worldHighlight;
         [SerializeField] private HotbarItemData _turretItem;
         [SerializeField] private RectTransform _turretHotbarSlotRect;
+        [SerializeField] private RectTransform _resumeButtonRect;
 
         [SerializeField] private string _mainMenuSceneName = "MainMenu";
 
@@ -95,7 +100,8 @@ namespace Game.UI
             _hintNextButton.onClick.AddListener(HandleNextClicked);
             _completeMainMenuButton.onClick.AddListener(BackToMainMenu);
             WaveManager.OnWaveCleared += HandleWaveCleared;
-            WaveChoiceUI.OnResolved += HandleRewardResolved;
+            WaveChoiceUI.OnRewardChosen += HandleRewardChosen;
+            WaveChoiceUI.OnResolved += HandleWaveResumed;
             BuildPlacer.OnPlaced += HandlePlaced;
             TileInspectorUI.OnOpened += HandleTileInspectorOpened;
             TileInspectorUI.OnClosed += HandleTileInspectorClosed;
@@ -108,7 +114,8 @@ namespace Game.UI
             _hintNextButton.onClick.RemoveListener(HandleNextClicked);
             _completeMainMenuButton.onClick.RemoveListener(BackToMainMenu);
             WaveManager.OnWaveCleared -= HandleWaveCleared;
-            WaveChoiceUI.OnResolved -= HandleRewardResolved;
+            WaveChoiceUI.OnRewardChosen -= HandleRewardChosen;
+            WaveChoiceUI.OnResolved -= HandleWaveResumed;
             BuildPlacer.OnPlaced -= HandlePlaced;
             TileInspectorUI.OnOpened -= HandleTileInspectorOpened;
             TileInspectorUI.OnClosed -= HandleTileInspectorClosed;
@@ -242,7 +249,7 @@ namespace Game.UI
                     TutorialGate.RestrictedPlacementCell = null;
                     _highlight.Hide();
                     _worldHighlight.Hide();
-                    ShowBanner("Kijk hoe wave 1 verloopt - let op de schade-cijfers die verschijnen als je turret raak schiet.");
+                    ShowBanner("Kijk hoe wave 1 verloopt - let op de schade-cijfers die verschijnen als je turret raak schiet. Na de wave kies je een beloning en klik je op HERVAT om door te gaan.");
                     if (WaveManager.Instance != null)
                     {
                         WaveManager.Instance.HoldFirstWave = false;
@@ -256,10 +263,20 @@ namespace Game.UI
                     break;
 
                 case Step.RewardChoice:
-                    ShowBanner("Elke wave kies je hierboven: munten (direct te besteden) of een gratis hex-tegel (permanent erbij). Klik daarna op HERVAT om verder te gaan - dit kun je automatiseren via het menu > Instellingen > 'Volgende wave automatisch starten'.");
+                    ShowBanner("Kies hierboven: munten (direct te besteden) of een gratis hex-tegel (permanent erbij).");
+                    break;
+
+                case Step.ClickResume:
+                    ShowBanner("Klik op HERVAT om door te gaan naar de volgende wave - dit kun je automatiseren via het menu > Instellingen > 'Volgende wave automatisch starten'.");
+                    if (_resumeButtonRect != null)
+                    {
+                        _highlight.TrackUI(_resumeButtonRect);
+                    }
+
                     break;
 
                 case Step.ClickTile:
+                    _highlight.Hide();
                     ShowBanner("Klik op de gemarkeerde lege hex-tegel om 'm te upgraden.");
                     if (HexGridManager.Instance != null)
                     {
@@ -385,10 +402,27 @@ namespace Game.UI
             }
         }
 
-        /// <summary>Fires once the player has picked (or skipped) the coins-vs-tile reward for wave 1 - see WaveChoiceUI.OnResolved.</summary>
-        private void HandleRewardResolved()
+        /// <summary>Fires the moment the player picks a reward for wave 1 - advances to the guided "now click Resume" step.</summary>
+        private void HandleRewardChosen()
         {
             if (_step == Step.RewardChoice)
+            {
+                EnterStep(Step.ClickResume);
+            }
+        }
+
+        /// <summary>
+        /// Fires once the wave actually resumes - the expected path is
+        /// clicking Resume from Step.ClickResume, but the Resume button is
+        /// clickable even without choosing a reward first (RewardChoice)
+        /// and AutoStartNextWave can resolve both in the same synchronous
+        /// call (ClickResume, entered moments earlier by HandleRewardChosen
+        /// above) - covering all three keeps this from ever getting stuck
+        /// on a step nothing will advance out of.
+        /// </summary>
+        private void HandleWaveResumed()
+        {
+            if (_step == Step.ClickResume || _step == Step.RewardChoice)
             {
                 EnterStep(Step.ClickTile);
             }
