@@ -17,22 +17,21 @@ namespace Game.UI
     /// Tutorial button. This is a guided, action-gated walkthrough rather
     /// than a slideshow: the player must actually pick up the basic Turret
     /// (every other hotbar item is locked out - see TutorialGate), place it
-    /// on one specific highlighted tile, watch wave 1 land real hits on it,
-    /// see the coins-vs-free-tile reward choice explained once it appears,
-    /// then click a highlighted empty tile and their own turret in turn to
-    /// see both upgrade panels for real. While wave 1 plays out, the
-    /// highlighted Resume button (always in the top-right HUD, whatever the
-    /// wave-choice panel is doing) is also pointed out up front, since
-    /// that's the only step players otherwise wouldn't know how to
-    /// discover on their own once a wave actually clears. Only the welcome
-    /// and wrap-up steps
-    /// are simple dismiss-to-continue cards; every step in between only
-    /// advances once the player performs the actual action. World targets
-    /// (the tile, the turret) are outlined with TutorialWorldHighlight in
-    /// their own real shape (hexagon / turret box); the hotbar slot is
-    /// outlined with the UI-space TutorialHighlight. Entirely inert if
-    /// GameSettings.IsTutorial wasn't set before this scene loaded, i.e.
-    /// every normal run.
+    /// on one specific highlighted tile, then click the highlighted Resume
+    /// button (always in the top-right HUD) to actually start wave 1 - it
+    /// stays held until they do, exactly like every wave after it, so this
+    /// is genuine practice rather than a mention in passing. Watch wave 1
+    /// land real hits, see the coins-vs-free-tile reward choice explained
+    /// once it appears, then click a highlighted empty tile and their own
+    /// turret in turn to see both upgrade panels for real. Only the welcome
+    /// and wrap-up steps are simple dismiss-to-continue cards; every step
+    /// in between only advances once the player performs the actual
+    /// action. World targets (the tile, the turret) are outlined with
+    /// TutorialWorldHighlight in their own real shape (hexagon / turret
+    /// polygon); the hotbar slot and the Resume button are outlined with
+    /// the UI-space TutorialHighlight. Entirely inert if GameSettings.
+    /// IsTutorial wasn't set before this scene loaded, i.e. every normal
+    /// run.
     /// </summary>
     public class TutorialController : MonoBehaviour
     {
@@ -42,6 +41,7 @@ namespace Game.UI
         {
             Welcome,
             PlaceTurret,
+            ClickResumeToStart,
             WatchWave,
             RewardChoice,
             ClickTile,
@@ -87,12 +87,18 @@ namespace Game.UI
         private Vector3Int _turretCell;
         private Vector3Int _tileHighlightCell;
         private GameObject _placedTurret;
+        private Button _resumeButton;
 
         private void Awake()
         {
             if (!GameSettings.IsTutorial)
             {
                 enabled = false;
+            }
+
+            if (_resumeButtonRect != null)
+            {
+                _resumeButton = _resumeButtonRect.GetComponent<Button>();
             }
         }
 
@@ -107,6 +113,11 @@ namespace Game.UI
             TileInspectorUI.OnClosed += HandleTileInspectorClosed;
             BuildingInspectorUI.OnOpened += HandleBuildingInspectorOpened;
             BuildingInspectorUI.OnClosed += HandleBuildingInspectorClosed;
+
+            if (_resumeButton != null)
+            {
+                _resumeButton.onClick.AddListener(HandleResumeClickedToStartWave);
+            }
         }
 
         private void OnDisable()
@@ -120,6 +131,11 @@ namespace Game.UI
             TileInspectorUI.OnClosed -= HandleTileInspectorClosed;
             BuildingInspectorUI.OnOpened -= HandleBuildingInspectorOpened;
             BuildingInspectorUI.OnClosed -= HandleBuildingInspectorClosed;
+
+            if (_resumeButton != null)
+            {
+                _resumeButton.onClick.RemoveListener(HandleResumeClickedToStartWave);
+            }
 
             // Never leave a restriction active if the tutorial ends abnormally mid-step.
             TutorialGate.RestrictedHotbarItem = null;
@@ -243,32 +259,29 @@ namespace Game.UI
 
                     break;
 
-                case Step.WatchWave:
+                case Step.ClickResumeToStart:
                     TutorialGate.RestrictedHotbarItem = null;
                     TutorialGate.RestrictedPlacementCell = null;
                     _highlight.Hide();
                     _worldHighlight.Hide();
-                    ShowBanner("Kijk hoe wave 1 verloopt - let op de schade-cijfers die verschijnen als je turret raak schiet.");
-                    if (WaveManager.Instance != null)
-                    {
-                        WaveManager.Instance.HoldFirstWave = false;
-                    }
+                    ShowBanner("Klik op de gemarkeerde HERVAT-knop rechtsboven om wave 1 te starten - dit kun je automatiseren via het menu > Instellingen > 'Volgende wave automatisch starten'.");
 
-                    // This step isn't gated on a click - the wave just plays
-                    // out over however long it takes - so the banner would
-                    // otherwise sit on screen the whole time, and while
-                    // wave 1 is still very obviously auto-playing itself is
-                    // the wrong moment to mention a button that does
-                    // nothing yet. Read this first message, then read a
-                    // second one about the Resume button, then (see
-                    // RevealResumeHighlightAfterDelay) reveal the button
-                    // itself with nothing covering it - the banner's own
-                    // panel sits directly on top of that button's fixed HUD
-                    // position, so showing banner text and the highlight at
-                    // the same time either hides the button behind the
-                    // banner or strands the highlight in the middle of the
-                    // text instead of around the real button.
+                    // Read time first, then reveal the actual button with
+                    // nothing over it - the banner's own panel spans the
+                    // same top-of-screen area the Resume button always
+                    // lives in, so showing banner text and the highlight at
+                    // the same time would either hide the button behind
+                    // the banner or strand the highlight in the middle of
+                    // the text instead of around the real button. Wave 1
+                    // itself stays held (see Start()) until the player
+                    // actually clicks Resume - see HandleResumeClickedToStartWave.
                     StartCoroutine(RevealResumeHighlightAfterDelay());
+                    break;
+
+                case Step.WatchWave:
+                    _highlight.Hide();
+                    ShowBanner("Kijk hoe wave 1 verloopt - let op de schade-cijfers die verschijnen als je turret raak schiet.");
+                    StartCoroutine(HideBannerAfterDelay());
                     break;
 
                 case Step.RewardChoice:
@@ -358,31 +371,19 @@ namespace Game.UI
         }
 
         /// <summary>
-        /// Three beats, each only starting once the last one had time to be
-        /// read and only if the wave hasn't already cleared and moved the
-        /// step on by then: the "watch the wave" message set in EnterStep,
-        /// a second message about the Resume button, then the Resume
-        /// button's own highlight with no text over it. The banner and the
-        /// highlight are never shown at the same time - the banner's own
-        /// panel spans the same top-of-screen area the Resume button
-        /// always lives in, so showing both at once would either hide the
-        /// button behind the banner or strand the highlight in the middle
-        /// of the text instead of around the real button. The highlight,
-        /// once revealed, stays up until the wave actually clears and
-        /// Step.RewardChoice takes over and hides it.
+        /// Hides the ClickResumeToStart banner after enough time to read
+        /// it, then reveals the Resume button's highlight with nothing
+        /// over it - the banner's own panel spans the same top-of-screen
+        /// area the button always lives in, so showing both at once would
+        /// either hide the button behind the banner or strand the
+        /// highlight in the middle of the text instead of around the real
+        /// button. Bails if the player already clicked Resume before the
+        /// delay elapsed (moving the step on) rather than fighting that.
         /// </summary>
         private IEnumerator RevealResumeHighlightAfterDelay()
         {
             yield return new WaitForSeconds(2.5f);
-            if (_step != Step.WatchWave)
-            {
-                yield break;
-            }
-
-            ShowBanner("Na de wave klik je op de gemarkeerde HERVAT-knop rechtsboven om door te gaan - dit kun je automatiseren via het menu > Instellingen > 'Volgende wave automatisch starten'.");
-
-            yield return new WaitForSeconds(2.5f);
-            if (_step != Step.WatchWave)
+            if (_step != Step.ClickResumeToStart)
             {
                 yield break;
             }
@@ -391,6 +392,16 @@ namespace Game.UI
             if (_resumeButtonRect != null)
             {
                 _highlight.TrackUI(_resumeButtonRect);
+            }
+        }
+
+        /// <summary>Reads the same way as HideWatchWaveBannerAfterDelay always did - wave 1 just plays out over however long it takes, so the banner would otherwise sit on screen the whole time.</summary>
+        private IEnumerator HideBannerAfterDelay()
+        {
+            yield return new WaitForSeconds(2.5f);
+            if (_step == Step.WatchWave)
+            {
+                HideModal();
             }
         }
 
@@ -415,6 +426,22 @@ namespace Game.UI
             }
 
             _placedTurret = building;
+            EnterStep(Step.ClickResumeToStart);
+        }
+
+        /// <summary>Wave 1 stays held (see Start()) until the player actually clicks Resume here - the same button (always in the top-right HUD) they'll need every wave after this one, so this is genuine practice rather than an FYI.</summary>
+        private void HandleResumeClickedToStartWave()
+        {
+            if (_step != Step.ClickResumeToStart)
+            {
+                return;
+            }
+
+            if (WaveManager.Instance != null)
+            {
+                WaveManager.Instance.HoldFirstWave = false;
+            }
+
             EnterStep(Step.WatchWave);
         }
 
