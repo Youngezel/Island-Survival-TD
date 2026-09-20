@@ -77,11 +77,6 @@ namespace Game.UI
         private static readonly Vector2 BannerCardPos = new Vector2(40f, -8f);
         private static readonly Vector2 BannerCardSize = new Vector2(560f, 40f);
 
-        // Padding added on top of a turret's own 1x1 world-unit footprint
-        // so its highlight box reads as "around it" rather than hugging
-        // the sprite exactly.
-        private const float TurretHighlightSize = 1.3f;
-
         private Step _step;
         private Vector3Int _turretCell;
         private Vector3Int _tileHighlightCell;
@@ -144,6 +139,16 @@ namespace Game.UI
         /// otherwise it can end up sharing an edge with the placed turret,
         /// where a click meant for the tile lands on the turret's own
         /// collider instead and opens the wrong inspector.
+        /// Both also explicitly exclude the village's own cell, rather than
+        /// trusting IsOccupied alone - Village registers its cell as
+        /// occupied in its own Start(), and Unity doesn't guarantee that
+        /// runs before this Start() does, so IsOccupied can still read false
+        /// for the village's cell at pick time (Enemy's own damageable-
+        /// target search has the same defensive check for the same reason).
+        /// Without it, the village's cell could get picked as the "click
+        /// this empty tile" target - a tile a building already stands on,
+        /// so clicking it opens the building's inspector instead and the
+        /// step can never be completed the way it's described.
         /// </summary>
         private void PickTargetCells()
         {
@@ -155,10 +160,14 @@ namespace Game.UI
                 return;
             }
 
+            Vector3Int? villageCell = Village.Instance != null
+                ? HexGridManager.Instance.WorldToCell(Village.Instance.transform.position)
+                : (Vector3Int?)null;
+
             bool haveTurretCell = false;
             foreach (Vector3Int cell in HexGridManager.Instance.GetAllTileCells())
             {
-                if (HexGridManager.Instance.IsOccupied(cell))
+                if (HexGridManager.Instance.IsOccupied(cell) || cell == villageCell)
                 {
                     continue;
                 }
@@ -174,6 +183,11 @@ namespace Game.UI
             }
 
             var excluded = new HashSet<Vector3Int> { _turretCell };
+            if (villageCell.HasValue)
+            {
+                excluded.Add(villageCell.Value);
+            }
+
             foreach (Vector3Int neighbor in HexGridManager.Instance.GetNeighbors(_turretCell))
             {
                 excluded.Add(neighbor);
@@ -263,7 +277,13 @@ namespace Game.UI
                     ShowBanner("Klik nu op je eigen turret om 'm te bekijken en te upgraden.");
                     if (_placedTurret != null)
                     {
-                        _worldHighlight.ShowBox(_placedTurret.transform.position, new Vector2(TurretHighlightSize, TurretHighlightSize));
+                        // Matches the turret's own CircleCollider2D exactly
+                        // rather than an approximate box - you have to click
+                        // inside that exact circle to actually hit it, so a
+                        // looser outline would invite a click that misses.
+                        CircleCollider2D turretCollider = _placedTurret.GetComponent<CircleCollider2D>();
+                        float radius = turretCollider != null ? turretCollider.radius : 0.4f;
+                        _worldHighlight.ShowCircle(_placedTurret.transform.position, radius);
                     }
 
                     break;

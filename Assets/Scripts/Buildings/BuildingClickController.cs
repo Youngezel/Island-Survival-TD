@@ -18,13 +18,24 @@ namespace Game.Buildings
     /// Handling is set to "Input System Package (New)" only, and OnMouseDown
     /// is implemented on top of the old Input Manager under the hood, so it
     /// silently never fires with that setting.
+    /// Only fires on mouse-up, and only when the pointer barely moved since
+    /// mouse-down - CameraPanController also drags on the left button to pan
+    /// the map, and acting on press alone would open an inspector the
+    /// instant a pan-drag started, before there was any way to tell the two
+    /// gestures apart.
     /// </summary>
     public class BuildingClickController : MonoBehaviour
     {
         [SerializeField] private Camera _worldCamera;
 
+        /// <summary>Screen pixels of movement between press and release still counted as a click rather than a drag.</summary>
+        private const float DragThresholdPixels = 6f;
+
         // Reused every click to avoid allocating a new array each frame.
         private readonly Collider2D[] _overlapResults = new Collider2D[16];
+
+        private bool _pressValid;
+        private Vector2 _pressScreenPosition;
 
         private void Awake()
         {
@@ -36,7 +47,34 @@ namespace Game.Buildings
 
         private void Update()
         {
-            if (Mouse.current == null || _worldCamera == null || !Mouse.current.leftButton.wasPressedThisFrame)
+            if (Mouse.current == null || _worldCamera == null)
+            {
+                return;
+            }
+
+            if (Mouse.current.leftButton.wasPressedThisFrame)
+            {
+                bool overUI = EventSystem.current != null && EventSystem.current.IsPointerOverGameObject();
+                bool placing = PlacementCursor.Instance != null && PlacementCursor.Instance.SelectedItem != null;
+                _pressValid = !overUI && !placing;
+                _pressScreenPosition = Mouse.current.position.ReadValue();
+                return;
+            }
+
+            if (!Mouse.current.leftButton.wasReleasedThisFrame)
+            {
+                return;
+            }
+
+            if (!_pressValid)
+            {
+                return;
+            }
+
+            _pressValid = false;
+
+            Vector2 releaseScreenPosition = Mouse.current.position.ReadValue();
+            if (Vector2.Distance(_pressScreenPosition, releaseScreenPosition) > DragThresholdPixels)
             {
                 return;
             }
@@ -46,12 +84,7 @@ namespace Game.Buildings
                 return;
             }
 
-            if (PlacementCursor.Instance != null && PlacementCursor.Instance.SelectedItem != null)
-            {
-                return;
-            }
-
-            Vector2 screenPosition = Mouse.current.position.ReadValue();
+            Vector2 screenPosition = releaseScreenPosition;
             Vector3 worldPosition = _worldCamera.ScreenToWorldPoint(new Vector3(screenPosition.x, screenPosition.y, -_worldCamera.transform.position.z));
             worldPosition.z = 0f;
 
