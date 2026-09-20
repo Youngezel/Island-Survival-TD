@@ -246,27 +246,30 @@ namespace Game.UI
                 case Step.WatchWave:
                     TutorialGate.RestrictedHotbarItem = null;
                     TutorialGate.RestrictedPlacementCell = null;
+                    _highlight.Hide();
                     _worldHighlight.Hide();
-                    ShowBanner("Kijk hoe wave 1 verloopt - let op de schade-cijfers die verschijnen als je turret raak schiet. Na elke wave kies je een beloning en klik je daarna op de gemarkeerde HERVAT-knop rechtsboven om door te gaan - dit kun je automatiseren via het menu > Instellingen > 'Volgende wave automatisch starten'.");
-                    if (_resumeButtonRect != null)
-                    {
-                        _highlight.TrackUI(_resumeButtonRect);
-                    }
-
+                    ShowBanner("Kijk hoe wave 1 verloopt - let op de schade-cijfers die verschijnen als je turret raak schiet. Na de wave klik je op de gemarkeerde HERVAT-knop rechtsboven om door te gaan - dit kun je automatiseren via het menu > Instellingen > 'Volgende wave automatisch starten'.");
                     if (WaveManager.Instance != null)
                     {
                         WaveManager.Instance.HoldFirstWave = false;
                     }
 
                     // This step isn't gated on a click - the wave just plays
-                    // out over however long it takes - so the banner (and
-                    // the Resume-button highlight shown alongside it) would
+                    // out over however long it takes - so the banner would
                     // otherwise sit on screen the whole time. Read it, then
-                    // get out of the way of the actual fight.
-                    StartCoroutine(HideWatchWaveBannerAfterDelay());
+                    // reveal the Resume button itself (see
+                    // ShowResumeHighlightAfterDelay) - the banner's own
+                    // panel sits directly on top of that button's fixed
+                    // HUD position, so showing both at once either hides
+                    // the button behind the banner or, if the highlight
+                    // were drawn on top of that, draws it in empty space in
+                    // the middle of the text instead of around the real
+                    // button. Sequencing them avoids both.
+                    StartCoroutine(RevealResumeHighlightAfterDelay());
                     break;
 
                 case Step.RewardChoice:
+                    _highlight.Hide();
                     ShowBanner("Kies hierboven: munten (direct te besteden) of een gratis hex-tegel (permanent erbij).");
                     break;
 
@@ -351,13 +354,29 @@ namespace Game.UI
             _hintPanel.SetActive(false);
         }
 
-        private IEnumerator HideWatchWaveBannerAfterDelay()
+        /// <summary>
+        /// Hides the WatchWave banner after enough time to read it, then
+        /// reveals the actual Resume button (its highlight only - no
+        /// banner text) so it stays visible, uncovered, until the wave
+        /// clears for real and Step.RewardChoice takes over. Never shown
+        /// at the same time as the banner: the banner's own panel spans
+        /// the same top-of-screen area the Resume button always lives in,
+        /// so a highlight drawn while it's up would either be hidden
+        /// behind it or appear stranded in the middle of the text instead
+        /// of around the real button.
+        /// </summary>
+        private IEnumerator RevealResumeHighlightAfterDelay()
         {
             yield return new WaitForSeconds(2.5f);
-            if (_step == Step.WatchWave)
+            if (_step != Step.WatchWave)
             {
-                HideModal();
-                _highlight.Hide();
+                yield break;
+            }
+
+            HideModal();
+            if (_resumeButtonRect != null)
+            {
+                _highlight.TrackUI(_resumeButtonRect);
             }
         }
 
