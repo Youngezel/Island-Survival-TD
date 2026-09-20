@@ -15,7 +15,7 @@ MonoBehaviour:
   _displayName: Fast pirate boot
   _maxHealth: 15
   _damage: 1
-  _coinReward: 5
+  _coinReward: 10
   _moveSpeed: 2
   _range: 1
   _attackRate: 1

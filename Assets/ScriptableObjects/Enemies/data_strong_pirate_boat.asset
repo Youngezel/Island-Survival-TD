@@ -15,7 +15,7 @@ MonoBehaviour:
   _displayName: Strong pirate boot
   _maxHealth: 30
   _damage: 3
-  _coinReward: 10
+  _coinReward: 20
   _moveSpeed: 0.5
   _range: 1
   _attackRate: 1

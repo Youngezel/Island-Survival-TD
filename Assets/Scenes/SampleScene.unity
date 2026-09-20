@@ -25744,7 +25744,6 @@ MonoBehaviour:
   _tileButton: {fileID: 1941306700}
   _resumeButton: {fileID: 741507453}
   _freeTileItem: {fileID: 11400000, guid: b7e69385fa8496940aa62bad612699c0, type: 2}
-  _coinBonus: 15
 --- !u!114 &1734676440
 MonoBehaviour:
   m_ObjectHideFlags: 0

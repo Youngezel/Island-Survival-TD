@@ -15,7 +15,7 @@ MonoBehaviour:
   _displayName: Boss Piraat
   _maxHealth: 70
   _damage: 3
-  _coinReward: 40
+  _coinReward: 80
   _moveSpeed: 0.5
   _range: 1
   _attackRate: 1

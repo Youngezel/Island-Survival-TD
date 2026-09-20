@@ -37,7 +37,9 @@ namespace Game.UI
         [SerializeField] private Button _tileButton;
         [SerializeField] private Button _resumeButton;
         [SerializeField] private HotbarItemData _freeTileItem;
-        [SerializeField] private int _coinBonus = 15;
+
+        /// <summary>The coins reward always matches what the free tile would otherwise cost to buy, so neither reward option is a strictly better deal - reading it from the item itself (rather than a separately hand-set number) means it can never drift out of sync if the tile's price ever changes.</summary>
+        private int CoinBonus => _freeTileItem != null ? _freeTileItem.Cost : 0;
 
         private bool _hasChosenReward;
         private bool _waitingToStartNextWave;
@@ -91,7 +93,7 @@ namespace Game.UI
             }
 
             _hasChosenReward = true;
-            CoinWallet.Instance.AddCoins(_coinBonus);
+            CoinWallet.Instance.AddCoins(CoinBonus);
             _panel.SetActive(false);
             OnResolved?.Invoke();
             MaybeAutoStart();
@@ -141,7 +143,7 @@ namespace Game.UI
 
             if (!_hasChosenReward)
             {
-                CoinWallet.Instance.AddCoins(_coinBonus);
+                CoinWallet.Instance.AddCoins(CoinBonus);
             }
 
             _panel.SetActive(false);
